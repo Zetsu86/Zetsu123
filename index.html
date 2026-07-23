@@ -1,9 +1,828 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>Trang web của tôi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Task Scheduler - Dashboard</title>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --sidebar-bg: #0f172a;
+            --sidebar-active: #2563eb;
+            --bg-main: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --primary-blue: #2563eb;
+            --badge-blue-bg: #eff6ff;
+            --badge-blue-text: #1d4ed8;
+            --badge-green-bg: #f0fdf4;
+            --badge-green-text: #15803d;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand i {
+            font-size: 24px;
+            color: #38bdf8;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 12px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu li.active a,
+        .sidebar-menu li a:hover {
+            background-color: var(--sidebar-active);
+            color: #ffffff;
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #38bdf8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .user-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* Top Header */
+        .header {
+            background-color: var(--card-bg);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .header-right div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: var(--text-muted);
+            position: relative;
+        }
+
+        /* Dashboard Body */
+        .dashboard-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card-top span {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .stat-card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            font-weight: 500;
+            color: #15803d;
+        }
+
+        .stat-link {
+            font-size: 13px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Content Grid (Left & Right) */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Quick Assignment Form */
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background-color: #fff;
+            color: var(--text-main);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-blue);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Today's Tasks */
+        .today-tasks-section {
+            margin-top: 20px;
+        }
+
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .mini-table th, .mini-table td {
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mini-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-morning {
+            background-color: var(--badge-blue-bg);
+            color: var(--badge-blue-text);
+        }
+
+        .badge-afternoon {
+            background-color: var(--badge-green-bg);
+            color: var(--badge-green-text);
+        }
+
+        .view-all {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Schedule Calendar Section */
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .schedule-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .schedule-nav button, .schedule-nav .nav-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .schedule-views {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .schedule-views button {
+            padding: 6px 14px;
+            border: none;
+            background: #fff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .schedule-views button.active {
+            background: var(--primary-blue);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .schedule-table th, .schedule-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .schedule-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .employee-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left !important;
+        }
+
+        .employee-cell img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .employee-cell h5 {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .employee-cell p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .task-slot {
+            background-color: var(--badge-blue-bg);
+            border-radius: 6px;
+            padding: 6px;
+            font-size: 11px;
+            color: var(--badge-blue-text);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .task-slot.green {
+            background-color: var(--badge-green-bg);
+            color: var(--badge-green-text);
+        }
+
+        .schedule-legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            font-size: 12px;
+            align-items: center;
+            color: var(--text-muted);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Xin chào GitHub Pages!</h1>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-user-clock"></i>
+                <h2>Employee<br>Task Scheduler</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa-solid fa-users"></i> Nhân viên</a></li>
+                <li><a href="#"><i class="fa-solid fa-briefcase"></i> Công việc</a></li>
+                <li><a href="#"><i class="fa-solid fa-calendar-days"></i> Phân công</a></li>
+                <li><a href="#"><i class="fa-solid fa-calendar-week"></i> Lịch tuần</a></li>
+                <li><a href="#"><i class="fa-solid fa-chart-column"></i> Báo cáo</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i> Cài đặt</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-user">
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div class="user-details">
+                    <h4>admin</h4>
+                    <p>Quản trị viên</p>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: #94a3b8;"></i>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="header">
+            <div class="header-title">
+                <h1>Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div><i class="fa-regular fa-clock"></i> 09:15:30 AM</div>
+                <div><i class="fa-regular fa-calendar"></i> Thứ hai, 19/05/2025</div>
+                <button class="notification-btn"><i class="fa-regular fa-bell"></i></button>
+            </div>
+        </header>
+
+        <!-- Dashboard Body Content -->
+        <div class="dashboard-body">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <span>Tổng nhân viên</span>
+                        <div class="stat-icon" style="background-color: #eff6ff; color: #2563eb;"><i class="fa-solid fa-users"></i></div>
+                    </div>
+                    <div class="stat-card-bottom">
+                        <span class="stat-value">25</span>
+                        <span class="stat-trend">+2 so với tuần trước</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <span>Tổng công việc</span>
+                        <div class="stat-icon" style="background-color: #f0fdf4; color: #16a34a;"><i class="fa-solid fa-clipboard-list"></i></div>
+                    </div>
+                    <div class="stat-card-bottom">
+                        <span class="stat-value">18</span>
+                        <span class="stat-trend">+3 so với tuần trước</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <span>Tổng lịch phân công</span>
+                        <div class="stat-icon" style="background-color: #fff7ed; color: #c2410c;"><i class="fa-solid fa-calendar-days"></i></div>
+                    </div>
+                    <div class="stat-card-bottom">
+                        <span class="stat-value">62</span>
+                        <span class="stat-trend">+8 so với tuần trước</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-top">
+                        <span>Hôm nay làm việc</span>
+                        <div class="stat-icon" style="background-color: #f3e8ff; color: #9333ea;"><i class="fa-solid fa-user-check"></i></div>
+                    </div>
+                    <div class="stat-card-bottom">
+                        <span class="stat-value">12</span>
+                        <a href="#" class="stat-link">Chi tiết <i class="fa-solid fa-arrow-right" style="font-size: 11px;"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Left Column -->
+                <div>
+                    <!-- Quick Assignment -->
+                    <div class="card">
+                        <div class="card-title"><i class="fa-regular fa-calendar-plus" style="color: var(--primary-blue);"></i> Phân công nhanh</div>
+                        <div class="form-group">
+                            <label>Nhân viên</label>
+                            <select class="form-control">
+                                <option>-- Chọn nhân viên --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Công việc</label>
+                            <select class="form-control">
+                                <option>-- Chọn công việc --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ngày làm việc</label>
+                            <input type="text" class="form-control" value="19/05/2025">
+                        </div>
+                        <div class="form-group">
+                            <label>Ca làm việc</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="shift" checked> Ca sáng (07:30 - 11:30)</label>
+                                <label><input type="radio" name="shift"> Ca chiều (13:00 - 17:00)</label>
+                            </div>
+                        </div>
+                        <button class="btn-primary"><i class="fa-solid fa-plus"></i> Lưu phân công</button>
+                    </div>
+
+                    <!-- Today's Tasks -->
+                    <div class="card today-tasks-section">
+                        <div class="card-title"><i class="fa-solid fa-bookmark" style="color: var(--primary-blue);"></i> Công việc hôm nay</div>
+                        <table class="mini-table">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Tên nhân viên</th>
+                                    <th>Nhiệm vụ</th>
+                                    <th>Ca làm việc</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>07:30</td>
+                                    <td>Nguyễn Văn A</td>
+                                    <td>Kiểm tra thiết bị</td>
+                                    <td><span class="badge badge-morning">Sáng</span></td>
+                                </tr>
+                                <tr>
+                                    <td>07:30</td>
+                                    <td>Trần Thị B</td>
+                                    <td>Nhập dữ liệu</td>
+                                    <td><span class="badge badge-morning">Sáng</span></td>
+                                </tr>
+                                <tr>
+                                    <td>13:00</td>
+                                    <td>Lê Văn C</td>
+                                    <td>Báo cáo tổng hợp</td>
+                                    <td><span class="badge badge-afternoon">Chiều</span></td>
+                                </tr>
+                                <tr>
+                                    <td>13:00</td>
+                                    <td>Phạm Thị D</td>
+                                    <td>Hỗ trợ khách hàng</td>
+                                    <td><span class="badge badge-afternoon">Chiều</span></td>
+                                </tr>
+                                <tr>
+                                    <td>13:00</td>
+                                    <td>Hoàng Văn E</td>
+                                    <td>Bảo trì hệ thống</td>
+                                    <td><span class="badge badge-afternoon">Chiều</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <a href="#" class="view-all">Xem tất cả <i class="fa-solid fa-arrow-right" style="font-size: 11px;"></i></a>
+                    </div>
+                </div>
+
+                <!-- Right Column (Schedule) -->
+                <div class="card">
+                    <div class="schedule-header">
+                        <div class="card-title" style="margin-bottom: 0;"><i class="fa-regular fa-calendar-days" style="color: var(--primary-blue);"></i> Lịch làm việc tuần này</div>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <div class="schedule-nav">
+                                <button><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="nav-btn">Tuần này</button>
+                                <button><i class="fa-solid fa-chevron-right"></i></button>
+                                <span style="font-size: 13px; font-weight: 500; margin-left: 8px;">19/05/2025 - 24/05/2025</span>
+                            </div>
+                            <div class="schedule-views">
+                                <button class="active">Tuần</button>
+                                <button>Danh sách</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Schedule Table Grid -->
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 180px; text-align: left;">Nhân viên</th>
+                                <th>Thứ 2<br><span style="font-weight: normal; font-size: 11px;">19/05</span></th>
+                                <th>Thứ 3<br><span style="font-weight: normal; font-size: 11px;">20/05</span></th>
+                                <th>Thứ 4<br><span style="font-weight: normal; font-size: 11px;">21/05</span></th>
+                                <th>Thứ 5<br><span style="font-weight: normal; font-size: 11px;">22/05</span></th>
+                                <th>Thứ 6<br><span style="font-weight: normal; font-size: 11px;">23/05</span></th>
+                                <th>Thứ 7<br><span style="font-weight: normal; font-size: 11px;">24/05</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="employee-cell">
+                                        <div class="user-avatar" style="background:#2563eb; color:#fff;">NV</div>
+                                        <div>
+                                            <h5>Nguyễn Văn A</h5>
+                                            <p>Kỹ thuật</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Kiểm tra thiết bị</div>
+                                    <div class="task-slot green">Chiều<br>Bảo trì máy móc</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot green">Sáng<br>Bảo trì máy móc</div>
+                                    <div class="task-slot green">Chiều<br>Bảo trì máy móc</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Kiểm tra thiết bị</div>
+                                    <div class="task-slot">Chiều<br>Nâng cấp hệ thống</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot green">Sáng<br>Bảo trì máy móc</div>
+                                    <div class="task-slot green">Chiều<br>Bảo trì máy móc</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Kiểm tra thiết bị</div>
+                                    <div class="task-slot green">Chiều<br>Báo cáo kỹ thuật</div>
+                                </td>
+                                <td><span style="font-size: 12px; color: var(--text-muted);">Dự phòng</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="employee-cell">
+                                        <div class="user-avatar" style="background:#059669; color:#fff;">TT</div>
+                                        <div>
+                                            <h5>Trần Thị B</h5>
+                                            <p>Kinh doanh</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Tư vấn KH</div>
+                                    <div class="task-slot green">Chiều<br>Chăm sóc KH</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Tư vấn KH</div>
+                                    <div class="task-slot green">Chiều<br>Báo giá</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Tư vấn KH</div>
+                                    <div class="task-slot green">Chiều<br>Chăm sóc KH</div>
+                                </td>
+                                <td><span style="font-size: 12px; color: var(--text-muted);">Báo giá</span></td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Tư vấn KH</div>
+                                    <div class="task-slot green">Chiều<br>Báo cáo KD</div>
+                                </td>
+                                <td><span style="font-size: 12px; color: var(--text-muted);">Dự phòng</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="employee-cell">
+                                        <div class="user-avatar" style="background:#d97706; color:#fff;">LV</div>
+                                        <div>
+                                            <h5>Lê Văn C</h5>
+                                            <p>Kế toán</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Nhập liệu</div>
+                                    <div class="task-slot green">Chiều<br>Đối chiếu</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Lập hóa đơn</div>
+                                    <div class="task-slot green">Chiều<br>Nhập liệu</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Nhập liệu</div>
+                                    <div class="task-slot green">Chiều<br>Đối chiếu</div>
+                                </td>
+                                <td>
+                                    <div class="task-slot">Sáng<br>Lập hóa đơn</div>
+                                    <div class="task-slot green">Chiều<br>Nhập liệu</div>
+                                </td>
+                                <td><span style="font-size: 12px; color: var(--text-muted);">Báo cáo</span></td>
+                                <td><span style="font-size: 12px; color: var(--text-muted);">Dự phòng</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Schedule Legend -->
+                    <div class="schedule-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background-color: var(--primary-blue);"></div>
+                            <span>Ca sáng (07:30 - 11:30)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background-color: #16a34a;"></div>
+                            <span>Ca chiều (13:00 - 17:00)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background-color: #cbd5e1;"></div>
+                            <span>Không có lịch</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
 </body>
 </html>
