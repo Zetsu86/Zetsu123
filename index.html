@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Quản Lý Nhân Sự & Phân Công Công Việc</title>
+    <title>Hệ Thống Quản Lý Nhân Sự & Lương Thưởng</title>
     <!-- Font Awesome cho Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -11,7 +11,7 @@
             --primary-color: #4361ee;
             --primary-hover: #3a56d4;
             --secondary-color: #3f37c9;
-            --success-color: #4cc9f0;
+            --success-color: #2ec4b6;
             --warning-color: #f72585;
             --bg-main: #f4f7f6;
             --card-bg: #ffffff;
@@ -22,7 +22,6 @@
             --input-bg: #ffffff;
         }
 
-        /* Biến màu sắc cho chế độ Dark Mode */
         body.dark-mode {
             --bg-main: #121212;
             --card-bg: #1e1e1e;
@@ -48,20 +47,45 @@
             overflow: hidden;
         }
 
-        /* --- 1. GIAO DIỆN ĐĂNG NHẬP --- */
+        /* Toast Container */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: var(--card-bg);
+            color: var(--text-main);
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            border: 1px solid var(--border-color);
+        }
+        .toast.success { border-left-color: var(--success-color); }
+        .toast.error { border-left-color: var(--warning-color); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+        /* Giao diện Đăng nhập */
         #login-view {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-main);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-
         .login-card {
             background: var(--card-bg);
             padding: 2.5rem;
@@ -72,452 +96,128 @@
             border: 1px solid var(--border-color);
             position: relative;
         }
-
-        .login-header h2 {
-            margin-bottom: 0.5rem;
-            color: var(--text-main);
-            font-size: 1.5rem;
-        }
-
-        .login-header p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: var(--text-main);
-        }
-
-        .input-icon-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-icon-wrapper i:first-child {
-            position: absolute;
-            left: 12px;
-            color: var(--text-muted);
-        }
-
+        .login-header h2 { margin-bottom: 0.5rem; color: var(--text-main); font-size: 1.5rem; }
+        .login-header p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-main); }
+        .input-icon-wrapper { position: relative; display: flex; align-items: center; }
+        .input-icon-wrapper i:first-child { position: absolute; left: 12px; color: var(--text-muted); }
         .input-icon-wrapper input {
-            width: 100%;
-            padding: 10px 12px 10px 38px;
-            border: 1px solid var(--border-color);
-            background-color: var(--input-bg);
-            color: var(--text-main);
-            border-radius: 6px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
+            width: 100%; padding: 10px 12px 10px 38px;
+            border: 1px solid var(--border-color); background-color: var(--input-bg);
+            color: var(--text-main); border-radius: 6px; font-size: 0.95rem; outline: none;
         }
+        .input-icon-wrapper input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); }
+        .toggle-password { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 1rem; }
+        .login-options { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .checkbox-label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .w-100 { width: 100%; padding: 12px; background-color: var(--primary-color); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .w-100:hover { background-color: var(--primary-hover); }
 
-        .input-icon-wrapper input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
-        }
+        /* Dashboard */
+        #dashboard-view { display: none; width: 100%; height: 100%; display: flex; }
+        aside { width: var(--sidebar-width); background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar-brand { padding: 1.5rem; font-size: 1.2rem; font-weight: bold; color: var(--primary-color); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-menu { list-style: none; padding: 1rem; flex-grow: 1; overflow-y: auto; }
+        .sidebar-menu li { margin-bottom: 0.5rem; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 12px; padding: 10px 15px; color: var(--text-main); text-decoration: none; border-radius: 6px; font-size: 0.95rem; }
+        .sidebar-menu a:hover, .sidebar-menu li.active a { background-color: rgba(67, 97, 238, 0.1); color: var(--primary-color); font-weight: 600; }
+        .sidebar-footer { padding: 1rem; border-top: 1px solid var(--border-color); }
+        .logout-btn { width: 100%; padding: 10px; background: #fff0f3; color: var(--warning-color); border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        body.dark-mode .logout-btn { background: rgba(247, 37, 133, 0.15); }
 
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-muted);
-            font-size: 1rem;
-            padding: 0;
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        header { height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; position: relative; z-index: 50; }
+        .header-title h1 { font-size: 1.3rem; color: var(--text-main); }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .dark-mode-btn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        /* User Profile Dropdown at Top Right */
+        .user-profile { display: flex; align-items: center; gap: 12px; cursor: pointer; position: relative; padding: 5px 10px; border-radius: 8px; }
+        .user-profile:hover { background-color: rgba(0,0,0,0.03); }
+        body.dark-mode .user-profile:hover { background-color: rgba(255,255,255,0.03); }
+        .user-avatar { width: 40px; height: 40px; background: var(--primary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; object-fit: cover; }
+        
+        .user-dropdown-menu {
+            display: none; position: absolute; top: 55px; right: 0;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            width: 200px; z-index: 1000; overflow: hidden;
         }
+        .user-dropdown-menu.show { display: block; }
+        .dropdown-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 15px; color: var(--text-main); text-decoration: none;
+            font-size: 0.9rem; border-bottom: 1px solid var(--border-color);
+            background: none; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer;
+        }
+        .dropdown-item:hover { background-color: rgba(67, 97, 238, 0.08); color: var(--primary-color); }
+        .dropdown-item.logout { color: var(--warning-color); border-bottom: none; }
+        .dropdown-item.logout:hover { background-color: rgba(247, 37, 133, 0.08); }
 
-        .toggle-password:hover {
-            color: var(--text-main);
-        }
+        .content-body { flex-grow: 1; padding: 2rem; overflow-y: auto; background-color: var(--bg-main); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .login-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-main);
-        }
+        .card { background: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+        .card-header h3 { font-size: 1.1rem; color: var(--text-main); }
 
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
+        .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-success { background: var(--success-color); color: white; }
+        .btn-success:hover { background: #25a194; }
+        .btn-danger { background: var(--warning-color); color: white; }
 
-        .forgot-link {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
+        /* Attendance Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.2rem; display: flex; align-items: center; gap: 15px; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .stat-icon.present { background: rgba(46, 196, 182, 0.15); color: var(--success-color); }
+        .stat-icon.late { background: rgba(247, 37, 133, 0.15); color: var(--warning-color); }
+        .stat-icon.total { background: rgba(67, 97, 238, 0.15); color: var(--primary-color); }
+        .stat-info h4 { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+        .stat-info span { font-size: 1.3rem; font-weight: bold; color: var(--text-main); }
 
-        .forgot-link:hover {
-            text-decoration: underline;
-        }
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; color: var(--text-main); }
+        th, td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        th { background-color: rgba(0,0,0,0.02); font-weight: 600; color: var(--text-muted); }
+        body.dark-mode th { background-color: rgba(255,255,255,0.02); }
 
-        .w-100 {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .w-100:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* --- 2. GIAO DIỆN CHÍNH (DASHBOARD) --- */
-        #dashboard-view {
-            display: none;
-            width: 100%;
-            height: 100%;
-            display: flex;
-        }
-
-        aside {
-            width: var(--sidebar-width);
-            background-color: var(--card-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .sidebar-brand {
-            padding: 1.5rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 1rem;
-            flex-grow: 1;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 15px;
-            color: var(--text-main);
-            text-decoration: none;
-            border-radius: 6px;
-            transition: background 0.2s, color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .sidebar-menu a:hover, .sidebar-menu li.active a {
-            background-color: rgba(67, 97, 238, 0.1);
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .sidebar-footer {
-            padding: 1rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 10px;
-            background: #fff0f3;
-            color: var(--warning-color);
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-        body.dark-mode .logout-btn {
-            background: rgba(247, 37, 133, 0.15);
-        }
-        .logout-btn:hover {
-            opacity: 0.8;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        header {
-            height: 70px;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-
-        .header-title h1 {
-            font-size: 1.3rem;
-            color: var(--text-main);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* Nút Dark Mode Switch */
-        .dark-mode-btn {
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            transition: background 0.2s;
-        }
-        .dark-mode-btn:hover {
-            border-color: var(--primary-color);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .content-body {
-            flex-grow: 1;
-            padding: 2rem;
-            overflow-y: auto;
-            background-color: var(--bg-main);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.25rem;
-        }
-
-        .card-header h3 {
-            font-size: 1.1rem;
-            color: var(--text-main);
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-        .btn-primary:hover {
-            background: var(--primary-hover);
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.9rem;
-            color: var(--text-main);
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: rgba(0,0,0,0.02);
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-        body.dark-mode th {
-            background-color: rgba(255,255,255,0.02);
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
+        .emp-table-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); }
+        .emp-cell-info { display: flex; align-items: center; gap: 12px; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
         .badge-morning { background: #e0fbfc; color: #00b4d8; }
         .badge-afternoon { background: #feeefa; color: #f72585; }
+        .badge-success { background: rgba(46, 196, 182, 0.15); color: #2ec4b6; }
+        .badge-warning { background: rgba(247, 37, 133, 0.15); color: #f72585; }
+        .badge-info { background: rgba(67, 97, 238, 0.15); color: #4361ee; }
+
         body.dark-mode .badge-morning { background: rgba(0, 180, 216, 0.2); color: #4cc9f0; }
         body.dark-mode .badge-afternoon { background: rgba(247, 37, 133, 0.2); color: #f72585; }
 
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-action {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 4px;
-            color: var(--text-muted);
-            transition: background 0.2s, color 0.2s;
-        }
-
+        .action-btns { display: flex; gap: 8px; }
+        .btn-action { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 4px; color: var(--text-muted); }
         .btn-edit:hover { background: rgba(67, 97, 238, 0.1); color: var(--primary-color); }
         .btn-delete:hover { background: rgba(247, 37, 133, 0.1); color: var(--warning-color); }
 
-        .task-slot {
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            background: var(--input-bg);
-            padding: 4px 8px;
-            border-radius: 4px;
-            border-left: 3px solid var(--primary-color);
-        }
+        .task-slot { font-size: 0.85rem; margin-bottom: 4px; background: var(--input-bg); padding: 4px 8px; border-radius: 4px; border-left: 3px solid var(--primary-color); }
 
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .modal.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-box {
-            background: var(--card-bg);
-            color: var(--text-main);
-            width: 100%;
-            max-width: 500px;
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            border: 1px solid var(--border-color);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--text-muted);
-        }
-        .close-modal:hover {
-            color: var(--text-main);
-        }
-
-        .search-input {
-            padding: 8px 12px;
-            width: 300px;
-            border: 1px solid var(--border-color);
-            background-color: var(--input-bg);
-            color: var(--text-main);
-            border-radius: 6px;
-            outline: none;
-        }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal.open { opacity: 1; pointer-events: auto; }
+        .modal-box { background: var(--card-bg); color: var(--text-main); width: 100%; max-width: 500px; border-radius: 8px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 1px solid var(--border-color); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .close-modal { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+        .search-input { padding: 8px 12px; width: 300px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px; outline: none; }
     </style>
 </head>
-<body>
+<body onclick="closeDropdownsOutside(event)">
 
-    <!-- GIAO DIỆN ĐĂNG NHẬP -->
+    <div id="toast-container"></div>
+
+    <!-- ĐĂNG NHẬP -->
     <div id="login-view">
         <div class="login-card">
             <div style="position: absolute; top: 20px; right: 20px;">
@@ -527,15 +227,15 @@
             </div>
             <div class="login-header">
                 <h2>Đăng Nhập Hệ Thống</h2>
-                <p>Vui lòng nhập thông tin tài khoản của bạn</p>
+                <p><strong>admin</strong> (mật khẩu: <strong>admin</strong>) hoặc tên nhân viên (mật khẩu mặc định: <strong>123</strong>)</p>
             </div>
             
             <form id="login-form" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label for="login-user">Tài khoản hoặc Email</label>
+                    <label for="login-user">Tên tài khoản</label>
                     <div class="input-icon-wrapper">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" id="login-user" autocomplete="username" placeholder="Nhập tên đăng nhập..." required>
+                        <input type="text" id="login-user" autocomplete="username" placeholder="admin hoặc tên nhân viên..." required>
                     </div>
                 </div>
 
@@ -544,41 +244,26 @@
                     <div class="input-icon-wrapper password-container">
                         <i class="fa-solid fa-lock"></i>
                         <input type="password" id="login-password" autocomplete="current-password" placeholder="Nhập mật khẩu..." required>
-                        <button type="button" id="toggle-password-btn" class="toggle-password" onclick="togglePasswordVisibility()" title="Hiện/Ẩn mật khẩu">
-                            <i class="fa-solid fa-eye" id="eye-icon"></i>
-                        </button>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye" id="eye-icon"></i></button>
                     </div>
                 </div>
 
                 <div class="login-options">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="remember-me"> Ghi nhớ tài khoản
-                    </label>
-                    <a href="#" onclick="forgotPassword(event)" class="forgot-link">Quên mật khẩu?</a>
+                    <label class="checkbox-label"><input type="checkbox" id="remember-me"> Ghi nhớ tài khoản</label>
                 </div>
 
-                <button type="submit" id="login-btn" class="w-100">
-                    <span class="btn-text">Đăng Nhập</span>
-                    <span class="spinner" id="login-spinner" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i></span>
-                </button>
+                <button type="submit" class="w-100">Đăng Nhập</button>
             </form>
         </div>
     </div>
 
-    <!-- GIAO DIỆN HỆ THỐNG QUẢN LÝ (DASHBOARD) -->
-    <div id="dashboard-view" style="display: none;">
-        <!-- Sidebar -->
+    <!-- DASHBOARD -->
+    <div id="dashboard-view">
         <aside>
             <div>
-                <div class="sidebar-brand">
-                    <i class="fa-solid fa-calendar-days"></i> TaskManager
-                </div>
-                <ul class="sidebar-menu">
-                    <li class="active"><a href="#" onclick="switchTab('dashboard', event)"><i class="fa-solid fa-chart-pie"></i> Tổng quan</a></li>
-                    <li><a href="#" onclick="switchTab('employees', event)"><i class="fa-solid fa-users"></i> Quản lý Nhân sự</a></li>
-                    <li><a href="#" onclick="switchTab('tasks', event)"><i class="fa-solid fa-list-check"></i> Danh mục Công việc</a></li>
-                    <li><a href="#" onclick="switchTab('schedule', event)"><i class="fa-solid fa-calendar-week"></i> Phân công Ca làm</a></li>
-                    <li><a href="#" onclick="switchTab('analytics', event)"><i class="fa-solid fa-chart-line"></i> Thống kê & Báo cáo</a></li>
+                <div class="sidebar-brand"><i class="fa-solid fa-calendar-days"></i> HRMS Master</div>
+                <ul class="sidebar-menu" id="sidebar-menu-list">
+                    <!-- Dynamic Menu -->
                 </ul>
             </div>
             <div class="sidebar-footer">
@@ -586,21 +271,23 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <div class="main-content">
             <header>
-                <div class="header-title">
-                    <h1 id="page-title">Tổng quan hệ thống</h1>
-                </div>
+                <div class="header-title"><h1 id="page-title">Tổng quan hệ thống</h1></div>
                 <div class="header-actions">
                     <button type="button" class="dark-mode-btn" onclick="toggleDarkMode()" title="Bật/Tắt chế độ tối">
                         <i class="fa-solid fa-moon" id="dash-theme-icon"></i>
                     </button>
-                    <div class="user-profile">
-                        <div class="user-avatar" id="user-initials">AD</div>
+                    <!-- User Profile & Dropdown at Top Right -->
+                    <div class="user-profile" onclick="toggleUserDropdown(event)">
+                        <img src="" id="header-avatar" class="user-avatar" alt="Avatar">
                         <div>
                             <strong id="display-username">Administrator</strong><br>
-                            <small style="color:var(--text-muted);">Quản trị viên</small>
+                            <small id="display-role" style="color:var(--text-muted);">Quản trị viên <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i></small>
+                        </div>
+                        <div class="user-dropdown-menu" id="user-dropdown-menu">
+                            <button type="button" class="dropdown-item" onclick="openPasswordModal(event)"><i class="fa-solid fa-key" style="color: var(--primary-color);"></i> Đổi mật khẩu</button>
+                            <button type="button" class="dropdown-item logout" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
                         </div>
                     </div>
                 </div>
@@ -629,9 +316,7 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header">
-                            <h3>Lịch làm việc tuần này</h3>
-                        </div>
+                        <div class="card-header"><h3>Lịch làm việc tuần này</h3></div>
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -651,23 +336,21 @@
                     </div>
                 </div>
 
-                <!-- Tab Nhân Sự -->
+                <!-- Tab Nhân Sự (Admin Only) -->
                 <div id="tab-employees" class="tab-content">
                     <div class="card">
                         <div class="card-header">
                             <h3>Danh sách Nhân sự</h3>
                             <button class="btn btn-primary" onclick="openEmployeeModal()"><i class="fa-solid fa-user-plus"></i> Thêm nhân sự</button>
                         </div>
-                        <div style="margin-bottom: 1rem;">
-                            <input type="text" id="employee-search" class="search-input" placeholder="Tìm kiếm nhân sự..." onkeyup="filterEmployees()">
-                        </div>
+                        <div style="margin-bottom: 1rem;"><input type="text" id="employee-search" class="search-input" placeholder="Tìm kiếm nhân sự..." onkeyup="filterEmployees()"></div>
                         <div class="table-responsive">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>Họ tên</th>
+                                        <th>Họ tên & Hình ảnh</th>
                                         <th>Email</th>
-                                        <th>Số điện thoại</th>
+                                        <th>SĐT</th>
                                         <th>Phòng ban</th>
                                         <th>Chức vụ</th>
                                         <th>Thao tác</th>
@@ -679,16 +362,14 @@
                     </div>
                 </div>
 
-                <!-- Tab Công Việc -->
+                <!-- Tab Công Việc (Admin Only) -->
                 <div id="tab-tasks" class="tab-content">
                     <div class="card">
                         <div class="card-header">
                             <h3>Danh mục công việc mẫu</h3>
                             <button class="btn btn-primary" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Thêm công việc</button>
                         </div>
-                        <div style="margin-bottom: 1rem;">
-                            <input type="text" id="task-search" class="search-input" placeholder="Tìm kiếm công việc..." onkeyup="filterTasks()">
-                        </div>
+                        <div style="margin-bottom: 1rem;"><input type="text" id="task-search" class="search-input" placeholder="Tìm kiếm công việc..." onkeyup="filterTasks()"></div>
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -696,7 +377,7 @@
                                         <th>Mã CV</th>
                                         <th>Tên công việc</th>
                                         <th>Mô tả</th>
-                                        <th>Độ ưu tiên</th>
+                                        <th>Ưu tiên</th>
                                         <th>Thời lượng</th>
                                         <th>Thao tác</th>
                                     </tr>
@@ -707,12 +388,10 @@
                     </div>
                 </div>
 
-                <!-- Tab Phân Công Ca Làm -->
+                <!-- Tab Phân Công (Admin Only) -->
                 <div id="tab-schedule" class="tab-content">
                     <div class="card">
-                        <div class="card-header">
-                            <h3>Tạo Phân Công Mới</h3>
-                        </div>
+                        <div class="card-header"><h3>Tạo Phân Công Mới</h3></div>
                         <form onsubmit="createAssignment(event)">
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                                 <div>
@@ -725,7 +404,7 @@
                                 </div>
                                 <div>
                                     <label style="display:block; margin-bottom: 5px; font-weight:500;">Ngày thực hiện</label>
-                                    <input type="date" id="assign-date" value="2026-06-08" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                                    <input type="date" id="assign-date" value="2026-07-23" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
                                 </div>
                                 <div>
                                     <label style="display:block; margin-bottom: 5px; font-weight:500;">Ca làm việc</label>
@@ -738,21 +417,12 @@
                             <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Xác nhận phân công</button>
                         </form>
                     </div>
-
                     <div class="card">
-                        <div class="card-header">
-                            <h3>Danh sách phân công hiện tại</h3>
-                        </div>
+                        <div class="card-header"><h3>Danh sách phân công hiện tại</h3></div>
                         <div class="table-responsive">
                             <table>
                                 <thead>
-                                    <tr>
-                                        <th>Ngày</th>
-                                        <th>Ca làm</th>
-                                        <th>Nhân sự</th>
-                                        <th>Công việc</th>
-                                        <th>Thao tác</th>
-                                    </tr>
+                                    <tr><th>Ngày</th><th>Ca làm</th><th>Nhân sự</th><th>Công việc</th><th>Thao tác</th></tr>
                                 </thead>
                                 <tbody id="assignment-table-body"></tbody>
                             </table>
@@ -760,7 +430,121 @@
                     </div>
                 </div>
 
-                <!-- Tab Thống Kê & Báo Cáo -->
+                <!-- Tab Chấm Công & Điểm Danh (Được tối ưu) -->
+                <div id="tab-attendance" class="tab-content">
+                    <!-- Thẻ thống kê nhanh chấm công -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon present"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div class="stat-info">
+                                <h4>Đúng giờ / Hoàn thành</h4>
+                                <span id="stat-present-count">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon late"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="stat-info">
+                                <h4>Đi muộn</h4>
+                                <span id="stat-late-count">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon total"><i class="fa-solid fa-clipboard-user"></i></div>
+                            <div class="stat-info">
+                                <h4>Tổng bản ghi chấm công</h4>
+                                <span id="stat-total-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Chấm Công Trực Tuyến & Kiểm Soát Đi Muộn / Về Sớm</h3>
+                            <button class="btn btn-success" id="attendance-action-btn" onclick="handleCheckInOrOut()"><i class="fa-solid fa-fingerprint"></i> Check-in Ngay</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr><th>Nhân sự</th><th>Ngày</th><th>Giờ Check-in</th><th>Giờ Check-out</th><th>Trạng thái chấm công</th></tr>
+                                </thead>
+                                <tbody id="attendance-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Quản Lý Nghỉ Phép -->
+                <div id="tab-leave" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Đơn Xin Nghỉ Phép</h3>
+                            <button class="btn btn-primary" onclick="openLeaveModal()"><i class="fa-solid fa-paper-plane"></i> Gửi đơn nghỉ phép</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr><th>Nhân sự</th><th>Lý do</th><th>Từ ngày</th><th>Đến ngày</th><th>Trạng thái</th><th>Thao tác duyệt</th></tr>
+                                </thead>
+                                <tbody id="leave-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Tính Lương Tự Động -->
+                <div id="tab-payroll" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Bảng Lương Sơ Bộ Tự Động (Tháng 07/2026)</h3>
+                            <button class="btn btn-success" onclick="showToast('Đã xuất bảng lương thành công!')"><i class="fa-solid fa-file-invoice-dollar"></i> Xuất Bảng Lương</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nhân sự</th>
+                                        <th>Phòng ban</th>
+                                        <th>Tổng ca làm</th>
+                                        <th>Đơn giá / Ca</th>
+                                        <th>Thưởng / Phạt</th>
+                                        <th>Thực lĩnh dự kiến</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payroll-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Cài Đặt Hệ Thống (Admin Only) -->
+                <div id="tab-settings" class="tab-content">
+                    <div class="card">
+                        <div class="card-header"><h3>Cài đặt thông số Chấm công & Lương thưởng</h3></div>
+                        <form onsubmit="saveAdminSettings(event)">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div class="form-group">
+                                    <label>Giờ giới hạn Check-in (Đi muộn sau giờ này)</label>
+                                    <input type="time" id="set-ci-limit" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Giờ giới hạn Check-out (Về sớm trước giờ này)</label>
+                                    <input type="time" id="set-co-limit" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Đơn giá lương / Ca (VNĐ)</label>
+                                    <input type="number" id="set-rate" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Mức phạt đi muộn (VNĐ)</label>
+                                    <input type="number" id="set-penalty" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Lưu cấu hình hệ thống</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab Thống Kê (Admin Only) -->
                 <div id="tab-analytics" class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -770,12 +554,7 @@
                         <div class="table-responsive">
                             <table>
                                 <thead>
-                                    <tr>
-                                        <th>Nhân sự</th>
-                                        <th>Phòng ban</th>
-                                        <th>Tổng việc đã giao</th>
-                                        <th>Đánh giá hiệu suất</th>
-                                    </tr>
+                                    <tr><th>Nhân sự</th><th>Phòng ban</th><th>Tổng việc đã giao</th><th>Hiệu suất</th></tr>
                                 </thead>
                                 <tbody id="analytics-table-body"></tbody>
                             </table>
@@ -787,35 +566,43 @@
         </div>
     </div>
 
+    <!-- MODAL ĐỔI MẬT KHẨU CHUNG (Góc phải) -->
+    <div class="modal" id="password-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Đổi Mật Khẩu Tài Khoản</h3>
+                <button class="close-modal" onclick="closePasswordModal()">&times;</button>
+            </div>
+            <form onsubmit="changePassword(event)">
+                <div class="form-group">
+                    <label>Mật khẩu hiện tại</label>
+                    <input type="password" id="modal-old-pass" placeholder="Nhập mật khẩu hiện tại..." required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <input type="password" id="modal-new-pass" placeholder="Nhập mật khẩu mới..." required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                </div>
+                <div class="form-group">
+                    <label>Xác nhận mật khẩu mới</label>
+                    <input type="password" id="modal-confirm-pass" placeholder="Nhập lại mật khẩu mới..." required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 6px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fa-solid fa-key"></i> Xác Nhận Đổi Mật Khẩu</button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL NHÂN VIÊN -->
     <div class="modal" id="employee-modal">
         <div class="modal-box">
-            <div class="modal-header">
-                <h3>Thông tin nhân sự</h3>
-                <button class="close-modal" onclick="closeEmployeeModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h3>Thông tin nhân sự</h3><button class="close-modal" onclick="closeEmployeeModal()">&times;</button></div>
             <form id="employee-form" onsubmit="saveEmployee(event)">
                 <input type="hidden" id="emp-index">
-                <div class="form-group">
-                    <label>Họ và tên</label>
-                    <input type="text" id="emp-name" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="emp-email" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" id="emp-phone" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
-                <div class="form-group">
-                    <label>Phòng ban</label>
-                    <input type="text" id="emp-department" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
-                <div class="form-group">
-                    <label>Chức vụ</label>
-                    <input type="text" id="emp-position" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
+                <div class="form-group"><label>Họ và tên</label><input type="text" id="emp-name" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Link hình ảnh đại diện (URL)</label><input type="text" id="emp-avatar" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="emp-email" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Số điện thoại</label><input type="text" id="emp-phone" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Phòng ban</label><input type="text" id="emp-department" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Chức vụ</label><input type="text" id="emp-position" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
                 <button type="submit" class="btn btn-primary" style="width:100%;">Lưu thông tin</button>
             </form>
         </div>
@@ -824,57 +611,87 @@
     <!-- MODAL CÔNG VIỆC -->
     <div class="modal" id="task-modal">
         <div class="modal-box">
-            <div class="modal-header">
-                <h3>Thông tin công việc</h3>
-                <button class="close-modal" onclick="closeTaskModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h3>Thông tin công việc</h3><button class="close-modal" onclick="closeTaskModal()">&times;</button></div>
             <form id="task-form" onsubmit="saveTask(event)">
                 <input type="hidden" id="task-index">
-                <div class="form-group">
-                    <label>Mã công việc</label>
-                    <input type="text" id="t-code" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
-                <div class="form-group">
-                    <label>Tên công việc</label>
-                    <input type="text" id="t-name" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
-                <div class="form-group">
-                    <label>Mô tả chi tiết</label>
-                    <textarea id="t-desc" rows="3" style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Độ ưu tiên</label>
-                    <select id="t-priority" style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                        <option value="Trung bình">Trung bình</option>
-                        <option value="Cao">Cao</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Thời lượng dự kiến</label>
-                    <input type="text" id="t-duration" placeholder="Ví dụ: 4 giờ" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;">
-                </div>
+                <div class="form-group"><label>Mã công việc</label><input type="text" id="t-code" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Tên công việc</label><input type="text" id="t-name" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Mô tả chi tiết</label><textarea id="t-desc" rows="3" style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></textarea></div>
+                <div class="form-group"><label>Độ ưu tiên</label><select id="t-priority" style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"><option value="Trung bình">Trung bình</option><option value="Cao">Cao</option></select></div>
+                <div class="form-group"><label>Thời lượng dự kiến</label><input type="text" id="t-duration" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
                 <button type="submit" class="btn btn-primary" style="width:100%;">Lưu công việc</button>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT HỆ THỐNG -->
+    <!-- MODAL NGHỈ PHÉP -->
+    <div class="modal" id="leave-modal">
+        <div class="modal-box">
+            <div class="modal-header"><h3>Gửi đơn xin nghỉ phép</h3><button class="close-modal" onclick="closeLeaveModal()">&times;</button></div>
+            <form id="leave-form" onsubmit="saveLeave(event)">
+                <div class="form-group"><label>Lý do nghỉ</label><input type="text" id="l-reason" required placeholder="VD: Việc gia đình, ốm đau..." style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Từ ngày</label><input type="date" id="l-start" value="2026-07-23" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <div class="form-group"><label>Đến ngày</label><input type="date" id="l-end" value="2026-07-23" required style="width:100%; padding:8px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius:6px;"></div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Gửi đơn</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        let employees = [
-            { name: 'Nguyễn Văn An', email: 'an.nv@company.com', phone: '0901234567', department: 'Kỹ thuật', position: 'Developer' },
-            { name: 'Trần Thị Bình', email: 'binh.tt@company.com', phone: '0907654321', department: 'Vận hành', position: 'Support' }
+        // --- DỮ LIỆU & LOCALSTORAGE ---
+        let employees = JSON.parse(localStorage.getItem('employees')) || [
+            { name: 'Nguyễn Văn An', email: 'an.nv@company.com', phone: '0901234567', department: 'Kỹ thuật', position: 'Developer', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80', password: '123' },
+            { name: 'Trần Thị Bình', email: 'binh.tt@company.com', phone: '0907654321', department: 'Vận hành', position: 'Support', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80', password: '123' }
         ];
 
-        let tasks = [
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [
             { code: 'TS01', name: 'Kiểm tra hệ thống Server', desc: 'Kiểm tra log và tối ưu băng thông', priority: 'Cao', duration: '2 giờ' },
             { code: 'TS02', name: 'Hỗ trợ khách hàng VIP', desc: 'Xử lý yêu cầu lỗi phần mềm trực tuyến', priority: 'Trung bình', duration: '3 giờ' }
         ];
 
-        let assignments = [
-            { date: '2026-06-08', shift: 'Ca sáng', employee: 'Nguyễn Văn An', taskCode: 'TS01', taskName: 'Kiểm tra hệ thống Server' }
+        let assignments = JSON.parse(localStorage.getItem('assignments')) || [
+            { date: '2026-07-23', shift: 'Ca sáng', employee: 'Nguyễn Văn An', taskCode: 'TS01', taskName: 'Kiểm tra hệ thống Server' }
         ];
 
-        // --- XỬ LÝ DARK MODE ---
+        let attendance = JSON.parse(localStorage.getItem('attendance')) || [
+            { employee: 'Nguyễn Văn An', date: '2026-07-23', checkIn: '08:00', checkOut: '17:00', status: 'Đúng giờ' }
+        ];
+
+        let leaves = JSON.parse(localStorage.getItem('leaves')) || [
+            { id: 1, employee: 'Trần Thị Bình', reason: 'Khám sức khỏe định kỳ', startDate: '2026-07-25', endDate: '2026-07-25', status: 'Đã duyệt' }
+        ];
+
+        let adminSettings = JSON.parse(localStorage.getItem('adminSettings')) || {
+            checkInLimit: '08:15',
+            checkOutLimit: '17:00',
+            shiftRate: 250000,
+            latePenalty: 50000,
+            adminPassword: 'admin'
+        };
+
+        let currentUser = null;
+        let currentRole = null;
+
+        function saveData() {
+            localStorage.setItem('employees', JSON.stringify(employees));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('assignments', JSON.stringify(assignments));
+            localStorage.setItem('attendance', JSON.stringify(attendance));
+            localStorage.setItem('leaves', JSON.stringify(leaves));
+            localStorage.setItem('adminSettings', JSON.stringify(adminSettings));
+        }
+
+        // --- TOAST NOTIFICATION ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // --- DARK MODE ---
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
@@ -883,126 +700,197 @@
         }
 
         function updateThemeIcons(isDark) {
-            const loginIcon = document.getElementById('login-theme-icon');
-            const dashIcon = document.getElementById('dash-theme-icon');
             const iconClass = isDark ? 'fa-sun' : 'fa-moon';
-            if (loginIcon) {
-                loginIcon.className = `fa-solid ${iconClass}`;
-            }
-            if (dashIcon) {
-                dashIcon.className = `fa-solid ${iconClass}`;
-            }
+            document.getElementById('login-theme-icon').className = `fa-solid ${iconClass}`;
+            document.getElementById('dash-theme-icon').className = `fa-solid ${iconClass}`;
         }
 
-        // --- KHỞI TẠO KHI TẢI TRANG ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Kiểm tra cấu hình Dark Mode đã lưu
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
+            if (localStorage.getItem('theme') === 'dark') {
                 document.body.classList.add('dark-mode');
                 updateThemeIcons(true);
             }
-
-            // Kiểm tra Ghi nhớ tài khoản
-            const savedUser = localStorage.getItem('remembered_user');
-            if (savedUser) {
-                document.getElementById('login-user').value = savedUser;
-                document.getElementById('remember-me').checked = true;
-            }
         });
 
-        // --- 1. HIỆN / ẨN MẬT KHẨU & ĐĂNG NHẬP ---
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('login-password');
-            const eyeIcon = document.getElementById('eye-icon');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
+        // --- TOP-RIGHT USER DROPDOWN & PASSWORD MODAL ---
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('user-dropdown-menu');
+            dropdown.classList.toggle('show');
+        }
+
+        function closeDropdownsOutside(event) {
+            const dropdown = document.getElementById('user-dropdown-menu');
+            if (dropdown && !event.target.closest('.user-profile')) {
+                dropdown.classList.remove('show');
             }
+        }
+
+        function openPasswordModal(event) {
+            if (event) event.preventDefault();
+            document.getElementById('user-dropdown-menu').classList.remove('show');
+            document.getElementById('password-modal').classList.add('open');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').classList.remove('open');
+        }
+
+        function changePassword(e) {
+            e.preventDefault();
+            const oldPass = document.getElementById('modal-old-pass').value;
+            const newPass = document.getElementById('modal-new-pass').value;
+            const confirmPass = document.getElementById('modal-confirm-pass').value;
+
+            if (newPass !== confirmPass) {
+                showToast('Mật khẩu mới và xác nhận mật khẩu không khớp!', 'error');
+                return;
+            }
+
+            if (newPass.length < 3) {
+                showToast('Mật khẩu mới phải có ít nhất 3 ký tự!', 'error');
+                return;
+            }
+
+            if (currentRole === 'admin') {
+                if (oldPass !== adminSettings.adminPassword) {
+                    showToast('Mật khẩu hiện tại không chính xác!', 'error');
+                    return;
+                }
+                adminSettings.adminPassword = newPass;
+            } else {
+                const empIndex = employees.findIndex(emp => emp.name === currentUser.name);
+                if (empIndex === -1) return;
+                const currentEmp = employees[empIndex];
+                const currentPass = currentEmp.password || '123';
+
+                if (oldPass !== currentPass) {
+                    showToast('Mật khẩu hiện tại không chính xác!', 'error');
+                    return;
+                }
+                employees[empIndex].password = newPass;
+            }
+
+            saveData();
+            closePasswordModal();
+            document.getElementById('modal-old-pass').value = '';
+            document.getElementById('modal-new-pass').value = '';
+            document.getElementById('modal-confirm-pass').value = '';
+            showToast('Đổi mật khẩu tài khoản thành công!');
+        }
+
+        // --- AUTHENTICATION & RBAC ---
+        function togglePasswordVisibility() {
+            const pwd = document.getElementById('login-password');
+            const icon = document.getElementById('eye-icon');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+            icon.className = pwd.type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
         }
 
         function handleLogin(event) {
             event.preventDefault();
-            const userInput = document.getElementById('login-user').value;
-            const rememberMe = document.getElementById('remember-me').checked;
-            
-            const btnText = document.querySelector('#login-btn .btn-text');
-            const spinner = document.getElementById('login-spinner');
-            const loginBtn = document.getElementById('login-btn');
+            const inputName = document.getElementById('login-user').value.trim();
+            const inputPass = document.getElementById('login-password').value;
 
-            btnText.style.display = 'none';
-            spinner.style.display = 'inline-block';
-            loginBtn.disabled = true;
-
-            if (rememberMe) {
-                localStorage.setItem('remembered_user', userInput);
+            if (inputName.toLowerCase() === 'admin') {
+                if (inputPass !== adminSettings.adminPassword) {
+                    showToast('Mật khẩu quản trị viên không chính xác!', 'error');
+                    return;
+                }
+                currentRole = 'admin';
+                currentUser = { name: 'Administrator', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80', roleName: 'Quản trị viên' };
             } else {
-                localStorage.removeItem('remembered_user');
+                const foundEmp = employees.find(e => e.name.toLowerCase() === inputName.toLowerCase() || e.email.toLowerCase() === inputName.toLowerCase());
+                if (foundEmp) {
+                    const empPass = foundEmp.password || '123';
+                    if (inputPass !== empPass) {
+                        showToast('Mật khẩu nhân viên không chính xác!', 'error');
+                        return;
+                    }
+                    currentRole = 'staff';
+                    currentUser = { name: foundEmp.name, avatar: foundEmp.avatar, roleName: foundEmp.position };
+                } else {
+                    showToast('Tài khoản không tồn tại!', 'error');
+                    return;
+                }
             }
 
-            setTimeout(() => {
-                document.getElementById('login-view').style.display = 'none';
-                document.getElementById('dashboard-view').style.display = 'flex';
-                
-                document.getElementById('display-username').textContent = userInput;
-                document.getElementById('user-initials').textContent = userInput.substring(0, 2).toUpperCase();
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'flex';
 
-                btnText.style.display = 'inline';
-                spinner.style.display = 'none';
-                loginBtn.disabled = false;
+            document.getElementById('display-username').textContent = currentUser.name;
+            document.getElementById('display-role').innerHTML = `${currentUser.roleName} <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>`;
+            document.getElementById('header-avatar').src = currentUser.avatar;
 
-                renderAll();
-            }, 800);
+            setupSidebarMenu();
+            renderAll();
+            showToast(`Xin chào, ${currentUser.name}!`);
         }
 
         function handleLogout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                document.getElementById('dashboard-view').style.display = 'none';
-                document.getElementById('login-view').style.display = 'flex';
-                document.getElementById('login-password').value = '';
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('login-view').style.display = 'flex';
+            document.getElementById('login-password').value = '';
+        }
+
+        function setupSidebarMenu() {
+            const menuList = document.getElementById('sidebar-menu-list');
+            if (currentRole === 'admin') {
+                menuList.innerHTML = `
+                    <li class="active"><a href="#" onclick="switchTab('dashboard', event)"><i class="fa-solid fa-chart-pie"></i> Tổng quan</a></li>
+                    <li><a href="#" onclick="switchTab('employees', event)"><i class="fa-solid fa-users"></i> Quản lý Nhân sự</a></li>
+                    <li><a href="#" onclick="switchTab('tasks', event)"><i class="fa-solid fa-list-check"></i> Danh mục Công việc</a></li>
+                    <li><a href="#" onclick="switchTab('schedule', event)"><i class="fa-solid fa-calendar-week"></i> Phân công Ca làm</a></li>
+                    <li><a href="#" onclick="switchTab('attendance', event)"><i class="fa-solid fa-fingerprint"></i> Chấm công</a></li>
+                    <li><a href="#" onclick="switchTab('leave', event)"><i class="fa-solid fa-calendar-xmark"></i> Quản lý Nghỉ phép</a></li>
+                    <li><a href="#" onclick="switchTab('payroll', event)"><i class="fa-solid fa-money-check-dollar"></i> Tính lương cơ bản</a></li>
+                    <li><a href="#" onclick="switchTab('settings', event)"><i class="fa-solid fa-gear"></i> Cài đặt hệ thống</a></li>
+                    <li><a href="#" onclick="switchTab('analytics', event)"><i class="fa-solid fa-chart-line"></i> Thống kê & Báo cáo</a></li>
+                `;
+            } else {
+                menuList.innerHTML = `
+                    <li class="active"><a href="#" onclick="switchTab('dashboard', event)"><i class="fa-solid fa-chart-pie"></i> Lịch làm việc cá nhân</a></li>
+                    <li><a href="#" onclick="switchTab('attendance', event)"><i class="fa-solid fa-fingerprint"></i> Chấm công của tôi</a></li>
+                    <li><a href="#" onclick="switchTab('leave', event)"><i class="fa-solid fa-calendar-xmark"></i> Xin nghỉ phép</a></li>
+                    <li><a href="#" onclick="switchTab('payroll', event)"><i class="fa-solid fa-money-check-dollar"></i> Lương của tôi</a></li>
+                `;
             }
         }
 
-        function forgotPassword(e) {
-            e.preventDefault();
-            const user = document.getElementById('login-user').value;
-            alert(user ? `Yêu cầu khôi phục mật khẩu đã được gửi tới tài khoản: ${user}` : 'Vui lòng nhập tài khoản hoặc email của bạn trước!');
-        }
-
-        // --- 2. CHUYỂN TAB TRONG DASHBOARD ---
         function switchTab(tabId, event) {
             if (event) event.preventDefault();
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
             
             document.getElementById('tab-' + tabId).classList.add('active');
-            if (event && event.currentTarget) {
-                event.currentTarget.parentElement.classList.add('active');
-            }
+            if (event && event.currentTarget) event.currentTarget.parentElement.classList.add('active');
 
             const titles = {
-                'dashboard': 'Tổng quan hệ thống',
+                'dashboard': currentRole === 'admin' ? 'Tổng quan hệ thống' : 'Lịch làm việc của tôi',
                 'employees': 'Quản lý Nhân sự',
                 'tasks': 'Danh mục Công việc',
                 'schedule': 'Phân công Ca làm',
+                'attendance': 'Hệ thống Chấm công & Kiểm soát giờ làm',
+                'leave': 'Quản lý Đơn Xin Nghỉ Phép',
+                'payroll': 'Bảng Lương Cơ Bản Tự Động',
+                'settings': 'Cài Đặt Hệ Thống & Bảo Mật',
                 'analytics': 'Thống kê & Báo cáo'
             };
             document.getElementById('page-title').textContent = titles[tabId];
             renderAll();
         }
 
-        // --- 3. RENDER DỮ LIỆU & QUẢN LÝ ---
+        // --- RENDER FUNCTIONS ---
         function renderAll() {
             renderEmployees();
             renderTasks();
             renderAssignments();
             renderTodayTasks();
             renderWeeklySchedule();
+            renderAttendance();
+            renderLeaves();
+            renderPayroll();
+            renderSettingsForm();
             renderAnalytics();
             populateSelectOptions();
         }
@@ -1010,12 +898,8 @@
         function populateSelectOptions() {
             const empSelect = document.getElementById('assign-emp');
             const taskSelect = document.getElementById('assign-task');
-            if (empSelect) {
-                empSelect.innerHTML = employees.map(e => `<option value="${e.name}">${e.name} (${e.department})</option>`).join('');
-            }
-            if (taskSelect) {
-                taskSelect.innerHTML = tasks.map(t => `<option value="${t.code}">${t.name} (${t.code})</option>`).join('');
-            }
+            if (empSelect) empSelect.innerHTML = employees.map(e => `<option value="${e.name}">${e.name} (${e.department})</option>`).join('');
+            if (taskSelect) taskSelect.innerHTML = tasks.map(t => `<option value="${t.code}">${t.name} (${t.code})</option>`).join('');
         }
 
         function renderEmployees() {
@@ -1025,19 +909,15 @@
             employees.forEach((emp, index) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${emp.name}</strong></td>
-                        <td>${emp.email}</td>
-                        <td>${emp.phone}</td>
-                        <td>${emp.department}</td>
-                        <td>${emp.position}</td>
+                        <td><div class="emp-cell-info"><img src="${emp.avatar}" class="emp-table-avatar"><strong>${emp.name}</strong></div></td>
+                        <td>${emp.email}</td><td>${emp.phone}</td><td>${emp.department}</td><td>${emp.position}</td>
                         <td>
                             <div class="action-btns">
                                 <button class="btn-action btn-edit" onclick="editEmployee(${index})"><i class="fa-solid fa-pen"></i></button>
                                 <button class="btn-action btn-delete" onclick="deleteEmployee(${index})"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         }
 
@@ -1049,19 +929,15 @@
                 let badgeClass = task.priority === 'Cao' ? 'badge-afternoon' : 'badge-morning';
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${task.code}</strong></td>
-                        <td>${task.name}</td>
-                        <td>${task.desc}</td>
-                        <td><span class="badge ${badgeClass}">${task.priority}</span></td>
-                        <td>${task.duration}</td>
+                        <td><strong>${task.code}</strong></td><td>${task.name}</td><td>${task.desc}</td>
+                        <td><span class="badge ${badgeClass}">${task.priority}</span></td><td>${task.duration}</td>
                         <td>
                             <div class="action-btns">
                                 <button class="btn-action btn-edit" onclick="editTask(${index})"><i class="fa-solid fa-pen"></i></button>
                                 <button class="btn-action btn-delete" onclick="deleteTask(${index})"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         }
 
@@ -1071,19 +947,14 @@
             tbody.innerHTML = '';
             assignments.forEach((asg, index) => {
                 let shiftBadge = asg.shift === 'Ca sáng' ? 'badge-morning' : 'badge-afternoon';
+                const empObj = employees.find(e => e.name === asg.employee);
+                const avatarHtml = empObj ? `<img src="${empObj.avatar}" style="width:24px; height:24px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-right:6px;">` : '';
                 tbody.innerHTML += `
                     <tr>
-                        <td>${asg.date}</td>
-                        <td><span class="badge ${shiftBadge}">${asg.shift}</span></td>
-                        <td><strong>${asg.employee}</strong></td>
-                        <td>${asg.taskName} (${asg.taskCode})</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-action btn-delete" onclick="deleteAssignment(${index})"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                        <td>${asg.date}</td><td><span class="badge ${shiftBadge}">${asg.shift}</span></td>
+                        <td>${avatarHtml}<strong>${asg.employee}</strong></td><td>${asg.taskName} (${asg.taskCode})</td>
+                        <td><button class="btn-action btn-delete" onclick="deleteAssignment(${index})"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>`;
             });
         }
 
@@ -1091,21 +962,20 @@
             const tbody = document.getElementById('today-tasks-tbody');
             if (!tbody) return;
             tbody.innerHTML = '';
-            const today = '2026-06-08';
-            const todayAsgs = assignments.filter(a => a.date === today);
+            const today = '2026-07-23';
+            let todayAsgs = assignments.filter(a => a.date === today);
+            if (currentRole === 'staff') {
+                todayAsgs = todayAsgs.filter(a => a.employee === currentUser.name);
+            }
             if (todayAsgs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Không có công việc nào trong hôm nay.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Không có công việc nào.</td></tr>`;
                 return;
             }
             todayAsgs.forEach(asg => {
                 let shiftBadge = asg.shift === 'Ca sáng' ? 'badge-morning' : 'badge-afternoon';
-                tbody.innerHTML += `
-                    <tr>
-                        <td><span class="badge ${shiftBadge}">${asg.shift}</span></td>
-                        <td><strong>${asg.employee}</strong></td>
-                        <td>${asg.taskName}</td>
-                    </tr>
-                `;
+                const empObj = employees.find(e => e.name === asg.employee);
+                const avatarHtml = empObj ? `<img src="${empObj.avatar}" style="width:24px; height:24px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-right:6px;">` : '';
+                tbody.innerHTML += `<tr><td><span class="badge ${shiftBadge}">${asg.shift}</span></td><td>${avatarHtml}<strong>${asg.employee}</strong></td><td>${asg.taskName}</td></tr>`;
             });
         }
 
@@ -1114,57 +984,256 @@
             if (!tbody) return;
             tbody.innerHTML = '';
             const days = [
-                { name: 'Thứ Hai', date: '2026-06-08' },
-                { name: 'Thứ Ba', date: '2026-06-09' },
-                { name: 'Thứ Tư', date: '2026-06-10' },
-                { name: 'Thứ Năm', date: '2026-06-11' },
-                { name: 'Thứ Sáu', date: '2026-06-12' },
-                { name: 'Thứ Bảy', date: '2026-06-13' }
+                { name: 'Thứ Hai', date: '2026-07-20' }, { name: 'Thứ Ba', date: '2026-07-21' },
+                { name: 'Thứ Tư', date: '2026-07-22' }, { name: 'Thứ Năm', date: '2026-07-23' },
+                { name: 'Thứ Sáu', date: '2026-07-24' }, { name: 'Thứ Bảy', date: '2026-07-25' }
             ];
 
-            employees.forEach(emp => {
-                let row = `<tr><td><strong>${emp.name}</strong><br><small style="color:var(--text-muted);">${emp.position}</small></td>`;
+            let targetEmps = employees;
+            if (currentRole === 'staff') {
+                targetEmps = employees.filter(e => e.name === currentUser.name);
+            }
+
+            targetEmps.forEach(emp => {
+                let row = `<td><div style="display:flex; align-items:center; gap:8px;"><img src="${emp.avatar}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;"><div><strong>${emp.name}</strong><br><small style="color:var(--text-muted);">${emp.position}</small></div></div></td>`;
                 days.forEach(day => {
                     const empDayTasks = assignments.filter(a => a.employee === emp.name && a.date === day.date);
                     row += `<td>`;
                     if (empDayTasks.length > 0) {
-                        empDayTasks.forEach(t => {
-                            row += `<div class="task-slot"><strong>${t.shift}:</strong> ${t.taskName}</div>`;
-                        });
+                        empDayTasks.forEach(t => row += `<div class="task-slot"><strong>${t.shift}:</strong> ${t.taskName}</div>`);
                     } else {
                         row += `<span style="color: var(--text-muted); font-size: 0.85rem;">Trống</span>`;
                     }
                     row += `</td>`;
                 });
-                row += `</tr>`;
-                tbody.innerHTML += row;
+                tbody.innerHTML += row + `</tr>`;
             });
         }
 
+        // --- CHẤM CÔNG THÔNG MINH & TỐI ƯU ---
+        function handleCheckInOrOut() {
+            const empName = currentUser.name;
+            const today = '2026-07-23';
+            let existing = attendance.find(a => a.employee === empName && a.date === today);
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (!existing) {
+                let [limitH, limitM] = adminSettings.checkInLimit.split(':').map(Number);
+                let [curH, curM] = nowTime.split(':').map(Number);
+                let checkStatus = (curH > limitH || (curH === limitH && curM > limitM)) ? 'Đi muộn' : 'Đúng giờ';
+
+                attendance.push({ employee: empName, date: today, checkIn: nowTime, checkOut: '--:--', status: checkStatus });
+                showToast(`Check-in thành công lúc ${nowTime} (${checkStatus})!`);
+            } else if (existing.checkOut === '--:--') {
+                let [limitH] = adminSettings.checkOutLimit.split(':').map(Number);
+                let [curH] = nowTime.split(':').map(Number);
+                if (curH < limitH) {
+                    existing.status = 'Về sớm';
+                } else {
+                    existing.status = 'Hoàn thành ca';
+                }
+                existing.checkOut = nowTime;
+                showToast(`Check-out thành công lúc ${nowTime}!`);
+            } else {
+                showToast('Hôm nay bạn đã hoàn thành chấm công rồi!', 'error');
+                return;
+            }
+            saveData();
+            renderAttendance();
+            renderPayroll();
+            updateAttendanceButtonState();
+        }
+
+        function updateAttendanceButtonState() {
+            const btn = document.getElementById('attendance-action-btn');
+            if (!btn) return;
+            const empName = currentUser.name;
+            const today = '2026-07-23';
+            let existing = attendance.find(a => a.employee === empName && a.date === today);
+
+            if (!existing) {
+                btn.className = 'btn btn-success';
+                btn.innerHTML = `<i class="fa-solid fa-fingerprint"></i> Check-in ngay`;
+                btn.disabled = false;
+            } else if (existing.checkOut === '--:--') {
+                btn.className = 'btn btn-primary';
+                btn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Check-out ngay`;
+                btn.disabled = false;
+            } else {
+                btn.className = 'btn';
+                btn.style.background = 'var(--border-color)';
+                btn.style.color = 'var(--text-muted)';
+                btn.innerHTML = `<i class="fa-solid fa-check-double"></i> Đã hoàn thành ca hôm nay`;
+                btn.disabled = true;
+            }
+        }
+
+        function renderAttendance() {
+            const tbody = document.getElementById('attendance-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            let list = attendance;
+            if (currentRole === 'staff') {
+                list = attendance.filter(a => a.employee === currentUser.name);
+            }
+
+            // Cập nhật số liệu thống kê nhanh chấm công
+            let presentCount = list.filter(a => a.status === 'Đúng giờ' || a.status === 'Hoàn thành ca').length;
+            let lateCount = list.filter(a => a.status === 'Đi muộn').length;
+            document.getElementById('stat-present-count').textContent = presentCount;
+            document.getElementById('stat-late-count').textContent = lateCount;
+            document.getElementById('stat-total-count').textContent = list.length;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Chưa có dữ liệu chấm công.</td></tr>`;
+                return;
+            }
+            list.forEach(att => {
+                let badgeStyle = att.status === 'Đúng giờ' || att.status === 'Hoàn thành ca' ? 'badge-success' : 'badge-warning';
+                tbody.innerHTML += `<tr><td><strong>${att.employee}</strong></td><td>${att.date}</td><td>${att.checkIn}</td><td>${att.checkOut}</td><td><span class="badge ${badgeStyle}">${att.status}</span></td></tr>`;
+            });
+            updateAttendanceButtonState();
+        }
+
+        // --- QUẢN LÝ NGHỈ PHÉP ---
+        function openLeaveModal() { document.getElementById('leave-modal').classList.add('open'); }
+        function closeLeaveModal() { document.getElementById('leave-modal').classList.remove('open'); }
+        
+        function saveLeave(e) {
+            e.preventDefault();
+            leaves.push({
+                id: Date.now(),
+                employee: currentUser.name,
+                reason: document.getElementById('l-reason').value,
+                startDate: document.getElementById('l-start').value,
+                endDate: document.getElementById('l-end').value,
+                status: 'Chờ duyệt'
+            });
+            saveData();
+            closeLeaveModal();
+            renderLeaves();
+            showToast('Đã gửi đơn xin nghỉ phép thành công!');
+        }
+
+        function updateLeaveStatus(idx, newStatus) {
+            leaves[idx].status = newStatus;
+            saveData();
+            renderLeaves();
+            showToast(`Đã ${newStatus.toLowerCase()} đơn xin nghỉ phép!`, newStatus === 'Đã duyệt' ? 'success' : 'error');
+        }
+
+        function renderLeaves() {
+            const tbody = document.getElementById('leave-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            let list = leaves;
+            if (currentRole === 'staff') {
+                list = leaves.filter(l => l.employee === currentUser.name);
+            }
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Chưa có đơn nghỉ phép nào.</td></tr>`;
+                return;
+            }
+            list.forEach((l, idx) => {
+                let badgeStyle = l.status === 'Đã duyệt' ? 'badge-success' : (l.status === 'Từ chối' ? 'badge-warning' : 'badge-info');
+                let actionCell = '';
+                if (currentRole === 'admin') {
+                    if (l.status === 'Chờ duyệt') {
+                        actionCell = `
+                            <button class="btn btn-success" style="padding: 4px 10px; font-size:0.8rem;" onclick="updateLeaveStatus(${idx}, 'Đã duyệt')">Chấp nhận</button>
+                            <button class="btn btn-danger" style="padding: 4px 10px; font-size:0.8rem;" onclick="updateLeaveStatus(${idx}, 'Từ chối')">Từ chối</button>`;
+                    } else {
+                        actionCell = `<span>Đã xử lý</span>`;
+                    }
+                } else {
+                    actionCell = `<span>${l.status}</span>`;
+                }
+                tbody.innerHTML += `<tr><td><strong>${l.employee}</strong></td><td>${l.reason}</td><td>${l.startDate}</td><td>${l.endDate}</td><td><span class="badge ${badgeStyle}">${l.status}</span></td><td>${actionCell}</td></tr>`;
+            });
+        }
+
+        // --- TÍNH LƯƠNG TỰ ĐỘNG ---
+        function renderPayroll() {
+            const tbody = document.getElementById('payroll-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            let targetEmps = employees;
+            if (currentRole === 'staff') {
+                targetEmps = employees.filter(e => e.name === currentUser.name);
+            }
+
+            const standardShiftRate = adminSettings.shiftRate;
+
+            targetEmps.forEach(emp => {
+                const shiftCount = assignments.filter(a => a.employee === emp.name).length;
+                const attendanceCount = attendance.filter(a => a.employee === emp.name && (a.status === 'Đúng giờ' || a.status === 'Hoàn thành ca')).length;
+                const totalPaidShifts = Math.max(shiftCount, attendanceCount);
+                
+                const lateCount = attendance.filter(a => a.employee === emp.name && a.status === 'Đi muộn').length;
+                const penalty = lateCount * adminSettings.latePenalty;
+
+                const grossSalary = (totalPaidShifts * standardShiftRate) - penalty;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <img src="${emp.avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+                                <div><strong>${emp.name}</strong><br><small style="color:var(--text-muted);">${emp.position}</small></div>
+                            </div>
+                        </td>
+                        <td>${emp.department}</td>
+                        <td><strong>${totalPaidShifts}</strong> ca</td>
+                        <td>${Number(standardShiftRate).toLocaleString()} đ</td>
+                        <td><span style="color: var(--warning-color);">-${Number(penalty).toLocaleString()} đ</span> (${lateCount} lần muộn)</td>
+                        <td><strong style="color: var(--success-color); font-size: 1.05rem;">${grossSalary > 0 ? Number(grossSalary).toLocaleString() : 0} VNĐ</strong></td>
+                    </tr>`;
+            });
+        }
+
+        // --- CÀI ĐẶT HỆ THỐNG ---
+        function renderSettingsForm() {
+            if (currentRole !== 'admin') return;
+            const ci = document.getElementById('set-ci-limit');
+            if (ci) {
+                document.getElementById('set-ci-limit').value = adminSettings.checkInLimit;
+                document.getElementById('set-co-limit').value = adminSettings.checkOutLimit;
+                document.getElementById('set-rate').value = adminSettings.shiftRate;
+                document.getElementById('set-penalty').value = adminSettings.latePenalty;
+            }
+        }
+
+        function saveAdminSettings(e) {
+            e.preventDefault();
+            adminSettings.checkInLimit = document.getElementById('set-ci-limit').value;
+            adminSettings.checkOutLimit = document.getElementById('set-co-limit').value;
+            adminSettings.shiftRate = parseFloat(document.getElementById('set-rate').value) || 250000;
+            adminSettings.latePenalty = parseFloat(document.getElementById('set-penalty').value) || 50000;
+            
+            saveData();
+            renderAll();
+            showToast('Đã lưu cấu hình cài đặt hệ thống thành công!');
+        }
+
+        // --- CÁC THAO TÁC KHÁC ---
         function renderAnalytics() {
             const tbody = document.getElementById('analytics-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
             employees.forEach(emp => {
                 const count = assignments.filter(a => a.employee === emp.name).length;
-                let perf = count > 1 ? 'Xuất sắc' : (count > 0 ? 'Hoàn thành tốt' : 'Chưa có việc');
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${emp.name}</strong></td>
-                        <td>${emp.department}</td>
-                        <td>${count} công việc</td>
-                        <td><span class="badge badge-morning">${perf}</span></td>
-                    </tr>
-                `;
+                let perf = count > 1 ? 'Xuất sắc' : (count > 0 ? 'Tốt' : 'Chưa có việc');
+                tbody.innerHTML += `<tr><td><div style="display:flex; align-items:center; gap:10px;"><img src="${emp.avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;"><strong>${emp.name}</strong></div></td><td>${emp.department}</td><td>${count} việc</td><td><span class="badge badge-morning">${perf}</span></td></tr>`;
             });
         }
 
-        // Modal thao tác
         function openEmployeeModal(index = null) {
             document.getElementById('employee-modal').classList.add('open');
             if (index !== null) {
                 document.getElementById('emp-index').value = index;
                 document.getElementById('emp-name').value = employees[index].name;
+                document.getElementById('emp-avatar').value = employees[index].avatar;
                 document.getElementById('emp-email').value = employees[index].email;
                 document.getElementById('emp-phone').value = employees[index].phone;
                 document.getElementById('emp-department').value = employees[index].department;
@@ -1172,29 +1241,36 @@
             } else {
                 document.getElementById('employee-form').reset();
                 document.getElementById('emp-index').value = '';
+                document.getElementById('emp-avatar').value = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80';
             }
         }
         function closeEmployeeModal() { document.getElementById('employee-modal').classList.remove('open'); }
         function saveEmployee(e) {
             e.preventDefault();
             const index = document.getElementById('emp-index').value;
-            const empData = {
+            const data = {
                 name: document.getElementById('emp-name').value,
+                avatar: document.getElementById('emp-avatar').value,
                 email: document.getElementById('emp-email').value,
                 phone: document.getElementById('emp-phone').value,
                 department: document.getElementById('emp-department').value,
-                position: document.getElementById('emp-position').value
+                position: document.getElementById('emp-position').value,
+                password: index === '' ? '123' : employees[index].password
             };
-            if (index === '') employees.push(empData);
-            else employees[index] = empData;
+            if (index === '') employees.push(data);
+            else employees[index] = data;
+            saveData();
             closeEmployeeModal();
             renderAll();
+            showToast('Đã lưu thông tin nhân sự!');
         }
         function editEmployee(index) { openEmployeeModal(index); }
         function deleteEmployee(index) {
-            if (confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) {
+            if (confirm('Xóa nhân viên này?')) {
                 employees.splice(index, 1);
+                saveData();
                 renderAll();
+                showToast('Đã xóa nhân sự!', 'error');
             }
         }
 
@@ -1216,60 +1292,62 @@
         function saveTask(e) {
             e.preventDefault();
             const index = document.getElementById('task-index').value;
-            const taskData = {
+            const data = {
                 code: document.getElementById('t-code').value,
                 name: document.getElementById('t-name').value,
                 desc: document.getElementById('t-desc').value,
                 priority: document.getElementById('t-priority').value,
                 duration: document.getElementById('t-duration').value
             };
-            if (index === '') tasks.push(taskData);
-            else tasks[index] = taskData;
+            if (index === '') tasks.push(data);
+            else tasks[index] = data;
+            saveData();
             closeTaskModal();
             renderAll();
+            showToast('Đã lưu công việc!');
         }
         function editTask(index) { openTaskModal(index); }
         function deleteTask(index) {
-            if (confirm('Bạn có chắc chắn muốn xóa công việc này?')) {
+            if (confirm('Xóa công việc này?')) {
                 tasks.splice(index, 1);
+                saveData();
                 renderAll();
+                showToast('Đã xóa công việc!', 'error');
             }
         }
 
         function createAssignment(e) {
             e.preventDefault();
-            const empName = document.getElementById('assign-emp').value;
-            const taskCode = document.getElementById('assign-task').value;
-            const date = document.getElementById('assign-date').value;
-            const shift = document.querySelector('input[name="shift"]:checked').value;
-            const taskObj = tasks.find(t => t.code === taskCode);
-            if (!empName || !taskObj) return;
-
-            assignments.push({ employee: empName, taskCode: taskCode, taskName: taskObj.name, date: date, shift: shift });
+            assignments.push({
+                employee: document.getElementById('assign-emp').value,
+                taskCode: document.getElementById('assign-task').value,
+                taskName: tasks.find(t => t.code === document.getElementById('assign-task').value).name,
+                date: document.getElementById('assign-date').value,
+                shift: document.querySelector('input[name="shift"]:checked').value
+            });
+            saveData();
             renderAll();
-            alert('Phân công thành công!');
+            showToast('Phân công thành công!');
         }
         function deleteAssignment(index) {
-            if (confirm('Bạn có muốn xóa phân công này?')) {
+            if (confirm('Xóa phân công này?')) {
                 assignments.splice(index, 1);
+                saveData();
                 renderAll();
+                showToast('Đã xóa phân công!', 'error');
             }
         }
 
         function filterEmployees() {
-            const keyword = document.getElementById('employee-search').value.toLowerCase();
-            document.querySelectorAll('#employee-table-body tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(keyword) ? '' : 'none';
-            });
+            const kw = document.getElementById('employee-search').value.toLowerCase();
+            document.querySelectorAll('#employee-table-body tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(kw) ? '' : 'none');
         }
         function filterTasks() {
-            const keyword = document.getElementById('task-search').value.toLowerCase();
-            document.querySelectorAll('#task-table-body tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(keyword) ? '' : 'none';
-            });
+            const kw = document.getElementById('task-search').value.toLowerCase();
+            document.querySelectorAll('#task-table-body tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(kw) ? '' : 'none');
         }
-        function exportExcel() { alert('Tính năng xuất Excel đang được phát triển!'); }
-        function sendNotificationEmail() { alert('Đã gửi thông báo lịch làm việc qua email cho toàn bộ nhân sự!'); }
+        function exportExcel() { showToast('Tính năng xuất Excel đang xử lý!'); }
+        function sendNotificationEmail() { showToast('Đã gửi thông báo email đến toàn bộ nhân sự!'); }
     </script>
 </body>
 </html>
