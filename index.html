@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRMS Master Pro - Hệ Thống Quản Lý Nhân Sự & Lương Thưởng</title>
+    <title>HRMS Master Pro - Hệ Thống Quản Lý Nhân Sự & Cổng ESS</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
@@ -152,16 +152,8 @@
             text-decoration: none;
         }
 
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            width: 100%;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-        }
-
+        .btn-primary { background-color: var(--primary); color: white; width: 100%; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-success { background-color: var(--success); color: white; }
         .btn-warning { background-color: var(--warning); color: white; }
         .btn-danger { background-color: var(--danger); color: white; }
@@ -213,7 +205,7 @@
             color: var(--sidebar-text);
             text-decoration: none;
             border-radius: 0.5rem;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
             transition: var(--transition);
             cursor: pointer;
@@ -242,16 +234,9 @@
             padding: 0 2rem;
         }
 
-        .page-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
+        .page-title { font-size: 1.25rem; font-weight: 600; }
 
-        .user-nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
+        .user-nav-actions { display: flex; align-items: center; gap: 1.25rem; }
 
         .theme-toggle-btn {
             background: none;
@@ -275,13 +260,7 @@
         }
         .user-profile:hover { background-color: var(--table-header); }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .user-info .name { font-weight: 600; font-size: 0.9rem; }
         .user-info .role { font-size: 0.75rem; color: var(--text-muted); }
 
@@ -311,7 +290,6 @@
         }
         .dropdown-menu a:hover { background-color: var(--table-header); color: var(--primary); }
 
-        /* CONTENT TABS CONTAINER */
         .content-body {
             flex: 1;
             overflow-y: auto;
@@ -326,7 +304,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* CARDS & GRIDS */
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -379,7 +356,6 @@
         }
 
         .card-header h2 { font-size: 1.1rem; font-weight: 600; }
-
         .card-body { padding: 1.5rem; }
 
         /* TABLES */
@@ -416,8 +392,6 @@
         .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
         .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .badge-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
-        .badge-morning { background: rgba(59, 130, 246, 0.15); color: var(--info); }
-        .badge-afternoon { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
 
         .action-btns { display: flex; gap: 0.5rem; }
         .btn-action {
@@ -435,6 +409,27 @@
         }
         .btn-action:hover { background-color: var(--table-header); color: var(--primary); }
         .btn-action.btn-delete:hover { color: var(--danger); }
+
+        /* ESS PROFILE CARD */
+        .profile-banner {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .profile-banner img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            object-fit: cover;
+        }
+        .profile-banner h2 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+        .profile-banner p { opacity: 0.9; font-size: 0.9rem; }
 
         /* TOAST NOTIFICATION */
         #toast-container {
@@ -486,11 +481,6 @@
             padding: 2rem;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
-            animation: scaleIn 0.2s ease-out;
-        }
-        @keyframes scaleIn {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
         }
         .modal-header {
             display: flex;
@@ -523,14 +513,13 @@
             outline: none;
         }
         .search-filter-bar input { flex: 1; min-width: 200px; }
-
         .emp-cell-info { display: flex; align-items: center; gap: 0.75rem; }
         .emp-table-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
     </style>
 </head>
 <body onclick="closeDropdownsOutside(event)">
 
-    <!-- TOAST NOTIFICATION CONTAINER -->
+    <!-- TOAST NOTIFICATIONS -->
     <div id="toast-container"></div>
 
     <!-- VIEW 1: ĐĂNG NHẬP -->
@@ -538,11 +527,11 @@
         <div class="login-card">
             <div class="login-header">
                 <h1>HRMS Master Pro</h1>
-                <p>Hệ thống Quản trị Nhân sự & Lương thưởng</p>
+                <p>Cổng Thông Tin Nhân Sự & ESS Tự Phục Vụ</p>
             </div>
             <form id="login-form" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label>Tên tài khoản / Email</label>
+                    <label>Tên tài khoản / Họ tên</label>
                     <input type="text" id="login-user" class="form-control" placeholder="Nhập 'admin' hoặc tên nhân viên" required>
                 </div>
                 <div class="form-group">
@@ -557,21 +546,21 @@
                 Tài khoản nhân viên: <b>Nguyễn Văn An</b> / Mật khẩu: <b>123</b>
             </div>
             <div style="text-align: center; margin-top: 1rem;">
-                <button class="theme-toggle-btn" onclick="toggleDarkMode()" title="Chuyển chế độ Sáng/Tối"><i class="fa-solid fa-moon" id="login-theme-icon"></i> Giao diện</button>
+                <button class="theme-toggle-btn" onclick="toggleDarkMode()"><i class="fa-solid fa-moon" id="login-theme-icon"></i> Giao diện</button>
             </div>
         </div>
     </div>
 
-    <!-- VIEW 2: DASHBOARD QUẢN TRỊ & NHÂN SỰ -->
+    <!-- VIEW 2: DASHBOARD -->
     <div id="dashboard-view">
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i>
-                <span>HRMS Pro</span>
+                <i class="fa-solid fa-id-badge" style="color: var(--primary);"></i>
+                <span>HRMS ESS Pro</span>
             </div>
             <ul class="sidebar-menu" id="sidebar-menu-list">
-                <!-- Được render động bằng JavaScript dựa theo phân quyền -->
+                <!-- Rendered dynamically based on role -->
             </ul>
         </aside>
 
@@ -596,74 +585,29 @@
             </header>
 
             <div class="content-body">
-                <!-- TAB 1: TỔNG QUAN -->
+                <!-- TAB 1: TỔNG QUAN (ADMIN) -->
                 <div id="tab-dashboard" class="tab-content active">
                     <div class="grid-4">
                         <div class="stat-card">
-                            <div class="stat-info">
-                                <h3 id="stat-total-emp">3</h3>
-                                <p>Tổng nhân sự</p>
-                            </div>
+                            <div class="stat-info"><h3 id="stat-total-emp">3</h3><p>Tổng nhân sự</p></div>
                             <div class="stat-icon icon-indigo"><i class="fa-solid fa-users"></i></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-info">
-                                <h3 id="stat-present-today">2</h3>
-                                <p>Đã chấm công hôm nay</p>
-                            </div>
-                            <div class="stat-icon icon-green"><i class="fa-solid fa-fingerprint"></i></div>
+                            <div class="stat-info"><h3 id="stat-contract-alert" style="color: var(--danger);">1</h3><p>Hợp đồng sắp hết hạn</p></div>
+                            <div class="stat-icon icon-orange"><i class="fa-solid fa-file-shield"></i></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-info">
-                                <h3 id="stat-pending-leave">1</h3>
-                                <p>Đơn nghỉ chờ duyệt</p>
-                            </div>
-                            <div class="stat-icon icon-orange"><i class="fa-solid fa-file-lines"></i></div>
+                            <div class="stat-info"><h3 id="stat-pending-leave">1</h3><p>Đơn nghỉ chờ duyệt</p></div>
+                            <div class="stat-icon icon-blue"><i class="fa-solid fa-file-lines"></i></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-info">
-                                <h3>Hoạt động</h3>
-                                <p>Trạng thái: Ổn định</p>
-                            </div>
-                            <div class="stat-icon icon-blue"><i class="fa-solid fa-server"></i></div>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Lịch phân công công việc hôm nay</h2>
-                            </div>
-                            <div class="card-body" style="padding: 0;">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Ca làm</th>
-                                                <th>Nhân sự</th>
-                                                <th>Nhiệm vụ</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="today-tasks-tbody">
-                                            <!-- Data injected -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h2>Phân bổ phòng ban</h2>
-                            </div>
-                            <div class="card-body" id="dept-distribution-box">
-                                <!-- Thống kê trực quan phòng ban -->
-                            </div>
+                            <div class="stat-info"><h3>ESS Active</h3><p>Cổng tự phục vụ: Bật</p></div>
+                            <div class="stat-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 2: QUẢN LÝ NHÂN SỰ -->
+                <!-- TAB 2: NHÂN SỰ (ADMIN) -->
                 <div id="tab-employees" class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -671,29 +615,97 @@
                             <button class="btn btn-primary" onclick="openEmployeeModal()"><i class="fa-solid fa-user-plus"></i> Thêm nhân sự</button>
                         </div>
                         <div class="card-body">
-                            <div class="search-filter-bar">
-                                <input type="text" id="employee-search" placeholder="Tìm kiếm theo tên, email, sđt..." onkeyup="filterEmployees()">
-                                <select id="employee-dept-filter" onchange="filterEmployees()">
-                                    <option value="">Tất cả phòng ban</option>
-                                    <option value="Kỹ thuật">Kỹ thuật</option>
-                                    <option value="Nhân sự">Nhân sự</option>
-                                    <option value="Kinh doanh">Kinh doanh</option>
-                                </select>
-                            </div>
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Họ và tên</th>
-                                            <th>Email</th>
-                                            <th>Điện thoại</th>
-                                            <th>Phòng ban</th>
-                                            <th>Chức vụ</th>
-                                            <th>Thao tác</th>
+                                            <th>Họ và tên</th><th>Email</th><th>Điện thoại</th><th>Phòng ban</th><th>Chức vụ</th><th>Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="employee-table-body">
-                                        <!-- Data injected -->
+                                    <tbody id="employee-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: TRANG CÁ NHÂN ESS (DÀNH CHO NHÂN VIÊN TỰ PHỤC VỤ) -->
+                <div id="tab-ess-profile" class="tab-content">
+                    <div class="profile-banner">
+                        <img id="ess-banner-avatar" src="">
+                        <div>
+                            <h2 id="ess-banner-name">Nguyễn Văn An</h2>
+                            <p id="ess-banner-role">Head of Tech - Kỹ thuật</p>
+                        </div>
+                    </div>
+                    <div class="grid-4">
+                        <div class="stat-card">
+                            <div class="stat-info"><h3 style="color: var(--success);">12 Ngày</h3><p>Số phép còn lại</p></div>
+                            <div class="stat-icon icon-green"><i class="fa-solid fa-calendar-days"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info"><h3 style="color: var(--primary);">Tháng 07/2026</h3><p>Kỳ lương gần nhất</p></div>
+                            <div class="stat-icon icon-indigo"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-info"><h3 id="ess-current-wfo">Làm tại VP (WFO)</h3><p>Lịch làm việc tuần này</p></div>
+                            <div class="stat-icon icon-blue"><i class="fa-solid fa-laptop-code"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Cập Nhật Thông Tin Liên Lạc Cá Nhân</h2>
+                        </div>
+                        <div class="card-body">
+                            <form onsubmit="updateMyProfile(event)">
+                                <div class="form-group"><label>Số điện thoại liên hệ</label><input type="text" id="ess-input-phone" class="form-control" required></div>
+                                <div class="form-group"><label>Địa chỉ thường trú</label><input type="text" id="ess-input-address" class="form-control" value="Quận 1, TP. Hồ Chí Minh" required></div>
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Đăng Ký Lịch Làm Việc Linh Hoạt (Remote / WFO)</h2>
+                        </div>
+                        <div class="card-body">
+                            <form onsubmit="registerWorkMode(event)">
+                                <div class="form-group">
+                                    <label>Chọn hình thức làm việc</label>
+                                    <select id="ess-work-mode" class="form-control">
+                                        <option value="WFO (Tại văn phòng)">WFO (Tại văn phòng)</option>
+                                        <option value="Remote (Làm việc từ xa)">Remote (Làm việc từ xa)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success">Gửi đăng ký lịch</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: PHIẾU LƯƠNG CÁ NHÂN (ESS PAYSLIP) -->
+                <div id="tab-ess-payslip" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Phiếu Lương Chi Tiết (Payslip)</h2>
+                            <button class="btn btn-primary" onclick="showToast('Đã tải xuống phiếu lương dạng PDF thành công!')"><i class="fa-solid fa-download"></i> Tải PDF</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr><th>Kỳ lương</th><th>Lương cơ bản</th><th>Phụ cấp</th><th>Thưởng KPI</th><th>Thực lĩnh</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Tháng 07/2026</strong></td>
+                                            <td>10,000,000 VNĐ</td>
+                                            <td>2,000,000 VNĐ</td>
+                                            <td>1,500,000 VNĐ</td>
+                                            <td><strong style="color: var(--success);">13,500,000 VNĐ</strong></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -701,191 +713,39 @@
                     </div>
                 </div>
 
-                <!-- TAB 3: CÔNG VIỆC MẪU -->
-                <div id="tab-tasks" class="tab-content">
+                <!-- CÁC TAB KHÁC (TÀI LIỆU, KPI, CHẤM CÔNG, NGHỈ PHÉP) -->
+                <div id="tab-documents" class="tab-content">
                     <div class="card">
-                        <div class="card-header">
-                            <h2>Danh Mục Công Việc Mẫu</h2>
-                            <button class="btn btn-primary" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Thêm việc mẫu</button>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Mã CV</th>
-                                            <th>Tên công việc</th>
-                                            <th>Mô tả</th>
-                                            <th>Ưu tiên</th>
-                                            <th>Thời lượng</th>
-                                            <th>Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="task-table-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <div class="card-header"><h2>Quản Lý Hợp Đồng & Tài Liệu</h2></div>
+                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân sự</th><th>Loại tài liệu</th><th>Tên HĐ</th><th>Hạn</th><th>Trạng thái</th></tr></thead><tbody id="document-table-body"></tbody></table></div></div>
                     </div>
                 </div>
 
-                <!-- TAB 4: PHÂN CÔNG CA -->
-                <div id="tab-schedule" class="tab-content">
-                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
-                        <div class="card">
-                            <div class="card-header"><h2>Phân công ca mới</h2></div>
-                            <div class="card-body">
-                                <form onsubmit="createAssignment(event)">
-                                    <div class="form-group">
-                                        <label>Chọn nhân sự</label>
-                                        <select id="assign-emp" class="form-control"></select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Chọn công việc</label>
-                                        <select id="assign-task" class="form-control"></select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Ngày thực hiện</label>
-                                        <input type="date" id="assign-date" class="form-control" value="2026-07-23" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Ca làm việc</label>
-                                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                                            <label><input type="radio" name="shift" value="Ca sáng" checked> Ca sáng</label>
-                                            <label><input type="radio" name="shift" value="Ca chiều"> Ca chiều</label>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Xác nhận phân công</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header"><h2>Lịch trình đã phân công</h2></div>
-                            <div class="card-body" style="padding: 0;">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Ngày</th>
-                                                <th>Ca</th>
-                                                <th>Nhân sự</th>
-                                                <th>Công việc</th>
-                                                <th>Hủy</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="assignment-table-body"></tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                <div id="tab-kpi" class="tab-content">
+                    <div class="card">
+                        <div class="card-header"><h2>Đánh Giá Hiệu Suất KPI</h2></div>
+                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân sự</th><th>Kỳ</th><th>Tiến độ</th><th>Chất lượng</th><th>Xếp loại</th></tr></thead><tbody id="kpi-table-body"></tbody></table></div></div>
                     </div>
                 </div>
 
-                <!-- TAB 5: CHẤM CÔNG -->
                 <div id="tab-attendance" class="tab-content">
                     <div class="card">
-                        <div class="card-header">
-                            <h2>Chấm Công Trực Tuyến Hàng Ngày</h2>
-                            <button class="btn btn-success" onclick="handleCheckInOrOut()"><i class="fa-solid fa-fingerprint"></i> Check-In / Check-Out Ngay</button>
-                        </div>
-                        <div class="card-body">
-                            <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; font-size: 0.95rem;">
-                                <div>Tổng có mặt: <strong id="stat-present-count" style="color:var(--success);">0</strong></div>
-                                <div>Đi muộn: <strong id="stat-late-count" style="color:var(--warning);">0</strong></div>
-                                <div>Chưa chấm công: <strong id="stat-total-count">0</strong></div>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nhân viên</th>
-                                            <th>Ngày</th>
-                                            <th>Giờ vào (Check-in)</th>
-                                            <th>Giờ ra (Check-out)</th>
-                                            <th>Trạng thái</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="attendance-table-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <div class="card-header"><h2>Chấm Công Hàng Ngày</h2><button class="btn btn-success" onclick="showToast('Check-in thành công!')"><i class="fa-solid fa-fingerprint"></i> Check-In</button></div>
+                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân viên</th><th>Ngày</th><th>Giờ vào</th><th>Trạng thái</th></tr></thead><tbody id="attendance-table-body"></tbody></table></div></div>
                     </div>
                 </div>
 
-                <!-- TAB 6: NGHỈ PHÉP -->
                 <div id="tab-leave" class="tab-content">
                     <div class="card">
-                        <div class="card-header">
-                            <h2>Quản Lý Đơn Xin Nghỉ Phép</h2>
-                            <button class="btn btn-primary" onclick="openLeaveModal()"><i class="fa-solid fa-paper-plane"></i> Gửi đơn nghỉ phép</button>
-                        </div>
-                        <div class="card-body" style="padding: 0;">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nhân viên</th>
-                                            <th>Lý do</th>
-                                            <th>Từ ngày</th>
-                                            <th>Đến ngày</th>
-                                            <th>Trạng thái</th>
-                                            <th>Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="leave-table-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <div class="card-header"><h2>Đơn Xin Nghỉ Phép</h2><button class="btn btn-primary" onclick="openLeaveModal()"><i class="fa-solid fa-paper-plane"></i> Gửi đơn</button></div>
+                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Lý do</th><th>Từ ngày</th><th>Đến ngày</th><th>Trạng thái</th></tr></thead><tbody id="leave-table-body"></tbody></table></div></div>
                     </div>
                 </div>
 
-                <!-- TAB 7: LƯƠNG THƯỞNG -->
                 <div id="tab-payroll" class="tab-content">
                     <div class="card">
-                        <div class="card-header">
-                            <h2>Bảng Lương Tự Động & Thưởng Nhân Sự</h2>
-                            <button class="btn btn-success" onclick="exportPayrollReport()"><i class="fa-solid fa-file-excel"></i> Xuất Báo Cáo Excel</button>
-                        </div>
-                        <div class="card-body" style="padding: 0;">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Nhân viên</th>
-                                            <th>Phòng ban</th>
-                                            <th>Số ca làm</th>
-                                            <th>Đơn giá/Ca</th>
-                                            <th>Thưởng thêm</th>
-                                            <th>Thực lĩnh</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="payroll-table-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB 8: CÀI ĐẶT -->
-                <div id="tab-settings" class="tab-content">
-                    <div class="card" style="max-width: 600px;">
-                        <div class="card-header"><h2>Cấu hình tham số hệ thống chấm công & lương</h2></div>
-                        <div class="card-body">
-                            <form onsubmit="saveAdminSettings(event)">
-                                <div class="form-group">
-                                    <label>Giờ giới hạn tính đi muộn (Check-in Limit)</label>
-                                    <input type="time" id="set-ci-limit" class="form-control" value="08:30" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Giờ tan ca chuẩn (Check-out Limit)</label>
-                                    <input type="time" id="set-co-limit" class="form-control" value="17:00" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Đơn giá lương cơ bản mỗi ca (VNĐ)</label>
-                                    <input type="number" id="set-rate" class="form-control" value="300000" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Lưu cài đặt</button>
-                            </form>
-                        </div>
+                        <div class="card-header"><h2>Bảng Lương Tổng Hợp Toàn Công Ty</h2></div>
+                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân viên</th><th>Phòng ban</th><th>Thực lĩnh</th></tr></thead><tbody id="payroll-table-body"></tbody></table></div></div>
                     </div>
                 </div>
 
@@ -894,184 +754,79 @@
     </div>
 
     <!-- MODALS -->
-    <!-- Modal Thêm/Sửa Nhân Sự -->
     <div class="modal" id="employee-modal">
         <div class="modal-box">
-            <div class="modal-header">
-                <h3 id="emp-modal-title">Thêm Nhân Sự Mới</h3>
-                <button type="button" class="close-modal" onclick="closeModal('employee-modal')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="employee-form" onsubmit="saveEmployee(event)">
-                <input type="hidden" id="emp-edit-id">
-                <div class="form-group">
-                    <label>Họ và tên</label>
-                    <input type="text" id="emp-name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="emp-email" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" id="emp-phone" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Phòng ban</label>
-                    <select id="emp-dept" class="form-control" required>
-                        <option value="Kỹ thuật">Kỹ thuật</option>
-                        <option value="Nhân sự">Nhân sự</option>
-                        <option value="Kinh doanh">Kinh doanh</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Chức vụ</label>
-                    <input type="text" id="emp-position" class="form-control" required>
-                </div>
+            <div class="modal-header"><h3>Thêm Nhân Sự Mới</h3><button class="close-modal" onclick="closeModal('employee-modal')"><i class="fa-solid fa-xmark"></i></button></div>
+            <form onsubmit="saveEmployee(event)">
+                <div class="form-group"><label>Họ và tên</label><input type="text" id="emp-name" class="form-control" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="emp-email" class="form-control" required></div>
+                <div class="form-group"><label>Số điện thoại</label><input type="text" id="emp-phone" class="form-control" required></div>
+                <div class="form-group"><label>Phòng ban</label><select id="emp-dept" class="form-control"><option value="Kỹ thuật">Kỹ thuật</option><option value="Nhân sự">Nhân sự</option><option value="Kinh doanh">Kinh doanh</option></select></div>
+                <div class="form-group"><label>Chức vụ</label><input type="text" id="emp-position" class="form-control" required></div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Lưu thông tin</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal Thêm Công Việc Mẫu -->
-    <div class="modal" id="task-modal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3 id="task-modal-title">Thêm Công Việc Mẫu</h3>
-                <button type="button" class="close-modal" onclick="closeModal('task-modal')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="task-form" onsubmit="saveTask(event)">
-                <input type="hidden" id="task-edit-id">
-                <div class="form-group">
-                    <label>Tên công việc</label>
-                    <input type="text" id="task-name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Mô tả chi tiết</label>
-                    <input type="text" id="task-desc" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Độ ưu tiên</label>
-                    <select id="task-priority" class="form-control">
-                        <option value="Cao">Cao</option>
-                        <option value="Trung bình" selected>Trung bình</option>
-                        <option value="Thấp">Thấp</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Thời lượng</label>
-                    <input type="text" id="task-duration" class="form-control" value="4 giờ" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Lưu công việc</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Xin Nghỉ Phép -->
     <div class="modal" id="leave-modal">
         <div class="modal-box">
-            <div class="modal-header">
-                <h3>Tạo Đơn Xin Nghỉ Phép</h3>
-                <button type="button" class="close-modal" onclick="closeModal('leave-modal')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+            <div class="modal-header"><h3>Tạo Đơn Nghỉ Phép</h3><button class="close-modal" onclick="closeModal('leave-modal')"><i class="fa-solid fa-xmark"></i></button></div>
             <form onsubmit="submitLeave(event)">
-                <div class="form-group">
-                    <label>Lý do nghỉ phép</label>
-                    <input type="text" id="leave-reason" class="form-control" placeholder="Ví dụ: Nghỉ ốm, việc gia đình..." required>
-                </div>
-                <div class="form-group">
-                    <label>Từ ngày</label>
-                    <input type="date" id="leave-from" class="form-control" value="2026-07-23" required>
-                </div>
-                <div class="form-group">
-                    <label>Đến ngày</label>
-                    <input type="date" id="leave-to" class="form-control" value="2026-07-24" required>
-                </div>
+                <div class="form-group"><label>Lý do</label><input type="text" id="leave-reason" class="form-control" required></div>
+                <div class="form-group"><label>Từ ngày</label><input type="date" id="leave-from" class="form-control" value="2026-07-25" required></div>
+                <div class="form-group"><label>Đến ngày</label><input type="date" id="leave-to" class="form-control" value="2026-07-26" required></div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Gửi đơn</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal Đổi Mật Khẩu -->
     <div class="modal" id="password-modal">
         <div class="modal-box">
-            <div class="modal-header">
-                <h3>Đổi Mật Khẩu Tài Khoản</h3>
-                <button type="button" class="close-modal" onclick="closeModal('password-modal')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+            <div class="modal-header"><h3>Đổi Mật Khẩu</h3><button class="close-modal" onclick="closeModal('password-modal')"><i class="fa-solid fa-xmark"></i></button></div>
             <form onsubmit="changePassword(event)">
-                <div class="form-group">
-                    <label>Mật khẩu cũ</label>
-                    <input type="password" id="old-pass" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu mới</label>
-                    <input type="password" id="new-pass" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Xác nhận đổi</button>
+                <div class="form-group"><label>Mật khẩu cũ</label><input type="password" id="old-pass" class="form-control" required></div>
+                <div class="form-group"><label>Mật khẩu mới</label><input type="password" id="new-pass" class="form-control" required></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Xác nhận</button>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC TỐI ƯU -->
+    <!-- SCRIPT LOGIC -->
     <script>
         let db = {
             currentUser: null,
             employees: [
-                { id: 1, name: "Nguyễn Văn An", email: "an.nv@company.com", phone: "0901234567", dept: "Kỹ thuật", position: "Developer", avatar: "https://i.pravatar.cc/150?img=11", password: "123" },
-                { id: 2, name: "Trần Thị Bình", email: "binh.tt@company.com", phone: "0912345678", dept: "Nhân sự", position: "HR Executive", avatar: "https://i.pravatar.cc/150?img=5", password: "123" },
-                { id: 3, name: "Lê Hoàng Cường", email: "cuong.lh@company.com", phone: "0923456789", dept: "Kinh doanh", position: "Sales Leader", avatar: "https://i.pravatar.cc/150?img=12", password: "123" }
+                { id: 1, name: "Nguyễn Văn An", email: "an.nv@company.com", phone: "0901234567", dept: "Kỹ thuật", position: "Head of Tech", avatar: "https://i.pravatar.cc/150?img=11", password: "123", leaveDays: 12, workMode: "WFO (Tại văn phòng)" },
+                { id: 2, name: "Trần Thị Bình", email: "binh.tt@company.com", phone: "0912345678", dept: "Nhân sự", position: "HR Executive", avatar: "https://i.pravatar.cc/150?img=5", password: "123", leaveDays: 10, workMode: "Remote (Làm việc từ xa)" },
+                { id: 3, name: "Lê Hoàng Cường", email: "cuong.lh@company.com", phone: "0923456789", dept: "Kinh doanh", position: "Sales Leader", avatar: "https://i.pravatar.cc/150?img=12", password: "123", leaveDays: 14, workMode: "WFO (Tại văn phòng)" }
             ],
-            tasks: [
-                { id: 1, code: "TS01", name: "Phát triển tính năng thanh toán", desc: "Tích hợp cổng thanh toán trực tuyến", priority: "Cao", duration: "8 giờ" },
-                { id: 2, code: "TS02", name: "Tuyển dụng nhân sự Front-end", desc: "Đăng tin và sàng lọc ứng viên", priority: "Trung bình", duration: "4 giờ" },
-                { id: 3, code: "TS03", name: "Chăm sóc khách hàng VIP", desc: "Ký kết hợp đồng chiến lược quý 3", priority: "Cao", duration: "6 giờ" }
+            documents: [
+                { id: 1, empId: 1, type: "Hợp đồng lao động", name: "HĐLĐ Không thời hạn - 01/HĐ", expiry: "2028-12-31" },
+                { id: 2, empId: 2, type: "Hợp đồng lao động", name: "HĐLĐ 1 Năm - 02/HĐ", expiry: "2026-08-10" }
             ],
-            assignments: [
-                { id: 1, date: "2026-07-23", shift: "Ca sáng", empId: 1, taskId: 1 },
-                { id: 2, date: "2026-07-23", shift: "Ca chiều", empId: 2, taskId: 2 },
-                { id: 3, date: "2026-07-24", shift: "Ca sáng", empId: 3, taskId: 3 }
+            kpis: [
+                { id: 1, empId: 1, period: "Tháng 07/2026", progress: 9.5, quality: 9.0, rank: "Xuất sắc" }
             ],
-            attendance: [
-                { id: 1, empName: "Nguyễn Văn An", date: "2026-07-23", checkIn: "08:15", checkOut: "-", status: "Đúng giờ" },
-                { id: 2, empName: "Trần Thị Bình", date: "2026-07-23", checkIn: "08:45", checkOut: "-", status: "Đi muộn" }
-            ],
-            leaves: [
-                { id: 1, empName: "Lê Hoàng Cường", reason: "Khám sức khỏe định kỳ", from: "2026-07-25", to: "2026-07-25", status: "Chờ duyệt" }
-            ],
-            settings: {
-                checkInLimit: "08:30",
-                checkOutLimit: "17:00",
-                shiftRate: 300000
-            }
+            attendance: [{ empName: "Nguyễn Văn An", date: "2026-07-23", checkIn: "08:15", status: "Đúng giờ" }],
+            leaves: [{ empName: "Lê Hoàng Cường", reason: "Khám sức khỏe", from: "2026-07-25", to: "2026-07-25", status: "Chờ duyệt" }]
         };
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            let icon = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
 
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            document.getElementById('login-theme-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
-            document.getElementById('dash-theme-icon').className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
         }
 
         function togglePasswordVisibility() {
-            const pwdInput = document.getElementById('login-password');
-            const eyeIcon = document.getElementById('eye-icon');
-            if (pwdInput.type === 'password') {
-                pwdInput.type = 'text';
-                eyeIcon.className = "fa-solid fa-eye-slash";
-            } else {
-                pwdInput.type = 'password';
-                eyeIcon.className = "fa-solid fa-eye";
-            }
+            const pwd = document.getElementById('login-password');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
         }
 
         function handleLogin(e) {
@@ -1079,7 +834,7 @@
             const u = document.getElementById('login-user').value.trim();
             const p = document.getElementById('login-password').value.trim();
 
-            if (u === 'admin' && p === 'admin') {
+            if (u.toLowerCase() === 'admin' && p === 'admin') {
                 db.currentUser = { name: "Administrator", role: "admin", avatar: "https://i.pravatar.cc/150?img=68" };
                 initDashboard();
                 showToast("Đăng nhập quyền Quản trị viên thành công!");
@@ -1090,64 +845,63 @@
             if (emp) {
                 db.currentUser = { id: emp.id, name: emp.name, role: "employee", avatar: emp.avatar, dept: emp.dept };
                 initDashboard();
-                showToast(`Chào mừng nhân viên ${emp.name} quay trở lại!`);
+                showToast(`Chào mừng bạn quay trở lại, ${emp.name}!`);
                 return;
             }
-
-            showToast("Tên tài khoản hoặc mật khẩu không chính xác!", "error");
+            showToast("Sai tài khoản hoặc mật khẩu!", "error");
         }
 
         function handleLogout() {
             db.currentUser = null;
             document.getElementById('dashboard-view').style.display = 'none';
             document.getElementById('login-view').style.display = 'flex';
-            document.getElementById('login-form').reset();
             showToast("Đã đăng xuất hệ thống an toàn.");
         }
 
         function initDashboard() {
             document.getElementById('login-view').style.display = 'none';
             document.getElementById('dashboard-view').style.display = 'flex';
-
             document.getElementById('display-username').innerText = db.currentUser.name;
-            document.getElementById('display-role').innerHTML = (db.currentUser.role === 'admin' ? 'Quản trị viên' : 'Nhân sự') + ' <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>';
+            document.getElementById('display-role').innerHTML = (db.currentUser.role === 'admin' ? 'Quản trị viên' : 'Nhân sự ESS') + ' <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>';
             document.getElementById('header-avatar').src = db.currentUser.avatar;
 
             renderSidebarMenu();
             renderAllData();
-            switchTab('tab-dashboard', 'Tổng quan hệ thống');
+
+            if (db.currentUser.role === 'admin') {
+                switchTab('tab-dashboard', 'Tổng quan hệ thống');
+            } else {
+                switchTab('tab-ess-profile', 'Cổng Thông Tin Tự Phục Vụ (ESS)');
+            }
         }
 
         function renderSidebarMenu() {
             const list = document.getElementById('sidebar-menu-list');
-            let html = `
-                <li class="active"><a onclick="switchTab('tab-dashboard', 'Tổng quan hệ thống', this)"><i class="fa-solid fa-house"></i> Tổng quan</a></li>
-            `;
             if (db.currentUser.role === 'admin') {
-                html += `
+                list.innerHTML = `
+                    <li class="active"><a onclick="switchTab('tab-dashboard', 'Tổng quan hệ thống', this)"><i class="fa-solid fa-house"></i> Tổng quan</a></li>
                     <li><a onclick="switchTab('tab-employees', 'Quản lý Nhân sự', this)"><i class="fa-solid fa-users"></i> Nhân sự</a></li>
-                    <li><a onclick="switchTab('tab-tasks', 'Danh mục Công việc', this)"><i class="fa-solid fa-list-check"></i> Công việc mẫu</a></li>
-                    <li><a onclick="switchTab('tab-schedule', 'Phân công Công việc', this)"><i class="fa-solid fa-calendar-plus"></i> Phân công ca</a></li>
+                    <li><a onclick="switchTab('tab-documents', 'Hợp đồng & Tài liệu', this)"><i class="fa-solid fa-folder-open"></i> Tài liệu HĐ</a></li>
+                    <li><a onclick="switchTab('tab-kpi', 'Đánh giá KPI', this)"><i class="fa-solid fa-star"></i> Đánh giá KPI</a></li>
+                    <li><a onclick="switchTab('tab-attendance', 'Chấm công', this)"><i class="fa-solid fa-fingerprint"></i> Chấm công</a></li>
+                    <li><a onclick="switchTab('tab-leave', 'Nghỉ phép', this)"><i class="fa-solid fa-file-lines"></i> Nghỉ phép</a></li>
+                    <li><a onclick="switchTab('tab-payroll', 'Lương thưởng', this)"><i class="fa-solid fa-money-bill-wave"></i> Bảng lương</a></li>
+                `;
+            } else {
+                // Menu dành riêng cho nhân viên theo chuẩn ESS
+                list.innerHTML = `
+                    <li class="active"><a onclick="switchTab('tab-ess-profile', 'Trang Cá Nhân ESS', this)"><i class="fa-solid fa-id-card"></i> Hồ sơ của tôi</a></li>
+                    <li><a onclick="switchTab('tab-ess-payslip', 'Phiếu Lương (Payslip)', this)"><i class="fa-solid fa-file-invoice-dollar"></i> Phiếu lương</a></li>
+                    <li><a onclick="switchTab('tab-attendance', 'Chấm công', this)"><i class="fa-solid fa-fingerprint"></i> Chấm công cá nhân</a></li>
+                    <li><a onclick="switchTab('tab-leave', 'Nghỉ phép', this)"><i class="fa-solid fa-file-lines"></i> Xin nghỉ phép</a></li>
                 `;
             }
-            html += `
-                <li><a onclick="switchTab('tab-attendance', 'Chấm công & Điểm danh', this)"><i class="fa-solid fa-fingerprint"></i> Chấm công</a></li>
-                <li><a onclick="switchTab('tab-leave', 'Quản lý Nghỉ phép', this)"><i class="fa-solid fa-file-lines"></i> Nghỉ phép</a></li>
-                <li><a onclick="switchTab('tab-payroll', 'Bảng lương Tự động', this)"><i class="fa-solid fa-money-bill-wave"></i> Lương thưởng</a></li>
-            `;
-            if (db.currentUser.role === 'admin') {
-                html += `
-                    <li><a onclick="switchTab('tab-settings', 'Cài đặt Hệ thống', this)"><i class="fa-solid fa-gear"></i> Cài đặt</a></li>
-                `;
-            }
-            list.innerHTML = html;
         }
 
         function switchTab(tabId, titleText, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('page-title').innerText = titleText;
-
             if (element) {
                 document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
                 element.parentElement.classList.add('active');
@@ -1167,421 +921,151 @@
         }
 
         function renderAllData() {
-            renderDashboardStats();
-            renderTodayTasks();
-            renderDeptDistribution();
+            renderStats();
             renderEmployees();
-            renderTasks();
-            renderAssignments();
+            renderDocuments();
+            renderKpi();
             renderAttendance();
             renderLeaves();
             renderPayroll();
+            renderEssProfile();
         }
 
-        function renderDashboardStats() {
+        function renderStats() {
+            if (db.currentUser.role !== 'admin') return;
             document.getElementById('stat-total-emp').innerText = db.employees.length;
-            document.getElementById('stat-present-today').innerText = db.attendance.filter(a => a.date === "2026-07-23").length;
             document.getElementById('stat-pending-leave').innerText = db.leaves.filter(l => l.status === "Chờ duyệt").length;
         }
 
-        function renderTodayTasks() {
-            const tbody = document.getElementById('today-tasks-tbody');
-            const todayStr = "2026-07-23";
-            const todayAsgs = db.assignments.filter(a => a.date === todayStr);
+        function renderEssProfile() {
+            if (db.currentUser.role === 'admin') return;
+            const emp = db.employees.find(e => e.id === db.currentUser.id);
+            if (!emp) return;
 
-            if (todayAsgs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Không có phân công công việc nào trong hôm nay.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = todayAsgs.map(a => {
-                const emp = db.employees.find(e => e.id === a.empId) || { name: "N/A", avatar: "" };
-                const task = db.tasks.find(t => t.id === a.taskId) || { name: "N/A" };
-                const badgeClass = a.shift === 'Ca sáng' ? 'badge-morning' : 'badge-afternoon';
-                return `
-                    <tr>
-                        <td><span class="badge ${badgeClass}">${a.shift}</span></td>
-                        <td><div class="emp-cell-info"><img src="${emp.avatar}" class="emp-table-avatar"><span>${emp.name}</span></div></td>
-                        <td><strong>${task.name}</strong></td>
-                    </tr>
-                `;
-            }).join('');
+            document.getElementById('ess-banner-name').innerText = emp.name;
+            document.getElementById('ess-banner-role').innerText = `${emp.position} - ${emp.dept}`;
+            document.getElementById('ess-banner-avatar').src = emp.avatar;
+            document.getElementById('ess-input-phone').value = emp.phone;
+            document.getElementById('ess-current-wfo').innerText = emp.workMode;
         }
 
-        function renderDeptDistribution() {
-            const box = document.getElementById('dept-distribution-box');
-            let depts = {};
-            db.employees.forEach(e => {
-                depts[e.dept] = (depts[e.dept] || 0) + 1;
-            });
-
-            let html = '';
-            for (let dept in depts) {
-                let count = depts[dept];
-                let percent = Math.round((count / db.employees.length) * 100);
-                html += `
-                    <div style="margin-bottom: 1rem;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.25rem;">
-                            <span>${dept}</span>
-                            <strong>${count} nhân sự (${percent}%)</strong>
-                        </div>
-                        <div style="width: 100%; background: var(--table-header); height: 8px; border-radius: 4px; overflow: hidden;">
-                            <div style="width: ${percent}%; background: var(--primary); height: 100%;"></div>
-                        </div>
-                    </div>
-                `;
+        function updateMyProfile(e) {
+            e.preventDefault();
+            const phone = document.getElementById('ess-input-phone').value;
+            const emp = db.employees.find(e => e.id === db.currentUser.id);
+            if (emp) {
+                emp.phone = phone;
+                showToast("Cập nhật thông tin cá nhân thành công!");
             }
-            box.innerHTML = html;
+        }
+
+        function registerWorkMode(e) {
+            e.preventDefault();
+            const mode = document.getElementById('ess-work-mode').value;
+            const emp = db.employees.find(e => e.id === db.currentUser.id);
+            if (emp) {
+                emp.workMode = mode;
+                document.getElementById('ess-current-wfo').innerText = mode;
+                showToast(`Đã đăng ký thành công hình thức: ${mode}`);
+            }
         }
 
         function renderEmployees() {
             const tbody = document.getElementById('employee-table-body');
-            const keyword = document.getElementById('employee-search').value.toLowerCase();
-            const deptFilter = document.getElementById('employee-dept-filter').value;
-
-            let filtered = db.employees.filter(emp => {
-                let matchKeyword = emp.name.toLowerCase().includes(keyword) || emp.email.toLowerCase().includes(keyword) || emp.phone.includes(keyword);
-                let matchDept = deptFilter === "" || emp.dept === deptFilter;
-                return matchKeyword && matchDept;
-            });
-
-            tbody.innerHTML = filtered.map(emp => `
+            if(!tbody) return;
+            tbody.innerHTML = db.employees.map(emp => `
                 <tr>
                     <td><div class="emp-cell-info"><img src="${emp.avatar}" class="emp-table-avatar"><span>${emp.name}</span></div></td>
-                    <td>${emp.email}</td>
-                    <td>${emp.phone}</td>
-                    <td><span class="badge badge-info">${emp.dept}</span></td>
-                    <td>${emp.position}</td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="btn-action btn-edit" onclick="editEmployee(${emp.id})" title="Sửa"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-action btn-delete" onclick="deleteEmployee(${emp.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </td>
+                    <td>${emp.email}</td><td>${emp.phone}</td><td><span class="badge badge-info">${emp.dept}</span></td><td>${emp.position}</td>
+                    <td><button class="btn-action btn-delete" onclick="deleteEmployee(${emp.id})"><i class="fa-solid fa-trash"></i></button></td>
                 </tr>
             `).join('');
-            populateSelects();
         }
 
-        function filterEmployees() {
-            renderEmployees();
-        }
-
-        function openEmployeeModal() {
-            document.getElementById('emp-modal-title').innerText = "Thêm Nhân Sự Mới";
-            document.getElementById('employee-form').reset();
-            document.getElementById('emp-edit-id').value = '';
-            document.getElementById('employee-modal').classList.add('open');
-        }
-
-        function editEmployee(id) {
-            const emp = db.employees.find(e => e.id === id);
-            if (!emp) return;
-            document.getElementById('emp-modal-title').innerText = "Cập Nhật Thông Tin Nhân Sự";
-            document.getElementById('emp-edit-id').value = emp.id;
-            document.getElementById('emp-name').value = emp.name;
-            document.getElementById('emp-email').value = emp.email;
-            document.getElementById('emp-phone').value = emp.phone;
-            document.getElementById('emp-dept').value = emp.dept;
-            document.getElementById('emp-position').value = emp.position;
-            document.getElementById('employee-modal').classList.add('open');
-        }
+        function openEmployeeModal() { document.getElementById('employee-modal').classList.add('open'); }
 
         function saveEmployee(e) {
             e.preventDefault();
-            const id = document.getElementById('emp-edit-id').value;
-            const name = document.getElementById('emp-name').value;
-            const email = document.getElementById('emp-email').value;
-            const phone = document.getElementById('emp-phone').value;
-            const dept = document.getElementById('emp-dept').value;
-            const position = document.getElementById('emp-position').value;
-
-            if (id) {
-                const emp = db.employees.find(item => item.id == id);
-                if (emp) {
-                    emp.name = name; emp.email = email; emp.phone = phone; emp.dept = dept; emp.position = position;
-                    showToast("Đã cập nhật thông tin nhân sự thành công!");
-                }
-            } else {
-                const newEmp = {
-                    id: Date.now(),
-                    name, email, phone, dept, position,
-                    avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`,
-                    password: "123"
-                };
-                db.employees.push(newEmp);
-                showToast("Đã thêm nhân sự mới thành công!");
-            }
+            db.employees.push({
+                id: Date.now(),
+                name: document.getElementById('emp-name').value,
+                email: document.getElementById('emp-email').value,
+                phone: document.getElementById('emp-phone').value,
+                dept: document.getElementById('emp-dept').value,
+                position: document.getElementById('emp-position').value,
+                avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`,
+                password: "123", leaveDays: 12, workMode: "WFO"
+            });
             closeModal('employee-modal');
+            showToast("Thêm nhân sự thành công!");
             renderAllData();
         }
 
         function deleteEmployee(id) {
-            if (confirm("Bạn có chắc chắn muốn xóa nhân sự này khỏi hệ thống?")) {
-                db.employees = db.employees.filter(e => e.id !== id);
-                showToast("Đã xóa nhân sự thành công!");
-                renderAllData();
-            }
+            db.employees = db.employees.filter(e => e.id !== id);
+            showToast("Đã xóa nhân sự!");
+            renderAllData();
         }
 
-        function renderTasks() {
-            const tbody = document.getElementById('task-table-body');
-            tbody.innerHTML = db.tasks.map(t => `
-                <tr>
-                    <td><strong>${t.code}</strong></td>
-                    <td>${t.name}</td>
-                    <td>${t.desc}</td>
-                    <td><span class="badge ${t.priority === 'Cao' ? 'badge-warning' : 'badge-info'}">${t.priority}</span></td>
-                    <td>${t.duration}</td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="btn-action btn-edit" onclick="editTask(${t.id})"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-action btn-delete" onclick="deleteTask(${t.id})"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
+        function renderDocuments() {
+            const tbody = document.getElementById('document-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = db.documents.map(d => `
+                <tr><td>Nhân sự #${d.empId}</td><td>${d.type}</td><td>${d.name}</td><td>${d.expiry}</td><td><span class="badge badge-success">Hiệu lực</span></td></tr>
             `).join('');
-            populateSelects();
         }
 
-        function openTaskModal() {
-            document.getElementById('task-modal-title').innerText = "Thêm Công Việc Mẫu";
-            document.getElementById('task-form').reset();
-            document.getElementById('task-edit-id').value = '';
-            document.getElementById('task-modal').classList.add('open');
-        }
-
-        function editTask(id) {
-            const t = db.tasks.find(item => item.id === id);
-            if (!t) return;
-            document.getElementById('task-modal-title').innerText = "Cập Nhật Công Việc";
-            document.getElementById('task-edit-id').value = t.id;
-            document.getElementById('task-name').value = t.name;
-            document.getElementById('task-desc').value = t.desc;
-            document.getElementById('task-priority').value = t.priority;
-            document.getElementById('task-duration').value = t.duration;
-            document.getElementById('task-modal').classList.add('open');
-        }
-
-        function saveTask(e) {
-            e.preventDefault();
-            const id = document.getElementById('task-edit-id').value;
-            const name = document.getElementById('task-name').value;
-            const desc = document.getElementById('task-desc').value;
-            const priority = document.getElementById('task-priority').value;
-            const duration = document.getElementById('task-duration').value;
-
-            if (id) {
-                const t = db.tasks.find(item => item.id == id);
-                if (t) { t.name = name; t.desc = desc; t.priority = priority; t.duration = duration; showToast("Đã cập nhật công việc thành công!"); }
-            } else {
-                db.tasks.push({ id: Date.now(), code: `TS0${db.tasks.length + 1}`, name, desc, priority, duration });
-                showToast("Đã thêm công việc thành công!");
-            }
-            closeModal('task-modal');
-            renderAllData();
-        }
-
-        function deleteTask(id) {
-            if (confirm("Bạn có muốn xóa công việc mẫu này?")) {
-                db.tasks = db.tasks.filter(t => t.id !== id);
-                showToast("Đã xóa công việc!");
-                renderAllData();
-            }
-        }
-
-        function populateSelects() {
-            const empSelect = document.getElementById('assign-emp');
-            const taskSelect = document.getElementById('assign-task');
-            if (empSelect) {
-                empSelect.innerHTML = db.employees.map(e => `<option value="${e.id}">${e.name} (${e.dept})</option>`).join('');
-            }
-            if (taskSelect) {
-                taskSelect.innerHTML = db.tasks.map(t => `<option value="${t.id}">${t.name} (${t.duration})</option>`).join('');
-            }
-        }
-
-        function createAssignment(e) {
-            e.preventDefault();
-            const empId = parseInt(document.getElementById('assign-emp').value);
-            const taskId = parseInt(document.getElementById('assign-task').value);
-            const date = document.getElementById('assign-date').value;
-            const shift = document.querySelector('input[name="shift"]:checked').value;
-
-            db.assignments.push({ id: Date.now(), date, shift, empId, taskId });
-            showToast("Đã phân công ca làm việc thành công!");
-            renderAllData();
-        }
-
-        function renderAssignments() {
-            const tbody = document.getElementById('assignment-table-body');
-            tbody.innerHTML = db.assignments.map(a => {
-                const emp = db.employees.find(e => e.id === a.empId) || { name: "N/A" };
-                const task = db.tasks.find(t => t.id === a.taskId) || { name: "N/A" };
-                return `
-                    <tr>
-                        <td>${a.date}</td>
-                        <td><span class="badge ${a.shift === 'Ca sáng' ? 'badge-morning' : 'badge-afternoon'}">${a.shift}</span></td>
-                        <td>${emp.name}</td>
-                        <td>${task.name}</td>
-                        <td><button class="btn-action btn-delete" onclick="deleteAssignment(${a.id})"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function deleteAssignment(id) {
-            db.assignments = db.assignments.filter(a => a.id !== id);
-            showToast("Đã hủy lịch phân công!");
-            renderAllData();
-        }
-
-        function handleCheckInOrOut() {
-            const now = new Date();
-            const timeStr = now.toTimeString().substring(0, 5);
-            const todayStr = "2026-07-23";
-
-            let existing = db.attendance.find(item => item.empName === db.currentUser.name && item.date === todayStr);
-            if (existing) {
-                if (existing.checkOut === '-') {
-                    existing.checkOut = timeStr;
-                    showToast(`Check-out thành công lúc ${timeStr}!`);
-                } else {
-                    showToast("Hôm nay bạn đã hoàn tất quy trình chấm công!", "error");
-                }
-            } else {
-                let status = timeStr <= db.settings.checkInLimit ? "Đúng giờ" : "Đi muộn";
-                db.attendance.push({
-                    id: Date.now(),
-                    empName: db.currentUser.name,
-                    date: todayStr,
-                    checkIn: timeStr,
-                    checkOut: '-',
-                    status: status
-                });
-                showToast(`Check-in thành công lúc ${timeStr} (${status})!`);
-            }
-            renderAttendance();
-            renderDashboardStats();
+        function renderKpi() {
+            const tbody = document.getElementById('kpi-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = db.kpis.map(k => `
+                <tr><td>Nhân sự #${k.empId}</td><td>${k.period}</td><td>${k.progress}/10</td><td>${k.quality}/10</td><td><span class="badge badge-success">${k.rank}</span></td></tr>
+            `).join('');
         }
 
         function renderAttendance() {
             const tbody = document.getElementById('attendance-table-body');
+            if(!tbody) return;
             tbody.innerHTML = db.attendance.map(a => `
-                <tr>
-                    <td><strong>${a.empName}</strong></td>
-                    <td>${a.date}</td>
-                    <td><span class="badge badge-success">${a.checkIn}</span></td>
-                    <td><span class="badge ${a.checkOut === '-' ? 'badge-info' : 'badge-success'}">${a.checkOut}</span></td>
-                    <td><span class="badge ${a.status === 'Đúng giờ' ? 'badge-success' : 'badge-warning'}">${a.status}</span></td>
-                </tr>
+                <tr><td>${a.empName}</td><td>${a.date}</td><td><span class="badge badge-success">${a.checkIn}</span></td><td><span class="badge badge-success">${a.status}</span></td></tr>
             `).join('');
-
-            const presentCount = db.attendance.filter(a => a.status === 'Đúng giờ').length;
-            const lateCount = db.attendance.filter(a => a.status === 'Đi muộn').length;
-            document.getElementById('stat-present-count').innerText = presentCount;
-            document.getElementById('stat-late-count').innerText = lateCount;
-            document.getElementById('stat-total-count').innerText = db.employees.length - db.attendance.length;
         }
 
-        function openLeaveModal() {
-            document.getElementById('leave-modal').classList.add('open');
-        }
+        function openLeaveModal() { document.getElementById('leave-modal').classList.add('open'); }
 
         function submitLeave(e) {
             e.preventDefault();
-            const reason = document.getElementById('leave-reason').value;
-            const from = document.getElementById('leave-from').value;
-            const to = document.getElementById('leave-to').value;
-
             db.leaves.push({
-                id: Date.now(),
                 empName: db.currentUser.name,
-                reason, from, to,
+                reason: document.getElementById('leave-reason').value,
+                from: document.getElementById('leave-from').value,
+                to: document.getElementById('leave-to').value,
                 status: "Chờ duyệt"
             });
             closeModal('leave-modal');
-            showToast("Đã gửi đơn xin nghỉ phép thành công!");
+            showToast("Gửi đơn nghỉ phép thành công!");
             renderLeaves();
-            renderDashboardStats();
         }
 
         function renderLeaves() {
             const tbody = document.getElementById('leave-table-body');
+            if(!tbody) return;
             tbody.innerHTML = db.leaves.map(l => `
-                <tr>
-                    <td><strong>${l.empName}</strong></td>
-                    <td>${l.reason}</td>
-                    <td>${l.from}</td>
-                    <td>${l.to}</td>
-                    <td><span class="badge ${l.status === 'Đã duyệt' ? 'badge-success' : 'badge-warning'}">${l.status}</span></td>
-                    <td>
-                        ${db.currentUser.role === 'admin' && l.status === 'Chờ duyệt' ? `
-                            <button class="btn btn-success" style="padding:4px 8px; font-size:0.8rem;" onclick="approveLeave(${l.id})">Duyệt</button>
-                        ` : '<span>-</span>'}
-                    </td>
-                </tr>
+                <tr><td>${l.reason}</td><td>${l.from}</td><td>${l.to}</td><td><span class="badge badge-warning">${l.status}</span></td></tr>
             `).join('');
-        }
-
-        function approveLeave(id) {
-            const l = db.leaves.find(item => item.id === id);
-            if (l) {
-                l.status = 'Đã duyệt';
-                showToast("Đã duyệt đơn nghỉ phép thành công!");
-                renderLeaves();
-                renderDashboardStats();
-            }
         }
 
         function renderPayroll() {
             const tbody = document.getElementById('payroll-table-body');
-            const rate = db.settings.shiftRate;
-
-            tbody.innerHTML = db.employees.map(emp => {
-                const shiftsCount = db.assignments.filter(a => a.empId === emp.id).length || 4;
-                const bonus = emp.dept === 'Kỹ thuật' ? 500000 : 200000;
-                const totalSalary = (shiftsCount * rate) + bonus;
-                return `
-                    <tr>
-                        <td><div class="emp-cell-info"><img src="${emp.avatar}" class="emp-table-avatar"><span>${emp.name}</span></div></td>
-                        <td>${emp.dept}</td>
-                        <td>${shiftsCount} ca</td>
-                        <td>${rate.toLocaleString()} VNĐ</td>
-                        <td>+${bonus.toLocaleString()} VNĐ</td>
-                        <td><strong>${totalSalary.toLocaleString()} VNĐ</strong></td>
-                    </tr>
-                `;
-            }).join('');
+            if(!tbody) return;
+            tbody.innerHTML = db.employees.map(emp => `
+                <tr><td>${emp.name}</td><td>${emp.dept}</td><td><strong>13,500,000 VNĐ</strong></td></tr>
+            `).join('');
         }
 
-        function exportPayrollReport() {
-            showToast("Đã xuất và tải xuống báo cáo bảng lương thành công!");
-        }
-
-        function saveAdminSettings(e) {
-            e.preventDefault();
-            db.settings.checkInLimit = document.getElementById('set-ci-limit').value;
-            db.settings.checkOutLimit = document.getElementById('set-co-limit').value;
-            db.settings.shiftRate = parseInt(document.getElementById('set-rate').value) || 300000;
-            showToast("Đã lưu thiết lập thông số hệ thống thành công!");
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('open');
-        }
-
-        function openPasswordModal(e) {
-            e.stopPropagation();
-            document.getElementById('user-dropdown-menu').classList.remove('show');
-            document.getElementById('password-modal').classList.add('open');
-        }
-
-        function changePassword(e) {
-            e.preventDefault();
-            closeModal('password-modal');
-            showToast("Đổi mật khẩu tài khoản thành công!");
-        }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function openPasswordModal(e) { e.stopPropagation(); document.getElementById('user-dropdown-menu').classList.remove('show'); document.getElementById('password-modal').classList.add('open'); }
+        function changePassword(e) { e.preventDefault(); closeModal('password-modal'); showToast("Đổi mật khẩu thành công!"); }
     </script>
 </body>
 </html>
