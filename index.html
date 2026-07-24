@@ -3,694 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRMS Master Pro - Hệ Thống Quản Lý Nhân Sự & Cổng ESS</title>
+    <title>HRMS Enterprise Pro - Full RBAC & Analytics</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- EXTERNAL LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
             --bg-main: #f8fafc;
-            --sidebar-bg: #1e1b4b;
-            --sidebar-text: #c7d2fe;
+            --sidebar-bg: #0d1117;
+            --sidebar-text: #94a3b8;
             --sidebar-text-hover: #ffffff;
-            --sidebar-active: #4f46e5;
+            --sidebar-active: #6366f1;
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
             --table-header: #f1f5f9;
             --input-bg: #ffffff;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --transition: all 0.25s ease-in-out;
         }
 
         .dark-mode {
             --primary: #6366f1;
             --primary-hover: #4f46e5;
-            --bg-main: #0f172a;
-            --sidebar-bg: #090d16;
+            --bg-main: #0b0f19;
+            --sidebar-bg: #070a12;
             --sidebar-text: #94a3b8;
             --sidebar-text-hover: #f8fafc;
             --sidebar-active: #6366f1;
-            --card-bg: #1e293b;
+            --card-bg: #151c2c;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-color: #334155;
-            --table-header: #0f172a;
-            --input-bg: #0f172a;
+            --border-color: #222d45;
+            --table-header: #0b0f19;
+            --input-bg: #0b0f19;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            transition: var(--transition);
-            min-height: 100vh;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); transition: var(--transition); min-height: 100vh; }
 
         /* LOGIN VIEW */
         #login-view {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-            position: relative;
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            background: linear-gradient(135deg, #070a12 0%, #151c2c 100%);
         }
-
         .login-card {
-            background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 420px;
+            background: var(--card-bg); padding: 2.5rem; border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); width: 100%; max-width: 420px;
             border: 1px solid var(--border-color);
         }
+        .login-header { text-align: center; margin-bottom: 2rem; }
+        .login-header h1 { font-size: 1.75rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; }
+        .login-header p { color: var(--text-muted); font-size: 0.875rem; }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .login-header h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-        }
-
-        .login-header p {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-            position: relative;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
+        .form-group { margin-bottom: 1.25rem; position: relative; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: var(--text-main); }
         .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            border-radius: 0.5rem;
-            font-size: 0.95rem;
-            outline: none;
-            transition: var(--transition);
+            width: 100%; padding: 0.75rem 1rem; background: var(--input-bg); border: 1px solid var(--border-color);
+            color: var(--text-main); border-radius: 0.5rem; font-size: 0.95rem; outline: none; transition: var(--transition);
         }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 1rem;
-            top: 2.35rem;
-            cursor: pointer;
-            color: var(--text-muted);
-        }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .password-toggle { position: absolute; right: 1rem; top: 2.35rem; cursor: pointer; color: var(--text-muted); }
 
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            font-size: 0.95rem;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.75rem 1.25rem; border-radius: 0.5rem; font-weight: 500; font-size: 0.95rem;
+            border: none; cursor: pointer; transition: var(--transition); text-decoration: none;
         }
-
         .btn-primary { background-color: var(--primary); color: white; width: 100%; }
         .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-success { background-color: var(--success); color: white; }
-        .btn-warning { background-color: var(--warning); color: white; }
-        .btn-danger { background-color: var(--danger); color: white; }
-        .btn-secondary { background-color: var(--border-color); color: var(--text-main); }
 
         /* DASHBOARD VIEW */
-        #dashboard-view {
-            display: none;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .sidebar-brand {
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: white;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 1rem 0.75rem;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 0.25rem;
-        }
-
+        #dashboard-view { display: none; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid var(--border-color); transition: var(--transition); }
+        .sidebar-brand { padding: 1.5rem; display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 700; color: white; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-menu { list-style: none; padding: 1rem 0.75rem; flex: 1; overflow-y: auto; }
+        .sidebar-menu li { margin-bottom: 0.35rem; }
         .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--sidebar-text);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: var(--transition);
-            cursor: pointer;
+            display: flex; align-items: center; gap: 0.85rem; padding: 0.85rem 1rem; color: var(--sidebar-text);
+            text-decoration: none; border-radius: 0.6rem; font-size: 0.95rem; font-weight: 500; transition: var(--transition); cursor: pointer;
         }
+        .sidebar-menu a:hover { color: var(--sidebar-text-hover); background-color: rgba(255,255,255,0.03); }
+        .sidebar-menu li.active a { background-color: var(--sidebar-active); color: #ffffff; font-weight: 600; }
 
-        .sidebar-menu a:hover, .sidebar-menu li.active a {
-            background-color: var(--sidebar-active);
-            color: var(--sidebar-text-hover);
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background-color: var(--bg-main);
-        }
-
-        .top-navbar {
-            height: 70px;
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-        }
-
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background-color: var(--bg-main); }
+        .top-navbar { height: 70px; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; }
         .page-title { font-size: 1.25rem; font-weight: 600; }
-
         .user-nav-actions { display: flex; align-items: center; gap: 1.25rem; }
-
-        .theme-toggle-btn {
-            background: none;
-            border: none;
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .theme-toggle-btn:hover { color: var(--primary); }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            cursor: pointer;
-            position: relative;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            transition: var(--transition);
-        }
-        .user-profile:hover { background-color: var(--table-header); }
-
+        .theme-toggle-btn { background: none; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer; transition: var(--transition); }
+        .user-profile { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; position: relative; padding: 0.25rem 0.5rem; border-radius: 0.5rem; }
         .user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .user-info .name { font-weight: 600; font-size: 0.9rem; }
         .user-info .role { font-size: 0.75rem; color: var(--text-muted); }
 
         .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            border-radius: 0.5rem;
-            width: 180px;
-            display: none;
-            z-index: 100;
-            padding: 0.5rem 0;
+            position: absolute; top: 100%; right: 0; background: var(--card-bg); border: 1px solid var(--border-color);
+            box-shadow: var(--shadow); border-radius: 0.5rem; width: 200px; display: none; z-index: 100; padding: 0.5rem 0;
         }
         .dropdown-menu.show { display: block; }
-        .dropdown-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: var(--transition);
-        }
-        .dropdown-menu a:hover { background-color: var(--table-header); color: var(--primary); }
+        .dropdown-menu a { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; color: var(--text-main); text-decoration: none; font-size: 0.875rem; cursor: pointer; }
+        .dropdown-menu a:hover { background-color: var(--table-header); }
 
-        .content-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-        }
-
+        .content-body { flex: 1; overflow-y: auto; padding: 2rem; }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        
+        .stat-card { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 0.75rem; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between; }
         .stat-card .stat-info h3 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
         .stat-card .stat-info p { color: var(--text-muted); font-size: 0.875rem; font-weight: 500; }
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        .icon-indigo { background: rgba(79, 70, 229, 0.15); color: var(--primary); }
+        .stat-icon { width: 50px; height: 50px; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .icon-indigo { background: rgba(99, 102, 241, 0.15); color: var(--primary); }
         .icon-green { background: rgba(16, 185, 129, 0.15); color: var(--success); }
         .icon-orange { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
         .icon-blue { background: rgba(59, 130, 246, 0.15); color: var(--info); }
 
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; box-shadow: var(--shadow); margin-bottom: 2rem; overflow: hidden; }
+        .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
         .card-header h2 { font-size: 1.1rem; font-weight: 600; }
         .card-body { padding: 1.5rem; }
 
-        /* TABLES */
+        /* TABLES & PAGINATION */
         .table-responsive { width: 100%; overflow-x: auto; }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-        .table th {
-            background-color: var(--table-header);
-            padding: 0.875rem 1rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
-        .table tr:hover { background-color: rgba(0,0,0,0.01); }
+        .table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        .table th { background-color: var(--table-header); padding: 0.875rem 1rem; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+        .table td { padding: 1rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.65rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
         .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
         .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-        .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        .badge-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
 
         .action-btns { display: flex; gap: 0.5rem; }
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 0.375rem;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
+        .btn-action { width: 32px; height: 32px; border-radius: 0.375rem; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); }
         .btn-action:hover { background-color: var(--table-header); color: var(--primary); }
         .btn-action.btn-delete:hover { color: var(--danger); }
 
-        /* ESS PROFILE CARD */
-        .profile-banner {
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white;
-            padding: 2rem;
-            border-radius: 0.75rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        .profile-banner img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid white;
-            object-fit: cover;
-        }
-        .profile-banner h2 { font-size: 1.5rem; margin-bottom: 0.25rem; }
-        .profile-banner p { opacity: 0.9; font-size: 0.9rem; }
+        .pagination-bar { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; font-size: 0.875rem; flex-wrap: wrap; gap: 1rem; }
+        .pagination-btns { display: flex; gap: 0.35rem; }
+        .btn-page { padding: 0.4rem 0.75rem; border: 1px solid var(--border-color); background: var(--card-bg); border-radius: 0.375rem; cursor: pointer; color: var(--text-main); }
+        .btn-page.active { background-color: var(--primary); color: white; border-color: var(--primary); }
 
-        /* TOAST NOTIFICATION */
-        #toast-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        .toast {
-            background: var(--card-bg);
-            color: var(--text-main);
-            padding: 1rem 1.25rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-            border-left: 4px solid var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            animation: slideIn 0.3s ease-out;
-            min-width: 300px;
-        }
+        /* TOAST & MODAL */
+        #toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast { background: var(--card-bg); color: var(--text-main); padding: 1rem 1.25rem; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 0.75rem; min-width: 300px; }
         .toast.success { border-left-color: var(--success); }
         .toast.error { border-left-color: var(--danger); }
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
 
-        /* MODALS */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
-        }
+        .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
         .modal.open { display: flex; }
-        .modal-box {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 500px;
-            border-radius: 0.75rem;
-            padding: 2rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-        }
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-        .modal-header h3 { font-size: 1.25rem; font-weight: 600; }
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
+        .modal-box { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 0.75rem; padding: 2rem; border: 1px solid var(--border-color); }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+        .close-modal { background: none; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer; }
 
-        .search-filter-bar {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .search-filter-bar input, .search-filter-bar select {
-            padding: 0.6rem 1rem;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            outline: none;
-        }
-        .search-filter-bar input { flex: 1; min-width: 200px; }
+        .search-filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .search-filter-bar input { flex: 1; padding: 0.6rem 1rem; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 0.5rem; font-size: 0.9rem; outline: none; }
         .emp-cell-info { display: flex; align-items: center; gap: 0.75rem; }
         .emp-table-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+
+        /* RBAC GUARD DISPLAY */
+        .admin-only { display: none !important; }
+        body.is-admin .admin-only { display: inline-flex !important; }
+        body.is-admin div.admin-only { display: flex !important; }
     </style>
 </head>
-<body onclick="closeDropdownsOutside(event)">
+<body class="dark-mode">
 
-    <!-- TOAST NOTIFICATIONS -->
     <div id="toast-container"></div>
 
     <!-- VIEW 1: ĐĂNG NHẬP -->
     <div id="login-view">
         <div class="login-card">
             <div class="login-header">
-                <h1>HRMS Master Pro</h1>
-                <p>Cổng Thông Tin Nhân Sự & ESS Tự Phục Vụ</p>
+                <h1>HRMS Pro</h1>
+                <p>Hệ Thống Quản Trị Nhân Sự Enterprise</p>
             </div>
-            <form id="login-form" onsubmit="handleLogin(event)">
+            <form id="login-form">
                 <div class="form-group">
-                    <label>Tên tài khoản / Họ tên</label>
-                    <input type="text" id="login-user" class="form-control" placeholder="Nhập 'admin' hoặc tên nhân viên" required>
+                    <label for="login-user">Tên tài khoản / Họ tên</label>
+                    <input type="text" id="login-user" class="form-control" placeholder="Nhập 'admin' hoặc tên cá nhân" required>
                 </div>
                 <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <input type="password" id="login-password" class="form-control" placeholder="Mật khẩu mặc định: 123" required>
-                    <span class="password-toggle" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye" id="eye-icon"></i></span>
+                    <label for="login-password">Mật khẩu</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Mật khẩu bất kỳ" required>
+                    <span class="password-toggle" id="btn-toggle-pwd"><i class="fa-solid fa-eye" id="eye-icon"></i></span>
                 </div>
                 <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập hệ thống</button>
             </form>
-            <div style="margin-top: 1.5rem; text-align: center; font-size: 0.8rem; color: var(--text-muted);">
-                Tài khoản Admin: <b>admin</b> / Mật khẩu: <b>admin</b><br>
-                Tài khoản nhân viên: <b>Nguyễn Văn An</b> / Mật khẩu: <b>123</b>
-            </div>
-            <div style="text-align: center; margin-top: 1rem;">
-                <button class="theme-toggle-btn" onclick="toggleDarkMode()"><i class="fa-solid fa-moon" id="login-theme-icon"></i> Giao diện</button>
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <button class="theme-toggle-btn" id="btn-theme-login"><i class="fa-solid fa-moon"></i> Đổi Giao diện</button>
             </div>
         </div>
     </div>
 
     <!-- VIEW 2: DASHBOARD -->
     <div id="dashboard-view">
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <i class="fa-solid fa-id-badge" style="color: var(--primary);"></i>
-                <span>HRMS ESS Pro</span>
+                <span>HRMS Pro</span>
             </div>
-            <ul class="sidebar-menu" id="sidebar-menu-list">
-                <!-- Rendered dynamically based on role -->
-            </ul>
+            <ul class="sidebar-menu" id="sidebar-menu-list"></ul>
         </aside>
 
-        <!-- MAIN AREA -->
         <main class="main-content">
             <header class="top-navbar">
                 <h1 class="page-title" id="page-title">Tổng quan hệ thống</h1>
                 <div class="user-nav-actions">
-                    <button class="theme-toggle-btn" onclick="toggleDarkMode()"><i class="fa-solid fa-moon" id="dash-theme-icon"></i></button>
-                    <div class="user-profile" onclick="toggleUserDropdown(event)">
-                        <img src="https://i.pravatar.cc/150?img=68" class="user-avatar" id="header-avatar">
+                    <button class="theme-toggle-btn" id="btn-theme-dash"><i class="fa-solid fa-moon"></i></button>
+                    <div class="user-profile" id="user-profile-trigger">
+                        <img src="" alt="User Avatar" class="user-avatar" id="header-avatar">
                         <div class="user-info">
-                            <div class="name" id="display-username">Administrator</div>
-                            <div class="role" id="display-role">Quản trị viên <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i></div>
+                            <div class="name" id="display-username">--</div>
+                            <div class="role" id="display-role">-- <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i></div>
                         </div>
                         <div class="dropdown-menu" id="user-dropdown-menu">
-                            <a onclick="openPasswordModal(event)"><i class="fa-solid fa-key"></i> Đổi mật khẩu</a>
-                            <a onclick="handleLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</a>
+                            <a id="btn-open-pwd-modal"><i class="fa-solid fa-key"></i> Đổi mật khẩu</a>
+                            <a id="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</a>
                         </div>
                     </div>
                 </div>
             </header>
 
             <div class="content-body">
-                <!-- TAB 1: TỔNG QUAN (ADMIN) -->
-                <div id="tab-dashboard" class="tab-content active">
+                <!-- 1. TAB TỔNG QUAN -->
+                <div id="tab-overview" class="tab-content active">
                     <div class="grid-4">
                         <div class="stat-card">
-                            <div class="stat-info"><h3 id="stat-total-emp">3</h3><p>Tổng nhân sự</p></div>
+                            <div class="stat-info"><h3 id="stat-total-emp">0</h3><p>Tổng nhân sự</p></div>
                             <div class="stat-icon icon-indigo"><i class="fa-solid fa-users"></i></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-info"><h3 id="stat-contract-alert" style="color: var(--danger);">1</h3><p>Hợp đồng sắp hết hạn</p></div>
+                            <div class="stat-info"><h3 id="stat-total-contract">0</h3><p>Hợp đồng hiệu lực</p></div>
                             <div class="stat-icon icon-orange"><i class="fa-solid fa-file-shield"></i></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-info"><h3 id="stat-pending-leave">1</h3><p>Đơn nghỉ chờ duyệt</p></div>
+                            <div class="stat-info"><h3 id="stat-pending-leave">0</h3><p>Đơn nghỉ chờ duyệt</p></div>
                             <div class="stat-icon icon-blue"><i class="fa-solid fa-file-lines"></i></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-info"><h3>ESS Active</h3><p>Cổng tự phục vụ: Bật</p></div>
-                            <div class="stat-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="stat-info"><h3>Ổn định</h3><p>RBAC & Charts Ready</p></div>
+                            <div class="stat-icon icon-green"><i class="fa-solid fa-chart-pie"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- REAL-TIME CHARTS ROW -->
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header"><h2>Phân Bổ Nhân Sự Theo Phòng Ban</h2></div>
+                            <div class="card-body"><canvas id="chart-dept" style="max-height: 280px;"></canvas></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><h2>Tỷ Lệ Trạng Thái Chấm Công</h2></div>
+                            <div class="card-body"><canvas id="chart-attendance" style="max-height: 280px;"></canvas></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 2: NHÂN SỰ (ADMIN) -->
+                <!-- 2. TAB NHÂN SỰ -->
                 <div id="tab-employees" class="tab-content">
                     <div class="card">
                         <div class="card-header">
-                            <h2>Danh Sách Nhân Sự Công Ty</h2>
-                            <button class="btn btn-primary" onclick="openEmployeeModal()"><i class="fa-solid fa-user-plus"></i> Thêm nhân sự</button>
+                            <h2>Danh Sách Nhân Sự</h2>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-success admin-only" id="btn-export-excel" style="width: auto;"><i class="fa-solid fa-file-excel"></i> Xuất Excel</button>
+                                <button class="btn btn-primary admin-only" id="btn-open-emp-modal" style="width: auto;"><i class="fa-solid fa-user-plus"></i> Thêm mới</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-filter-bar">
+                                <input type="text" id="search-emp" placeholder="Tìm kiếm theo tên, email, chức vụ...">
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr><th>Họ và tên</th><th>Email</th><th>Điện thoại</th><th>Phòng ban</th><th>Chức vụ</th><th class="admin-only">Thao tác</th></tr>
+                                    </thead>
+                                    <tbody id="employee-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div class="pagination-bar">
+                                <span id="pagination-info">Hiển thị 0 - 0 trong số 0 bản ghi</span>
+                                <div class="pagination-btns" id="pagination-btns-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. TAB TÀI LIỆU HĐ -->
+                <div id="tab-contracts" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Quản Lý Tài Liệu & Hợp Đồng</h2>
+                            <button class="btn btn-primary admin-only" id="btn-open-contract-modal" style="width: auto;"><i class="fa-solid fa-file-circle-plus"></i> Thêm Hợp Đồng</button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
-                                        <tr>
-                                            <th>Họ và tên</th><th>Email</th><th>Điện thoại</th><th>Phòng ban</th><th>Chức vụ</th><th>Thao tác</th>
-                                        </tr>
+                                        <tr><th>Mã HĐ</th><th>Nhân sự</th><th>Loại hợp đồng</th><th>Ngày hiệu lực</th><th>Trạng thái</th><th>Thao tác</th></tr>
                                     </thead>
-                                    <tbody id="employee-table-body"></tbody>
+                                    <tbody id="contract-table-body"></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 3: TRANG CÁ NHÂN ESS (DÀNH CHO NHÂN VIÊN TỰ PHỤC VỤ) -->
-                <div id="tab-ess-profile" class="tab-content">
-                    <div class="profile-banner">
-                        <img id="ess-banner-avatar" src="">
-                        <div>
-                            <h2 id="ess-banner-name">Nguyễn Văn An</h2>
-                            <p id="ess-banner-role">Head of Tech - Kỹ thuật</p>
-                        </div>
-                    </div>
-                    <div class="grid-4">
-                        <div class="stat-card">
-                            <div class="stat-info"><h3 style="color: var(--success);">12 Ngày</h3><p>Số phép còn lại</p></div>
-                            <div class="stat-icon icon-green"><i class="fa-solid fa-calendar-days"></i></div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info"><h3 style="color: var(--primary);">Tháng 07/2026</h3><p>Kỳ lương gần nhất</p></div>
-                            <div class="stat-icon icon-indigo"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-info"><h3 id="ess-current-wfo">Làm tại VP (WFO)</h3><p>Lịch làm việc tuần này</p></div>
-                            <div class="stat-icon icon-blue"><i class="fa-solid fa-laptop-code"></i></div>
-                        </div>
-                    </div>
-
+                <!-- 4. TAB ĐÁNH GIÁ KPI -->
+                <div id="tab-kpi" class="tab-content">
                     <div class="card">
-                        <div class="card-header">
-                            <h2>Cập Nhật Thông Tin Liên Lạc Cá Nhân</h2>
-                        </div>
+                        <div class="card-header"><h2>Đánh Giá KPI & Hiệu Suất Kỳ Này</h2></div>
                         <div class="card-body">
-                            <form onsubmit="updateMyProfile(event)">
-                                <div class="form-group"><label>Số điện thoại liên hệ</label><input type="text" id="ess-input-phone" class="form-control" required></div>
-                                <div class="form-group"><label>Địa chỉ thường trú</label><input type="text" id="ess-input-address" class="form-control" value="Quận 1, TP. Hồ Chí Minh" required></div>
-                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>Đăng Ký Lịch Làm Việc Linh Hoạt (Remote / WFO)</h2>
-                        </div>
-                        <div class="card-body">
-                            <form onsubmit="registerWorkMode(event)">
-                                <div class="form-group">
-                                    <label>Chọn hình thức làm việc</label>
-                                    <select id="ess-work-mode" class="form-control">
-                                        <option value="WFO (Tại văn phòng)">WFO (Tại văn phòng)</option>
-                                        <option value="Remote (Làm việc từ xa)">Remote (Làm việc từ xa)</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-success">Gửi đăng ký lịch</button>
-                            </form>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr><th>Nhân sự</th><th>Phòng ban</th><th>Mục tiêu chính</th><th>Điểm số KPI</th><th>Xếp loại</th></tr>
+                                    </thead>
+                                    <tbody id="kpi-table-body"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 4: PHIẾU LƯƠNG CÁ NHÂN (ESS PAYSLIP) -->
-                <div id="tab-ess-payslip" class="tab-content">
+                <!-- 5. TAB CHẤM CÔNG -->
+                <div id="tab-attendance" class="tab-content">
                     <div class="card">
                         <div class="card-header">
-                            <h2>Phiếu Lương Chi Tiết (Payslip)</h2>
-                            <button class="btn btn-primary" onclick="showToast('Đã tải xuống phiếu lương dạng PDF thành công!')"><i class="fa-solid fa-download"></i> Tải PDF</button>
+                            <h2>Quản Lý Chấm Công Hằng Ngày</h2>
+                            <button class="btn btn-success" id="btn-checkin" style="width: auto;"><i class="fa-solid fa-fingerprint"></i> Thực hiện Check-in / Out</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr><th>Ngày</th><th>Nhân sự</th><th>Giờ vào</th><th>Giờ ra</th><th>Trạng thái</th></tr>
+                                    </thead>
+                                    <tbody id="attendance-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. TAB NGHỈ PHÉP -->
+                <div id="tab-leave" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Quản Lý Nghỉ Phép & Phê Duyệt</h2>
+                            <button class="btn btn-primary" id="btn-open-leave-modal" style="width: auto;"><i class="fa-solid fa-calendar-plus"></i> Tạo Đơn Nghỉ</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr><th>Nhân sự</th><th>Lý do</th><th>Từ ngày</th><th>Đến ngày</th><th>Trạng thái</th><th>Thao tác</th></tr>
+                                    </thead>
+                                    <tbody id="leave-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. TAB BẢNG LƯƠNG -->
+                <div id="tab-payroll" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Bảng Lương & Phiếu Lương Chi Tiết</h2>
+                            <button class="btn btn-primary" id="btn-export-payslip-pdf" style="width: auto;"><i class="fa-solid fa-file-pdf"></i> Tải PDF Phiếu Lương</button>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -701,10 +404,10 @@
                                     <tbody>
                                         <tr>
                                             <td><strong>Tháng 07/2026</strong></td>
-                                            <td>10,000,000 VNĐ</td>
-                                            <td>2,000,000 VNĐ</td>
-                                            <td>1,500,000 VNĐ</td>
-                                            <td><strong style="color: var(--success);">13,500,000 VNĐ</strong></td>
+                                            <td>18,000,000 VNĐ</td>
+                                            <td>2,500,000 VNĐ</td>
+                                            <td>3,500,000 VNĐ</td>
+                                            <td><strong style="color: var(--success);">24,000,000 VNĐ</strong></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -713,359 +416,712 @@
                     </div>
                 </div>
 
-                <!-- CÁC TAB KHÁC (TÀI LIỆU, KPI, CHẤM CÔNG, NGHỈ PHÉP) -->
-                <div id="tab-documents" class="tab-content">
-                    <div class="card">
-                        <div class="card-header"><h2>Quản Lý Hợp Đồng & Tài Liệu</h2></div>
-                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân sự</th><th>Loại tài liệu</th><th>Tên HĐ</th><th>Hạn</th><th>Trạng thái</th></tr></thead><tbody id="document-table-body"></tbody></table></div></div>
-                    </div>
-                </div>
-
-                <div id="tab-kpi" class="tab-content">
-                    <div class="card">
-                        <div class="card-header"><h2>Đánh Giá Hiệu Suất KPI</h2></div>
-                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân sự</th><th>Kỳ</th><th>Tiến độ</th><th>Chất lượng</th><th>Xếp loại</th></tr></thead><tbody id="kpi-table-body"></tbody></table></div></div>
-                    </div>
-                </div>
-
-                <div id="tab-attendance" class="tab-content">
-                    <div class="card">
-                        <div class="card-header"><h2>Chấm Công Hàng Ngày</h2><button class="btn btn-success" onclick="showToast('Check-in thành công!')"><i class="fa-solid fa-fingerprint"></i> Check-In</button></div>
-                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân viên</th><th>Ngày</th><th>Giờ vào</th><th>Trạng thái</th></tr></thead><tbody id="attendance-table-body"></tbody></table></div></div>
-                    </div>
-                </div>
-
-                <div id="tab-leave" class="tab-content">
-                    <div class="card">
-                        <div class="card-header"><h2>Đơn Xin Nghỉ Phép</h2><button class="btn btn-primary" onclick="openLeaveModal()"><i class="fa-solid fa-paper-plane"></i> Gửi đơn</button></div>
-                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Lý do</th><th>Từ ngày</th><th>Đến ngày</th><th>Trạng thái</th></tr></thead><tbody id="leave-table-body"></tbody></table></div></div>
-                    </div>
-                </div>
-
-                <div id="tab-payroll" class="tab-content">
-                    <div class="card">
-                        <div class="card-header"><h2>Bảng Lương Tổng Hợp Toàn Công Ty</h2></div>
-                        <div class="card-body"><div class="table-responsive"><table class="table"><thead><tr><th>Nhân viên</th><th>Phòng ban</th><th>Thực lĩnh</th></tr></thead><tbody id="payroll-table-body"></tbody></table></div></div>
-                    </div>
-                </div>
-
             </div>
         </main>
     </div>
 
-    <!-- MODALS -->
+    <!-- MODAL THÊM/SỬA NHÂN SỰ -->
     <div class="modal" id="employee-modal">
         <div class="modal-box">
-            <div class="modal-header"><h3>Thêm Nhân Sự Mới</h3><button class="close-modal" onclick="closeModal('employee-modal')"><i class="fa-solid fa-xmark"></i></button></div>
-            <form onsubmit="saveEmployee(event)">
-                <div class="form-group"><label>Họ và tên</label><input type="text" id="emp-name" class="form-control" required></div>
-                <div class="form-group"><label>Email</label><input type="email" id="emp-email" class="form-control" required></div>
-                <div class="form-group"><label>Số điện thoại</label><input type="text" id="emp-phone" class="form-control" required></div>
-                <div class="form-group"><label>Phòng ban</label><select id="emp-dept" class="form-control"><option value="Kỹ thuật">Kỹ thuật</option><option value="Nhân sự">Nhân sự</option><option value="Kinh doanh">Kinh doanh</option></select></div>
-                <div class="form-group"><label>Chức vụ</label><input type="text" id="emp-position" class="form-control" required></div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Lưu thông tin</button>
+            <div class="modal-header">
+                <h3 id="modal-emp-title">Thêm Nhân Sự Mới</h3>
+                <button class="close-modal" data-close="employee-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-employee">
+                <input type="hidden" id="emp-id">
+                <div class="form-group"><label for="emp-name">Họ và tên</label><input type="text" id="emp-name" class="form-control" required></div>
+                <div class="form-group"><label for="emp-email">Email</label><input type="email" id="emp-email" class="form-control" required></div>
+                <div class="form-group"><label for="emp-phone">Điện thoại</label><input type="text" id="emp-phone" class="form-control" required></div>
+                <div class="form-group"><label for="emp-dept">Phòng ban</label><input type="text" id="emp-dept" class="form-control" required></div>
+                <div class="form-group"><label for="emp-role">Chức vụ</label><input type="text" id="emp-role" class="form-control" required></div>
+                <button type="submit" class="btn btn-primary">Lưu thông tin</button>
             </form>
         </div>
     </div>
 
-    <div class="modal" id="leave-modal">
-        <div class="modal-box">
-            <div class="modal-header"><h3>Tạo Đơn Nghỉ Phép</h3><button class="close-modal" onclick="closeModal('leave-modal')"><i class="fa-solid fa-xmark"></i></button></div>
-            <form onsubmit="submitLeave(event)">
-                <div class="form-group"><label>Lý do</label><input type="text" id="leave-reason" class="form-control" required></div>
-                <div class="form-group"><label>Từ ngày</label><input type="date" id="leave-from" class="form-control" value="2026-07-25" required></div>
-                <div class="form-group"><label>Đến ngày</label><input type="date" id="leave-to" class="form-control" value="2026-07-26" required></div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Gửi đơn</button>
-            </form>
-        </div>
-    </div>
-
+    <!-- MODAL ĐỔI MẬT KHẨU -->
     <div class="modal" id="password-modal">
         <div class="modal-box">
-            <div class="modal-header"><h3>Đổi Mật Khẩu</h3><button class="close-modal" onclick="closeModal('password-modal')"><i class="fa-solid fa-xmark"></i></button></div>
-            <form onsubmit="changePassword(event)">
-                <div class="form-group"><label>Mật khẩu cũ</label><input type="password" id="old-pass" class="form-control" required></div>
-                <div class="form-group"><label>Mật khẩu mới</label><input type="password" id="new-pass" class="form-control" required></div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Xác nhận</button>
+            <div class="modal-header">
+                <h3>Đổi Mật Khẩu Tài Khoản</h3>
+                <button class="close-modal" data-close="password-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-password">
+                <div class="form-group"><label for="old-pwd">Mật khẩu hiện tại</label><input type="password" id="old-pwd" class="form-control" required></div>
+                <div class="form-group"><label for="new-pwd">Mật khẩu mới</label><input type="password" id="new-pwd" class="form-control" required></div>
+                <div class="form-group"><label for="confirm-pwd">Xác nhận mật khẩu mới</label><input type="password" id="confirm-pwd" class="form-control" required></div>
+                <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT LOGIC -->
+    <!-- MODAL TẠO ĐƠN NGHỈ PHÉP -->
+    <div class="modal" id="leave-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Đăng Ký Đơn Nghỉ Phép</h3>
+                <button class="close-modal" data-close="leave-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-leave">
+                <div class="form-group"><label for="leave-reason">Lý do nghỉ</label><input type="text" id="leave-reason" class="form-control" placeholder="VD: Việc gia đình, ốm..." required></div>
+                <div class="form-group"><label for="leave-from">Từ ngày</label><input type="date" id="leave-from" class="form-control" required></div>
+                <div class="form-group"><label for="leave-to">Đến ngày</label><input type="date" id="leave-to" class="form-control" required></div>
+                <button type="submit" class="btn btn-primary">Gửi đơn phê duyệt</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM HỢP ĐỒNG -->
+    <div class="modal" id="contract-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Thêm Hợp Đồng Lao Động</h3>
+                <button class="close-modal" data-close="contract-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-contract">
+                <div class="form-group"><label for="contract-code">Mã Hợp Đồng</label><input type="text" id="contract-code" class="form-control" placeholder="HDLD-2026-XX" required></div>
+                <div class="form-group"><label for="contract-name">Tên nhân sự</label><input type="text" id="contract-name" class="form-control" required></div>
+                <div class="form-group"><label for="contract-type">Loại hợp đồng</label><input type="text" id="contract-type" class="form-control" value="Chính thức" required></div>
+                <div class="form-group"><label for="contract-date">Ngày hiệu lực</label><input type="date" id="contract-date" class="form-control" required></div>
+                <button type="submit" class="btn btn-primary">Lưu hợp đồng</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        let db = {
+        /**
+         * MOCK REST API CLIENT WITH FULL LOCAL STORAGE PERSISTENCE
+         */
+        class APIClient {
+            static async delay(ms = 100) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            static async login(username) {
+                await this.delay(100);
+                const mockToken = btoa(JSON.stringify({ user: username, exp: Date.now() + 3600000 }));
+                localStorage.setItem('jwt_token', mockToken);
+                return { success: true, token: mockToken };
+            }
+
+            static async getEmployees() {
+                await this.delay(100);
+                const data = localStorage.getItem('db_employees');
+                if (!data) {
+                    const initial = [
+                        { id: '1', name: 'Nguyễn Văn An', email: 'an.nguyen@company.com', phone: '0901234567', dept: 'Kỹ thuật', role: 'Head of Tech', avatar: 'https://i.pravatar.cc/150?img=68' },
+                        { id: '2', name: 'Trần Thị Bình', email: 'binh.tran@company.com', phone: '0912345678', dept: 'Nhân sự', role: 'HR Manager', avatar: 'https://i.pravatar.cc/150?img=47' },
+                        { id: '3', name: 'Lê Hoàng Cường', email: 'cuong.le@company.com', phone: '0923456789', dept: 'Kinh doanh', role: 'Sales Lead', avatar: 'https://i.pravatar.cc/150?img=12' },
+                        { id: '4', name: 'Phạm Minh Đức', email: 'duc.pham@company.com', phone: '0934567890', dept: 'Kỹ thuật', role: 'Senior Developer', avatar: 'https://i.pravatar.cc/150?img=13' }
+                    ];
+                    localStorage.setItem('db_employees', JSON.stringify(initial));
+                    return initial;
+                }
+                return JSON.parse(data);
+            }
+
+            static async saveEmployee(empData) {
+                await this.delay(100);
+                let employees = await this.getEmployees();
+                if (empData.id) {
+                    employees = employees.map(e => e.id === empData.id ? { ...e, ...empData } : e);
+                } else {
+                    empData.id = Date.now().toString();
+                    empData.avatar = `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`;
+                    employees.push(empData);
+                }
+                localStorage.setItem('db_employees', JSON.stringify(employees));
+                return empData;
+            }
+
+            static async deleteEmployee(id) {
+                await this.delay(100);
+                let employees = await this.getEmployees();
+                employees = employees.filter(e => e.id !== id);
+                localStorage.setItem('db_employees', JSON.stringify(employees));
+                return true;
+            }
+
+            static async getContracts() {
+                let data = localStorage.getItem('db_contracts');
+                if (!data) {
+                    data = JSON.stringify([
+                        { id: 'C01', name: 'Nguyễn Văn An', type: 'Không thời hạn', date: '2023-01-15', status: 'Hiệu lực' },
+                        { id: 'C02', name: 'Trần Thị Bình', type: 'Có thời hạn (2 năm)', date: '2024-05-10', status: 'Hiệu lực' }
+                    ]);
+                    localStorage.setItem('db_contracts', data);
+                }
+                return JSON.parse(data);
+            }
+
+            static async saveContract(c) {
+                let list = await this.getContracts();
+                list.push(c);
+                localStorage.setItem('db_contracts', JSON.stringify(list));
+            }
+
+            static async getKPIs() {
+                return [
+                    { name: 'Nguyễn Văn An', dept: 'Kỹ thuật', goal: 'Hoàn thành kiến trúc microservices', score: '95/100', rank: 'Xuất sắc' },
+                    { name: 'Trần Thị Bình', dept: 'Nhân sự', goal: 'Tuyển dụng đủ 15 nhân sự Q3', score: '90/100', rank: 'Giỏi' },
+                    { name: 'Lê Hoàng Cường', dept: 'Kinh doanh', goal: 'Đạt 120% chỉ tiêu doanh số', score: '88/100', rank: 'Giỏi' }
+                ];
+            }
+
+            static async getAttendance() {
+                let data = localStorage.getItem('db_attendance');
+                if (!data) {
+                    data = JSON.stringify([
+                        { date: '2026-07-24', name: 'Nguyễn Văn An', in: '08:00', out: '17:30', status: 'Đúng giờ' },
+                        { date: '2026-07-24', name: 'Trần Thị Bình', in: '08:15', out: '17:30', status: 'Đi muộn' },
+                        { date: '2026-07-24', name: 'Lê Hoàng Cường', in: '07:55', out: '17:30', status: 'Đúng giờ' }
+                    ]);
+                    localStorage.setItem('db_attendance', data);
+                }
+                return JSON.parse(data);
+            }
+
+            static async addAttendance(item) {
+                let list = await this.getAttendance();
+                list.unshift(item);
+                localStorage.setItem('db_attendance', JSON.stringify(list));
+            }
+
+            static async getLeaves() {
+                let data = localStorage.getItem('db_leaves');
+                if (!data) {
+                    data = JSON.stringify([
+                        { id: 'L1', name: 'Phạm Minh Đức', reason: 'Khám sức khỏe định kỳ', from: '2026-07-25', to: '2026-07-25', status: 'Chờ duyệt' },
+                        { id: 'L2', name: 'Đỗ Hải Yến', reason: 'Việc gia đình', from: '2026-07-28', to: '2026-07-29', status: 'Đã duyệt' }
+                    ]);
+                    localStorage.setItem('db_leaves', data);
+                }
+                return JSON.parse(data);
+            }
+
+            static async saveLeave(item) {
+                let list = await this.getLeaves();
+                list.push(item);
+                localStorage.setItem('db_leaves', JSON.stringify(list));
+            }
+
+            static async deleteLeave(id) {
+                let list = await this.getLeaves();
+                list = list.filter(l => l.id !== id);
+                localStorage.setItem('db_leaves', JSON.stringify(list));
+            }
+        }
+
+        const AppState = {
             currentUser: null,
-            employees: [
-                { id: 1, name: "Nguyễn Văn An", email: "an.nv@company.com", phone: "0901234567", dept: "Kỹ thuật", position: "Head of Tech", avatar: "https://i.pravatar.cc/150?img=11", password: "123", leaveDays: 12, workMode: "WFO (Tại văn phòng)" },
-                { id: 2, name: "Trần Thị Bình", email: "binh.tt@company.com", phone: "0912345678", dept: "Nhân sự", position: "HR Executive", avatar: "https://i.pravatar.cc/150?img=5", password: "123", leaveDays: 10, workMode: "Remote (Làm việc từ xa)" },
-                { id: 3, name: "Lê Hoàng Cường", email: "cuong.lh@company.com", phone: "0923456789", dept: "Kinh doanh", position: "Sales Leader", avatar: "https://i.pravatar.cc/150?img=12", password: "123", leaveDays: 14, workMode: "WFO (Tại văn phòng)" }
-            ],
-            documents: [
-                { id: 1, empId: 1, type: "Hợp đồng lao động", name: "HĐLĐ Không thời hạn - 01/HĐ", expiry: "2028-12-31" },
-                { id: 2, empId: 2, type: "Hợp đồng lao động", name: "HĐLĐ 1 Năm - 02/HĐ", expiry: "2026-08-10" }
-            ],
-            kpis: [
-                { id: 1, empId: 1, period: "Tháng 07/2026", progress: 9.5, quality: 9.0, rank: "Xuất sắc" }
-            ],
-            attendance: [{ empName: "Nguyễn Văn An", date: "2026-07-23", checkIn: "08:15", status: "Đúng giờ" }],
-            leaves: [{ empName: "Lê Hoàng Cường", reason: "Khám sức khỏe", from: "2026-07-25", to: "2026-07-25", status: "Chờ duyệt" }]
+            theme: localStorage.getItem('theme') || 'dark',
+            employees: [],
+            pagination: { currentPage: 1, pageSize: 4, totalPages: 1 },
+            charts: { deptChart: null, attendanceChart: null }
         };
 
-        function showToast(message, type = 'success') {
+        const MENU_CONFIG = [
+            { id: 'overview', icon: 'fa-chart-pie', label: 'Tổng quan' },
+            { id: 'employees', icon: 'fa-users', label: 'Nhân sự' },
+            { id: 'contracts', icon: 'fa-folder-open', label: 'Tài liệu HĐ' },
+            { id: 'kpi', icon: 'fa-star', label: 'Đánh giá KPI' },
+            { id: 'attendance', icon: 'fa-fingerprint', label: 'Chấm công' },
+            { id: 'leave', icon: 'fa-file-lines', label: 'Nghỉ phép' },
+            { id: 'payroll', icon: 'fa-money-bill-wave', label: 'Bảng lương' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            bindEvents();
+        });
+
+        function showToast(msg, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
+            toast.innerHTML = `<i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'circle-exclamation'}"></i> <span>${msg}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
 
+        function initTheme() {
+            if (AppState.theme === 'dark') document.body.classList.add('dark-mode');
+            else document.body.classList.remove('dark-mode');
+        }
+
         function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
+            AppState.theme = AppState.theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', AppState.theme);
+            initTheme();
+            renderCharts(); // Re-render charts for dark mode compatibility if needed
         }
 
-        function togglePasswordVisibility() {
-            const pwd = document.getElementById('login-password');
-            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+        function bindEvents() {
+            document.getElementById('btn-theme-login').addEventListener('click', toggleDarkMode);
+            document.getElementById('btn-theme-dash').addEventListener('click', toggleDarkMode);
+
+            document.getElementById('btn-toggle-pwd').addEventListener('click', () => {
+                const pwd = document.getElementById('login-password');
+                const icon = document.getElementById('eye-icon');
+                pwd.type = pwd.type === 'password' ? 'text' : 'password';
+                icon.className = pwd.type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+            });
+
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('login-user').value.trim();
+                await APIClient.login(username);
+
+                const isAdmin = username.toLowerCase() === 'admin';
+                AppState.currentUser = { 
+                    name: isAdmin ? 'Administrator' : username, 
+                    role: isAdmin ? 'admin' : 'employee', 
+                    avatar: 'https://i.pravatar.cc/150?img=68' 
+                };
+
+                // Apply RBAC Class on Body
+                if (isAdmin) document.body.classList.add('is-admin');
+                else document.body.classList.remove('is-admin');
+
+                document.getElementById('login-view').style.display = 'none';
+                document.getElementById('dashboard-view').style.display = 'flex';
+                setupDashboard();
+                showToast(`Đăng nhập thành công với quyền: ${isAdmin ? 'Quản trị viên' : 'Nhân viên'}`);
+            });
+
+            document.getElementById('user-profile-trigger').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('user-dropdown-menu').classList.toggle('show');
+            });
+
+            document.addEventListener('click', () => document.getElementById('user-dropdown-menu').classList.remove('show'));
+
+            document.getElementById('btn-logout').addEventListener('click', () => {
+                localStorage.removeItem('jwt_token');
+                AppState.currentUser = null;
+                document.body.classList.remove('is-admin');
+                document.getElementById('dashboard-view').style.display = 'none';
+                document.getElementById('login-view').style.display = 'flex';
+                showToast('Đã đăng xuất hệ thống!');
+            });
+
+            document.getElementById('btn-open-pwd-modal').addEventListener('click', () => {
+                document.getElementById('form-password').reset();
+                openModal('password-modal');
+            });
+
+            document.getElementById('form-password').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newPwd = document.getElementById('new-pwd').value;
+                const confirmPwd = document.getElementById('confirm-pwd').value;
+
+                if (newPwd !== confirmPwd) {
+                    showToast('Mật khẩu mới không khớp!', 'error');
+                    return;
+                }
+                if (newPwd.length < 6) {
+                    showToast('Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
+                    return;
+                }
+                showToast('Đổi mật khẩu thành công!');
+                closeModal('password-modal');
+            });
+
+            document.querySelectorAll('[data-close]').forEach(btn => {
+                btn.addEventListener('click', () => closeModal(btn.getAttribute('data-close')));
+            });
+
+            document.getElementById('btn-open-emp-modal').addEventListener('click', () => {
+                document.getElementById('form-employee').reset();
+                document.getElementById('emp-id').value = '';
+                openModal('employee-modal');
+            });
+
+            document.getElementById('form-employee').addEventListener('submit', handleEmployeeSubmit);
+            document.getElementById('search-emp').addEventListener('input', () => {
+                AppState.pagination.currentPage = 1;
+                renderEmployeesTable();
+            });
+
+            document.getElementById('btn-export-excel').addEventListener('click', exportToExcel);
+            document.getElementById('btn-export-payslip-pdf').addEventListener('click', exportPayslipPDF);
+
+            // Contracts
+            document.getElementById('btn-open-contract-modal').addEventListener('click', () => openModal('contract-modal'));
+            document.getElementById('form-contract').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await APIClient.saveContract({
+                    id: document.getElementById('contract-code').value,
+                    name: document.getElementById('contract-name').value,
+                    type: document.getElementById('contract-type').value,
+                    date: document.getElementById('contract-date').value,
+                    status: 'Hiệu lực'
+                });
+                showToast('Đã thêm hợp đồng mới!');
+                closeModal('contract-modal');
+                renderContracts();
+            });
+
+            // Attendance check-in
+            document.getElementById('btn-checkin').addEventListener('click', async () => {
+                const now = new Date();
+                const timeStr = now.toTimeString().slice(0,5);
+                await APIClient.addAttendance({
+                    date: now.toISOString().slice(0,10),
+                    name: AppState.currentUser.name,
+                    in: timeStr,
+                    out: '--:--',
+                    status: 'Đang làm việc'
+                });
+                showToast('Chấm công thành công!');
+                renderAttendance();
+                renderCharts();
+            });
+
+            // Leave modal
+            document.getElementById('btn-open-leave-modal').addEventListener('click', () => openModal('leave-modal'));
+            document.getElementById('form-leave').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await APIClient.saveLeave({
+                    id: 'L-' + Date.now().toString().slice(-4),
+                    name: AppState.currentUser.name,
+                    reason: document.getElementById('leave-reason').value,
+                    from: document.getElementById('leave-from').value,
+                    to: document.getElementById('leave-to').value,
+                    status: 'Chờ duyệt'
+                });
+                showToast('Đã gửi đơn nghỉ phép!');
+                closeModal('leave-modal');
+                renderLeaves();
+            });
         }
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById('login-user').value.trim();
-            const p = document.getElementById('login-password').value.trim();
+        async function setupDashboard() {
+            const isAdmin = AppState.currentUser.role === 'admin';
+            document.getElementById('display-username').innerText = AppState.currentUser.name;
+            document.getElementById('display-role').innerHTML = `${isAdmin ? 'Quản trị viên' : 'Nhân viên'} <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>`;
+            document.getElementById('header-avatar').src = AppState.currentUser.avatar;
 
-            if (u.toLowerCase() === 'admin' && p === 'admin') {
-                db.currentUser = { name: "Administrator", role: "admin", avatar: "https://i.pravatar.cc/150?img=68" };
-                initDashboard();
-                showToast("Đăng nhập quyền Quản trị viên thành công!");
-                return;
-            }
+            const menuList = document.getElementById('sidebar-menu-list');
+            menuList.innerHTML = '';
 
-            const emp = db.employees.find(item => item.name.toLowerCase() === u.toLowerCase() && item.password === p);
-            if (emp) {
-                db.currentUser = { id: emp.id, name: emp.name, role: "employee", avatar: emp.avatar, dept: emp.dept };
-                initDashboard();
-                showToast(`Chào mừng bạn quay trở lại, ${emp.name}!`);
-                return;
-            }
-            showToast("Sai tài khoản hoặc mật khẩu!", "error");
+            MENU_CONFIG.forEach((m, idx) => {
+                const li = document.createElement('li');
+                if (idx === 0) li.className = 'active';
+                li.innerHTML = `<a data-tab="${m.id}"><i class="fa-solid ${m.icon}"></i> <span>${m.label}</span></a>`;
+                li.querySelector('a').addEventListener('click', () => switchTab(m.id, li, m.label));
+                menuList.appendChild(li);
+            });
+
+            switchTab(MENU_CONFIG[0].id, menuList.querySelector('li'), MENU_CONFIG[0].label);
+            await refreshAllData();
         }
 
-        function handleLogout() {
-            db.currentUser = null;
-            document.getElementById('dashboard-view').style.display = 'none';
-            document.getElementById('login-view').style.display = 'flex';
-            showToast("Đã đăng xuất hệ thống an toàn.");
-        }
+        function switchTab(tabId, activeLi, labelText) {
+            document.querySelectorAll('#sidebar-menu-list li').forEach(li => li.classList.remove('active'));
+            if (activeLi) activeLi.classList.add('active');
+            if (labelText) document.getElementById('page-title').innerText = labelText;
 
-        function initDashboard() {
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('dashboard-view').style.display = 'flex';
-            document.getElementById('display-username').innerText = db.currentUser.name;
-            document.getElementById('display-role').innerHTML = (db.currentUser.role === 'admin' ? 'Quản trị viên' : 'Nhân sự ESS') + ' <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>';
-            document.getElementById('header-avatar').src = db.currentUser.avatar;
-
-            renderSidebarMenu();
-            renderAllData();
-
-            if (db.currentUser.role === 'admin') {
-                switchTab('tab-dashboard', 'Tổng quan hệ thống');
-            } else {
-                switchTab('tab-ess-profile', 'Cổng Thông Tin Tự Phục Vụ (ESS)');
-            }
-        }
-
-        function renderSidebarMenu() {
-            const list = document.getElementById('sidebar-menu-list');
-            if (db.currentUser.role === 'admin') {
-                list.innerHTML = `
-                    <li class="active"><a onclick="switchTab('tab-dashboard', 'Tổng quan hệ thống', this)"><i class="fa-solid fa-house"></i> Tổng quan</a></li>
-                    <li><a onclick="switchTab('tab-employees', 'Quản lý Nhân sự', this)"><i class="fa-solid fa-users"></i> Nhân sự</a></li>
-                    <li><a onclick="switchTab('tab-documents', 'Hợp đồng & Tài liệu', this)"><i class="fa-solid fa-folder-open"></i> Tài liệu HĐ</a></li>
-                    <li><a onclick="switchTab('tab-kpi', 'Đánh giá KPI', this)"><i class="fa-solid fa-star"></i> Đánh giá KPI</a></li>
-                    <li><a onclick="switchTab('tab-attendance', 'Chấm công', this)"><i class="fa-solid fa-fingerprint"></i> Chấm công</a></li>
-                    <li><a onclick="switchTab('tab-leave', 'Nghỉ phép', this)"><i class="fa-solid fa-file-lines"></i> Nghỉ phép</a></li>
-                    <li><a onclick="switchTab('tab-payroll', 'Lương thưởng', this)"><i class="fa-solid fa-money-bill-wave"></i> Bảng lương</a></li>
-                `;
-            } else {
-                // Menu dành riêng cho nhân viên theo chuẩn ESS
-                list.innerHTML = `
-                    <li class="active"><a onclick="switchTab('tab-ess-profile', 'Trang Cá Nhân ESS', this)"><i class="fa-solid fa-id-card"></i> Hồ sơ của tôi</a></li>
-                    <li><a onclick="switchTab('tab-ess-payslip', 'Phiếu Lương (Payslip)', this)"><i class="fa-solid fa-file-invoice-dollar"></i> Phiếu lương</a></li>
-                    <li><a onclick="switchTab('tab-attendance', 'Chấm công', this)"><i class="fa-solid fa-fingerprint"></i> Chấm công cá nhân</a></li>
-                    <li><a onclick="switchTab('tab-leave', 'Nghỉ phép', this)"><i class="fa-solid fa-file-lines"></i> Xin nghỉ phép</a></li>
-                `;
-            }
-        }
-
-        function switchTab(tabId, titleText, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('page-title').innerText = titleText;
-            if (element) {
-                document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
-                element.parentElement.classList.add('active');
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
+
+            if (tabId === 'overview') {
+                renderCharts();
             }
         }
 
-        function toggleUserDropdown(e) {
-            e.stopPropagation();
-            document.getElementById('user-dropdown-menu').classList.toggle('show');
-        }
+        async function refreshAllData() {
+            AppState.employees = await APIClient.getEmployees();
+            document.getElementById('stat-total-emp').innerText = AppState.employees.length;
+            
+            const contracts = await APIClient.getContracts();
+            document.getElementById('stat-total-contract').innerText = contracts.length;
 
-        function closeDropdownsOutside(e) {
-            if (!e.target.closest('.user-profile')) {
-                const menu = document.getElementById('user-dropdown-menu');
-                if (menu) menu.classList.remove('show');
-            }
-        }
+            const leaves = await APIClient.getLeaves();
+            document.getElementById('stat-pending-leave').innerText = leaves.filter(l => l.status === 'Chờ duyệt').length;
 
-        function renderAllData() {
-            renderStats();
-            renderEmployees();
-            renderDocuments();
-            renderKpi();
+            renderEmployeesTable();
+            renderContracts();
+            renderKPIs();
             renderAttendance();
             renderLeaves();
-            renderPayroll();
-            renderEssProfile();
+            renderCharts();
         }
 
-        function renderStats() {
-            if (db.currentUser.role !== 'admin') return;
-            document.getElementById('stat-total-emp').innerText = db.employees.length;
-            document.getElementById('stat-pending-leave').innerText = db.leaves.filter(l => l.status === "Chờ duyệt").length;
-        }
-
-        function renderEssProfile() {
-            if (db.currentUser.role === 'admin') return;
-            const emp = db.employees.find(e => e.id === db.currentUser.id);
-            if (!emp) return;
-
-            document.getElementById('ess-banner-name').innerText = emp.name;
-            document.getElementById('ess-banner-role').innerText = `${emp.position} - ${emp.dept}`;
-            document.getElementById('ess-banner-avatar').src = emp.avatar;
-            document.getElementById('ess-input-phone').value = emp.phone;
-            document.getElementById('ess-current-wfo').innerText = emp.workMode;
-        }
-
-        function updateMyProfile(e) {
-            e.preventDefault();
-            const phone = document.getElementById('ess-input-phone').value;
-            const emp = db.employees.find(e => e.id === db.currentUser.id);
-            if (emp) {
-                emp.phone = phone;
-                showToast("Cập nhật thông tin cá nhân thành công!");
-            }
-        }
-
-        function registerWorkMode(e) {
-            e.preventDefault();
-            const mode = document.getElementById('ess-work-mode').value;
-            const emp = db.employees.find(e => e.id === db.currentUser.id);
-            if (emp) {
-                emp.workMode = mode;
-                document.getElementById('ess-current-wfo').innerText = mode;
-                showToast(`Đã đăng ký thành công hình thức: ${mode}`);
-            }
-        }
-
-        function renderEmployees() {
+        function renderEmployeesTable() {
             const tbody = document.getElementById('employee-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = db.employees.map(emp => `
-                <tr>
-                    <td><div class="emp-cell-info"><img src="${emp.avatar}" class="emp-table-avatar"><span>${emp.name}</span></div></td>
-                    <td>${emp.email}</td><td>${emp.phone}</td><td><span class="badge badge-info">${emp.dept}</span></td><td>${emp.position}</td>
-                    <td><button class="btn-action btn-delete" onclick="deleteEmployee(${emp.id})"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>
-            `).join('');
+            const keyword = document.getElementById('search-emp').value.toLowerCase();
+            const isAdmin = AppState.currentUser.role === 'admin';
+            tbody.innerHTML = '';
+
+            const filtered = AppState.employees.filter(e => 
+                e.name.toLowerCase().includes(keyword) || 
+                e.email.toLowerCase().includes(keyword) ||
+                e.dept.toLowerCase().includes(keyword)
+            );
+
+            const totalItems = filtered.length;
+            AppState.pagination.totalPages = Math.ceil(totalItems / AppState.pagination.pageSize) || 1;
+            
+            if (AppState.pagination.currentPage > AppState.pagination.totalPages) {
+                AppState.pagination.currentPage = AppState.pagination.totalPages;
+            }
+
+            const startIdx = (AppState.pagination.currentPage - 1) * AppState.pagination.pageSize;
+            const endIdx = Math.min(startIdx + AppState.pagination.pageSize, totalItems);
+            const pageData = filtered.slice(startIdx, endIdx);
+
+            pageData.forEach(e => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><div class="emp-cell-info"><img src="${e.avatar}" class="emp-table-avatar"><strong>${e.name}</strong></div></td>
+                    <td>${e.email}</td>
+                    <td>${e.phone}</td>
+                    <td><span class="badge badge-info">${e.dept}</span></td>
+                    <td>${e.role}</td>
+                    <td class="admin-only">
+                        <div class="action-btns">
+                            <button class="btn-action" onclick="editEmployee('${e.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-action btn-delete" onclick="deleteEmployee('${e.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('pagination-info').innerText = totalItems > 0 
+                ? `Hiển thị ${startIdx + 1} - ${endIdx} trong số ${totalItems} bản ghi`
+                : 'Không tìm thấy dữ liệu';
+
+            renderPaginationControls();
         }
 
-        function openEmployeeModal() { document.getElementById('employee-modal').classList.add('open'); }
+        function renderPaginationControls() {
+            const container = document.getElementById('pagination-btns-container');
+            container.innerHTML = '';
 
-        function saveEmployee(e) {
+            for (let i = 1; i <= AppState.pagination.totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `btn-page ${i === AppState.pagination.currentPage ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.addEventListener('click', () => {
+                    AppState.pagination.currentPage = i;
+                    renderEmployeesTable();
+                });
+                container.appendChild(btn);
+            }
+        }
+
+        async function renderContracts() {
+            const tbody = document.getElementById('contract-table-body');
+            tbody.innerHTML = '';
+            const list = await APIClient.getContracts();
+            list.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${c.id}</strong></td>
+                    <td>${c.name}</td>
+                    <td>${c.type}</td>
+                    <td>${c.date}</td>
+                    <td><span class="badge badge-success">${c.status}</span></td>
+                    <td><button class="btn-action" onclick="showToast('Đang tải file...')"><i class="fa-solid fa-download"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function renderKPIs() {
+            const tbody = document.getElementById('kpi-table-body');
+            tbody.innerHTML = '';
+            const list = await APIClient.getKPIs();
+            list.forEach(k => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${k.name}</strong></td>
+                    <td><span class="badge badge-info">${k.dept}</span></td>
+                    <td>${k.goal}</td>
+                    <td><strong>${k.score}</strong></td>
+                    <td><span class="badge badge-success">${k.rank}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function renderAttendance() {
+            const tbody = document.getElementById('attendance-table-body');
+            tbody.innerHTML = '';
+            const list = await APIClient.getAttendance();
+            list.forEach(a => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${a.date}</td>
+                    <td><strong>${a.name}</strong></td>
+                    <td>${a.in}</td>
+                    <td>${a.out}</td>
+                    <td><span class="badge ${a.status === 'Đúng giờ' ? 'badge-success' : 'badge-warning'}">${a.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function renderLeaves() {
+            const tbody = document.getElementById('leave-table-body');
+            tbody.innerHTML = '';
+            const list = await APIClient.getLeaves();
+            const isAdmin = AppState.currentUser.role === 'admin';
+            list.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${l.name}</strong></td>
+                    <td>${l.reason}</td>
+                    <td>${l.from}</td>
+                    <td>${l.to}</td>
+                    <td><span class="badge ${l.status === 'Đã duyệt' ? 'badge-success' : 'badge-warning'}">${l.status}</span></td>
+                    <td>${isAdmin ? `<button class="btn-action btn-delete" onclick="cancelLeave('${l.id}')"><i class="fa-solid fa-xmark"></i></button>` : '--'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function renderCharts() {
+            const employees = await APIClient.getEmployees();
+            const attendance = await APIClient.getAttendance();
+
+            // 1. Department Distribution Chart
+            const deptCounts = {};
+            employees.forEach(e => { deptCounts[e.dept] = (deptCounts[e.dept] || 0) + 1; });
+
+            const ctxDept = document.getElementById('chart-dept')?.getContext('2d');
+            if (ctxDept) {
+                if (AppState.charts.deptChart) AppState.charts.deptChart.destroy();
+                AppState.charts.deptChart = new Chart(ctxDept, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(deptCounts),
+                        datasets: [{
+                            label: 'Số nhân sự',
+                            data: Object.values(deptCounts),
+                            backgroundColor: '#6366f1',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } } }
+                });
+            }
+
+            // 2. Attendance Status Pie Chart
+            const statusCounts = {};
+            attendance.forEach(a => { statusCounts[a.status] = (statusCounts[a.status] || 0) + 1; });
+
+            const ctxAttendance = document.getElementById('chart-attendance')?.getContext('2d');
+            if (ctxAttendance) {
+                if (AppState.charts.attendanceChart) AppState.charts.attendanceChart.destroy();
+                AppState.charts.attendanceChart = new Chart(ctxAttendance, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(statusCounts),
+                        datasets: [{
+                            data: Object.values(statusCounts),
+                            backgroundColor: ['#10b981', '#f59e0b', '#3b82f6']
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            }
+        }
+
+        window.cancelLeave = async function(id) {
+            await APIClient.deleteLeave(id);
+            showToast('Đã xóa đơn nghỉ phép!', 'error');
+            renderLeaves();
+        };
+
+        async function handleEmployeeSubmit(e) {
             e.preventDefault();
-            db.employees.push({
-                id: Date.now(),
+            const id = document.getElementById('emp-id').value;
+            const payload = {
+                id: id || null,
                 name: document.getElementById('emp-name').value,
                 email: document.getElementById('emp-email').value,
                 phone: document.getElementById('emp-phone').value,
                 dept: document.getElementById('emp-dept').value,
-                position: document.getElementById('emp-position').value,
-                avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`,
-                password: "123", leaveDays: 12, workMode: "WFO"
-            });
+                role: document.getElementById('emp-role').value
+            };
+
+            await APIClient.saveEmployee(payload);
+            showToast(id ? 'Đã cập nhật nhân sự!' : 'Đã thêm mới nhân sự!');
             closeModal('employee-modal');
-            showToast("Thêm nhân sự thành công!");
-            renderAllData();
+            await refreshAllData();
         }
 
-        function deleteEmployee(id) {
-            db.employees = db.employees.filter(e => e.id !== id);
-            showToast("Đã xóa nhân sự!");
-            renderAllData();
+        window.editEmployee = function(id) {
+            const emp = AppState.employees.find(e => e.id === id);
+            if (!emp) return;
+            document.getElementById('emp-id').value = emp.id;
+            document.getElementById('emp-name').value = emp.name;
+            document.getElementById('emp-email').value = emp.email;
+            document.getElementById('emp-phone').value = emp.phone;
+            document.getElementById('emp-dept').value = emp.dept;
+            document.getElementById('emp-role').value = emp.role;
+            openModal('employee-modal');
+        };
+
+        window.deleteEmployee = async function(id) {
+            if (confirm('Xác nhận xóa nhân sự này khỏi hệ thống?')) {
+                await APIClient.deleteEmployee(id);
+                showToast('Đã xóa nhân sự!', 'error');
+                await refreshAllData();
+            }
+        };
+
+        function exportToExcel() {
+            const exportData = AppState.employees.map(e => ({
+                "Mã NV": e.id,
+                "Họ và Tên": e.name,
+                "Email": e.email,
+                "Số Điện Thoại": e.phone,
+                "Phòng Ban": e.dept,
+                "Chức Vụ": e.role
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachNhanSu");
+            XLSX.writeFile(workbook, `HRMS_DanhSachNhanSu_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast('Đã xuất file Excel thành công!');
         }
 
-        function renderDocuments() {
-            const tbody = document.getElementById('document-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = db.documents.map(d => `
-                <tr><td>Nhân sự #${d.empId}</td><td>${d.type}</td><td>${d.name}</td><td>${d.expiry}</td><td><span class="badge badge-success">Hiệu lực</span></td></tr>
-            `).join('');
-        }
+        function exportPayslipPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-        function renderKpi() {
-            const tbody = document.getElementById('kpi-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = db.kpis.map(k => `
-                <tr><td>Nhân sự #${k.empId}</td><td>${k.period}</td><td>${k.progress}/10</td><td>${k.quality}/10</td><td><span class="badge badge-success">${k.rank}</span></td></tr>
-            `).join('');
-        }
+            doc.setFontSize(18);
+            doc.text("PHIẾU LƯƠNG NHÂN VIÊN", 14, 20);
+            
+            doc.setFontSize(11);
+            doc.text(`Nguoi nhan: ${AppState.currentUser ? AppState.currentUser.name : 'Nhan vien'}`, 14, 30);
+            doc.text(`Ky luong: Thang 07/2026`, 14, 37);
 
-        function renderAttendance() {
-            const tbody = document.getElementById('attendance-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = db.attendance.map(a => `
-                <tr><td>${a.empName}</td><td>${a.date}</td><td><span class="badge badge-success">${a.checkIn}</span></td><td><span class="badge badge-success">${a.status}</span></td></tr>
-            `).join('');
-        }
-
-        function openLeaveModal() { document.getElementById('leave-modal').classList.add('open'); }
-
-        function submitLeave(e) {
-            e.preventDefault();
-            db.leaves.push({
-                empName: db.currentUser.name,
-                reason: document.getElementById('leave-reason').value,
-                from: document.getElementById('leave-from').value,
-                to: document.getElementById('leave-to').value,
-                status: "Chờ duyệt"
+            doc.autoTable({
+                startY: 45,
+                head: [['Thanh phan', 'Gia tri (VND)']],
+                body: [
+                    ['Luong co ban', '18,000,000'],
+                    ['Phu cap cong viec', '2,500,000'],
+                    ['Thuong KPI', '3,500,000'],
+                    ['Tong thuc linh', '24,000,000']
+                ],
+                theme: 'grid',
+                headStyles: { fillColor: [99, 102, 241] }
             });
-            closeModal('leave-modal');
-            showToast("Gửi đơn nghỉ phép thành công!");
-            renderLeaves();
+
+            doc.save(`PhieuLuong_${AppState.currentUser ? AppState.currentUser.name : 'ESS'}_07_2026.pdf`);
+            showToast('Đã tải xuống file PDF Phiếu lương!');
         }
 
-        function renderLeaves() {
-            const tbody = document.getElementById('leave-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = db.leaves.map(l => `
-                <tr><td>${l.reason}</td><td>${l.from}</td><td>${l.to}</td><td><span class="badge badge-warning">${l.status}</span></td></tr>
-            `).join('');
-        }
-
-        function renderPayroll() {
-            const tbody = document.getElementById('payroll-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = db.employees.map(emp => `
-                <tr><td>${emp.name}</td><td>${emp.dept}</td><td><strong>13,500,000 VNĐ</strong></td></tr>
-            `).join('');
-        }
-
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-        function openPasswordModal(e) { e.stopPropagation(); document.getElementById('user-dropdown-menu').classList.remove('show'); document.getElementById('password-modal').classList.add('open'); }
-        function changePassword(e) { e.preventDefault(); closeModal('password-modal'); showToast("Đổi mật khẩu thành công!"); }
+        function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+        function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
     </script>
 </body>
 </html>
