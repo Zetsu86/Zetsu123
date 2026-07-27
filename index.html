@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRMS Enterprise Pro - Full RBAC & Analytics</title>
+    <title>HRMS Enterprise Pro - Full RBAC & Weekly Task Scheduler (Mon-Sat)</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
@@ -36,6 +36,10 @@
             --input-bg: #ffffff;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --transition: all 0.25s ease-in-out;
+            --shift-morning-bg: #e0f2fe;
+            --shift-morning-text: #0369a1;
+            --shift-afternoon-bg: #dcfce7;
+            --shift-afternoon-text: #15803d;
         }
 
         .dark-mode {
@@ -53,6 +57,10 @@
             --table-header: #0b0f19;
             --input-bg: #0b0f19;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --shift-morning-bg: #1e293b;
+            --shift-morning-text: #38bdf8;
+            --shift-afternoon-bg: #064e3b;
+            --shift-afternoon-text: #4ade80;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -89,6 +97,7 @@
         .btn-primary { background-color: var(--primary); color: white; width: 100%; }
         .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-success { background-color: var(--success); color: white; }
+        .btn-warning { background-color: var(--warning); color: white; }
 
         /* DASHBOARD VIEW */
         #dashboard-view { display: none; height: 100vh; overflow: hidden; }
@@ -144,6 +153,15 @@
         .card-header h2 { font-size: 1.1rem; font-weight: 600; }
         .card-body { padding: 1.5rem; }
 
+        /* SCHEDULE MATRIX STYLING (THỨ 2 -> THỨ 7) */
+        .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .schedule-table th, .schedule-table td { border: 1px solid var(--border-color); padding: 0.6rem; text-align: center; vertical-align: middle; }
+        .schedule-table th { background-color: var(--table-header); color: var(--text-muted); font-weight: 600; }
+        .schedule-cell-task { font-size: 0.78rem; padding: 0.4rem; border-radius: 0.35rem; margin-bottom: 0.2rem; font-weight: 500; display: block; text-align: center; }
+        .shift-morning { background-color: var(--shift-morning-bg); color: var(--shift-morning-text); }
+        .shift-afternoon { background-color: var(--shift-afternoon-bg); color: var(--shift-afternoon-text); }
+        .shift-label { font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem; }
+
         /* TABLES & PAGINATION */
         .table-responsive { width: 100%; overflow-x: auto; }
         .table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
@@ -154,6 +172,7 @@
         .badge-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
         .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
         .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
         .action-btns { display: flex; gap: 0.5rem; }
         .btn-action { width: 32px; height: 32px; border-radius: 0.375rem; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); }
@@ -178,7 +197,7 @@
         .close-modal { background: none; border: none; font-size: 1.25rem; color: var(--text-muted); cursor: pointer; }
 
         .search-filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .search-filter-bar input { flex: 1; padding: 0.6rem 1rem; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 0.5rem; font-size: 0.9rem; outline: none; }
+        .search-filter-bar input, .search-filter-bar select { flex: 1; padding: 0.6rem 1rem; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 0.5rem; font-size: 0.9rem; outline: none; }
         .emp-cell-info { display: flex; align-items: center; gap: 0.75rem; }
         .emp-table-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
 
@@ -263,19 +282,47 @@
                             <div class="stat-icon icon-blue"><i class="fa-solid fa-file-lines"></i></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-info"><h3>Ổn định</h3><p>RBAC & Charts Ready</p></div>
-                            <div class="stat-icon icon-green"><i class="fa-solid fa-chart-pie"></i></div>
+                            <div class="stat-info"><h3 id="stat-pending-tasks">0</h3><p>Công việc chưa gán</p></div>
+                            <div class="stat-icon icon-green"><i class="fa-solid fa-robot"></i></div>
                         </div>
                     </div>
 
-                    <!-- REAL-TIME CHARTS ROW -->
+                    <!-- LỊCH LÀM VIỆC TUẦN NÀY (THỨ 2 -> THỨ 7) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Lịch Làm Việc Tuần Này (Thứ 2 đến Thứ 7)</h2>
+                            <span class="badge badge-info">27/07/2026 - 01/08/2026</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="schedule-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 16%;">Nhân viên</th>
+                                            <th style="width: 14%;">Thứ 2 (27/07)</th>
+                                            <th style="width: 14%;">Thứ 3 (28/07)</th>
+                                            <th style="width: 14%;">Thứ 4 (29/07)</th>
+                                            <th style="width: 14%;">Thứ 5 (30/07)</th>
+                                            <th style="width: 14%;">Thứ 6 (31/07)</th>
+                                            <th style="width: 14%;">Thứ 7 (01/08)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="weekly-schedule-body">
+                                        <!-- Dynamic JS Injection -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REAL-TIME CHARTS ROW (THỨ 2 -> THỨ 7) -->
                     <div class="grid-2">
                         <div class="card">
                             <div class="card-header"><h2>Phân Bổ Nhân Sự Theo Phòng Ban</h2></div>
                             <div class="card-body"><canvas id="chart-dept" style="max-height: 280px;"></canvas></div>
                         </div>
                         <div class="card">
-                            <div class="card-header"><h2>Tỷ Lệ Trạng Thái Chấm Công</h2></div>
+                            <div class="card-header"><h2>Tỷ Lệ Chấm Công Trong Tuần (Thứ 2 - Thứ 7)</h2></div>
                             <div class="card-body"><canvas id="chart-attendance" style="max-height: 280px;"></canvas></div>
                         </div>
                     </div>
@@ -311,7 +358,30 @@
                     </div>
                 </div>
 
-                <!-- 3. TAB TÀI LIỆU HĐ -->
+                <!-- 3. TAB TỰ ĐỘNG PHÂN CÔNG -->
+                <div id="tab-tasks" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Quản Lý & Tự Động Phân Công Công Việc</h2>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-warning admin-only" id="btn-auto-assign" style="width: auto;"><i class="fa-solid fa-wand-magic-sparkles"></i> Tự Động Phân Công All</button>
+                                <button class="btn btn-primary admin-only" id="btn-open-task-modal" style="width: auto;"><i class="fa-solid fa-plus"></i> Tạo Việc Mới</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr><th>Tên công việc</th><th>Phòng ban yêu cầu</th><th>Độ ưu tiên</th><th>Người thực hiện</th><th>Trạng thái</th><th class="admin-only">Thao tác</th></tr>
+                                    </thead>
+                                    <tbody id="task-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. TAB TÀI LIỆU HĐ -->
                 <div id="tab-contracts" class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -331,7 +401,7 @@
                     </div>
                 </div>
 
-                <!-- 4. TAB ĐÁNH GIÁ KPI -->
+                <!-- 5. TAB ĐÁNH GIÁ KPI -->
                 <div id="tab-kpi" class="tab-content">
                     <div class="card">
                         <div class="card-header"><h2>Đánh Giá KPI & Hiệu Suất Kỳ Này</h2></div>
@@ -348,7 +418,7 @@
                     </div>
                 </div>
 
-                <!-- 5. TAB CHẤM CÔNG -->
+                <!-- 6. TAB CHẤM CÔNG -->
                 <div id="tab-attendance" class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -368,7 +438,7 @@
                     </div>
                 </div>
 
-                <!-- 6. TAB NGHỈ PHÉP -->
+                <!-- 7. TAB NGHỈ PHÉP -->
                 <div id="tab-leave" class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -388,7 +458,7 @@
                     </div>
                 </div>
 
-                <!-- 7. TAB BẢNG LƯƠNG -->
+                <!-- 8. TAB BẢNG LƯƠNG -->
                 <div id="tab-payroll" class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -435,6 +505,36 @@
                 <div class="form-group"><label for="emp-dept">Phòng ban</label><input type="text" id="emp-dept" class="form-control" required></div>
                 <div class="form-group"><label for="emp-role">Chức vụ</label><input type="text" id="emp-role" class="form-control" required></div>
                 <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM CÔNG VIỆC MỚI -->
+    <div class="modal" id="task-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Tạo Công Việc Cần Phân Công</h3>
+                <button class="close-modal" data-close="task-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="form-task">
+                <div class="form-group"><label for="task-title">Tên/Mô tả công việc</label><input type="text" id="task-title" class="form-control" required placeholder="VD: Nâng cấp Server DB"></div>
+                <div class="form-group">
+                    <label for="task-dept">Phòng ban phụ trách</label>
+                    <select id="task-dept" class="form-control" required>
+                        <option value="Kỹ thuật">Kỹ thuật</option>
+                        <option value="Nhân sự">Nhân sự</option>
+                        <option value="Kinh doanh">Kinh doanh</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-priority">Độ ưu tiên</label>
+                    <select id="task-priority" class="form-control" required>
+                        <option value="Cao">Cao</option>
+                        <option value="Trung bình" selected>Trung bình</option>
+                        <option value="Thấp">Thấp</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Tạo Công Việc</button>
             </form>
         </div>
     </div>
@@ -490,22 +590,41 @@
 
     <script>
         /**
-         * MOCK REST API CLIENT WITH FULL LOCAL STORAGE PERSISTENCE
+         * MOCK REST API CLIENT WITH FULL LOCAL STORAGE PERSISTENCE & AUTO ASSIGNMENT ENGINE
          */
         class APIClient {
-            static async delay(ms = 100) {
+            static async delay(ms = 80) {
                 return new Promise(resolve => setTimeout(resolve, ms));
             }
 
             static async login(username) {
-                await this.delay(100);
-                const mockToken = btoa(JSON.stringify({ user: username, exp: Date.now() + 3600000 }));
+                await this.delay();
+                const role = username.toLowerCase() === 'admin' ? 'SYSTEM ADMIN' : 'STAFF MEMBER';
+                const avatar = username.toLowerCase() === 'admin' 
+                    ? 'https://i.pravatar.cc/150?img=60' 
+                    : 'https://i.pravatar.cc/150?img=32';
+                
+                const userObj = { name: username, role: role, avatar: avatar };
+                const mockToken = btoa(JSON.stringify({ ...userObj, exp: Date.now() + 3600000 }));
+                
                 localStorage.setItem('jwt_token', mockToken);
-                return { success: true, token: mockToken };
+                localStorage.setItem('current_user', JSON.stringify(userObj));
+                return { success: true, user: userObj };
             }
 
+            static getCurrentUser() {
+                const user = localStorage.getItem('current_user');
+                return user ? JSON.parse(user) : { name: 'Khách', role: 'STAFF MEMBER', avatar: 'https://i.pravatar.cc/150?img=33' };
+            }
+
+            static logout() {
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('current_user');
+            }
+
+            // EMPLOYEES CRUD
             static async getEmployees() {
-                await this.delay(100);
+                await this.delay();
                 const data = localStorage.getItem('db_employees');
                 if (!data) {
                     const initial = [
@@ -520,608 +639,892 @@
                 return JSON.parse(data);
             }
 
-            static async saveEmployee(empData) {
-                await this.delay(100);
-                let employees = await this.getEmployees();
-                if (empData.id) {
-                    employees = employees.map(e => e.id === empData.id ? { ...e, ...empData } : e);
+            static async saveEmployee(employee) {
+                await this.delay();
+                const list = await this.getEmployees();
+                if (employee.id) {
+                    const idx = list.findIndex(item => item.id === employee.id);
+                    if (idx !== -1) {
+                        list[idx] = { ...list[idx], ...employee };
+                    }
                 } else {
-                    empData.id = Date.now().toString();
-                    empData.avatar = `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`;
-                    employees.push(empData);
+                    employee.id = Date.now().toString();
+                    employee.avatar = `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}`;
+                    list.unshift(employee);
                 }
-                localStorage.setItem('db_employees', JSON.stringify(employees));
-                return empData;
+                localStorage.setItem('db_employees', JSON.stringify(list));
+                return { success: true, data: list };
             }
 
             static async deleteEmployee(id) {
-                await this.delay(100);
-                let employees = await this.getEmployees();
-                employees = employees.filter(e => e.id !== id);
-                localStorage.setItem('db_employees', JSON.stringify(employees));
-                return true;
+                await this.delay();
+                let list = await this.getEmployees();
+                list = list.filter(item => item.id !== id);
+                localStorage.setItem('db_employees', JSON.stringify(list));
+                return { success: true };
             }
 
-            static async getContracts() {
-                let data = localStorage.getItem('db_contracts');
+            // AUTO ASSIGNMENT & TASKS ENGINE
+            static async getTasks() {
+                await this.delay();
+                const data = localStorage.getItem('db_tasks');
                 if (!data) {
-                    data = JSON.stringify([
-                        { id: 'C01', name: 'Nguyễn Văn An', type: 'Không thời hạn', date: '2023-01-15', status: 'Hiệu lực' },
-                        { id: 'C02', name: 'Trần Thị Bình', type: 'Có thời hạn (2 năm)', date: '2024-05-10', status: 'Hiệu lực' }
-                    ]);
-                    localStorage.setItem('db_contracts', data);
+                    const initial = [
+                        { id: 't1', title: 'Thiết kế sơ đồ DB HRMS v2', dept: 'Kỹ thuật', priority: 'Cao', assignedTo: 'Nguyễn Văn An', status: 'Đang làm' },
+                        { id: 't2', title: 'Tổ chức phỏng vấn Senior Dev', dept: 'Nhân sự', priority: 'Trung bình', assignedTo: 'Trần Thị Bình', status: 'Đang làm' },
+                        { id: 't3', title: 'Tối ưu hóa Query PostgreSQL', dept: 'Kỹ thuật', priority: 'Cao', assignedTo: 'Chưa phân công', status: 'Chưa gán' }
+                    ];
+                    localStorage.setItem('db_tasks', JSON.stringify(initial));
+                    return initial;
                 }
                 return JSON.parse(data);
             }
 
-            static async saveContract(c) {
-                let list = await this.getContracts();
-                list.push(c);
-                localStorage.setItem('db_contracts', JSON.stringify(list));
+            static async saveTask(task) {
+                await this.delay();
+                const list = await this.getTasks();
+                task.id = 't' + Date.now();
+                task.assignedTo = task.assignedTo || 'Chưa phân công';
+                task.status = task.assignedTo === 'Chưa phân công' ? 'Chưa gán' : 'Đang làm';
+                list.unshift(task);
+                localStorage.setItem('db_tasks', JSON.stringify(list));
+                return { success: true };
             }
 
-            static async getKPIs() {
+            static async autoAssignTasks() {
+                await this.delay();
+                const tasks = await this.getTasks();
+                const employees = await this.getEmployees();
+                let countAssigned = 0;
+
+                const workloadMap = {};
+                employees.forEach(e => workloadMap[e.name] = 0);
+                tasks.forEach(t => {
+                    if (t.assignedTo && t.assignedTo !== 'Chưa phân công' && workloadMap[t.assignedTo] !== undefined) {
+                        workloadMap[t.assignedTo]++;
+                    }
+                });
+
+                tasks.forEach(task => {
+                    if (task.status === 'Chưa gán' || task.assignedTo === 'Chưa phân công') {
+                        let candidates = employees.filter(e => e.dept.toLowerCase() === task.dept.toLowerCase());
+                        if (candidates.length === 0) candidates = employees;
+
+                        candidates.sort((a, b) => (workloadMap[a.name] || 0) - (workloadMap[b.name] || 0));
+                        const selectedCandidate = candidates[0];
+
+                        if (selectedCandidate) {
+                            task.assignedTo = selectedCandidate.name;
+                            task.status = 'Đang làm';
+                            workloadMap[selectedCandidate.name] = (workloadMap[selectedCandidate.name] || 0) + 1;
+                            countAssigned++;
+                        }
+                    }
+                });
+
+                localStorage.setItem('db_tasks', JSON.stringify(tasks));
+                return { success: true, count: countAssigned };
+            }
+
+            // WEEKLY SCHEDULE MATRIX DATA (THỨ 2 -> THỨ 7)
+            static async getWeeklySchedule() {
+                await this.delay();
                 return [
-                    { name: 'Nguyễn Văn An', dept: 'Kỹ thuật', goal: 'Hoàn thành kiến trúc microservices', score: '95/100', rank: 'Xuất sắc' },
-                    { name: 'Trần Thị Bình', dept: 'Nhân sự', goal: 'Tuyển dụng đủ 15 nhân sự Q3', score: '90/100', rank: 'Giỏi' },
-                    { name: 'Lê Hoàng Cường', dept: 'Kinh doanh', goal: 'Đạt 120% chỉ tiêu doanh số', score: '88/100', rank: 'Giỏi' }
+                    {
+                        name: 'Nguyễn Văn An', dept: 'Kỹ thuật', avatar: 'https://i.pravatar.cc/150?img=68',
+                        schedule: {
+                            mon: { morning: 'Kiểm tra thiết bị', afternoon: 'Bảo trì máy móc' },
+                            tue: { morning: 'Sửa chữa DB', afternoon: 'Bảo trì máy móc' },
+                            wed: { morning: 'Kiểm tra thiết bị', afternoon: 'Nâng cấp hệ thống' },
+                            thu: { morning: 'Sửa chữa DB', afternoon: 'Bảo trì máy móc' },
+                            fri: { morning: 'Kiểm tra thiết bị', afternoon: 'Báo cáo kỹ thuật' },
+                            sat: { morning: 'Dự phòng/Trực', afternoon: 'Dự phòng/Trực' }
+                        }
+                    },
+                    {
+                        name: 'Trần Thị Bình', dept: 'Nhân sự', avatar: 'https://i.pravatar.cc/150?img=47',
+                        schedule: {
+                            mon: { morning: 'Tư vấn KH', afternoon: 'Chăm sóc KH' },
+                            tue: { morning: 'Tư vấn KH', afternoon: 'Báo giá' },
+                            wed: { morning: 'Tư vấn KH', afternoon: 'Chăm sóc KH' },
+                            thu: { morning: 'Báo giá', afternoon: 'Chăm sóc KH' },
+                            fri: { morning: 'Tư vấn KH', afternoon: 'Báo cáo KD' },
+                            sat: { morning: 'Tổng kết tuần', afternoon: 'Nghỉ' }
+                        }
+                    },
+                    {
+                        name: 'Lê Hoàng Cường', dept: 'Kinh doanh', avatar: 'https://i.pravatar.cc/150?img=12',
+                        schedule: {
+                            mon: { morning: 'Gặp đối tác', afternoon: 'Chăm sóc KH' },
+                            tue: { morning: 'Báo giá hợp đồng', afternoon: 'Tư vấn' },
+                            wed: { morning: 'Gặp đối tác', afternoon: 'Đi thị trường' },
+                            thu: { morning: 'Báo giá hợp đồng', afternoon: 'Tư vấn' },
+                            fri: { morning: 'Chăm sóc KH', afternoon: 'Báo cáo doanh số' },
+                            sat: { morning: 'Trực hotline', afternoon: 'Nghỉ' }
+                        }
+                    },
+                    {
+                        name: 'Phạm Minh Đức', dept: 'Kỹ thuật', avatar: 'https://i.pravatar.cc/150?img=13',
+                        schedule: {
+                            mon: { morning: 'Hỗ trợ IT', afternoon: 'Quản trị mạng' },
+                            tue: { morning: 'Bảo trì Server', afternoon: 'Backup dữ liệu' },
+                            wed: { morning: 'Hỗ trợ IT', afternoon: 'Quản trị mạng' },
+                            thu: { morning: 'Bảo trì Server', afternoon: 'Backup dữ liệu' },
+                            fri: { morning: 'Hỗ trợ IT', afternoon: 'Báo cáo IT' },
+                            sat: { morning: 'Kiểm tra Server', afternoon: 'Trực kỹ thuật' }
+                        }
+                    }
                 ];
             }
 
+            // CONTRACTS CRUD
+            static async getContracts() {
+                await this.delay();
+                const data = localStorage.getItem('db_contracts');
+                if (!data) {
+                    const initial = [
+                        { id: '1', code: 'HDLD-2026-01', name: 'Nguyễn Văn An', type: 'Chính thức', date: '2026-01-15', status: 'Hiệu lực' },
+                        { id: '2', code: 'HDLD-2026-02', name: 'Trần Thị Bình', type: 'Chính thức', date: '2026-02-01', status: 'Hiệu lực' },
+                        { id: '3', code: 'HDLD-2026-03', name: 'Lê Hoàng Cường', type: 'Thử việc', date: '2026-06-10', status: 'Hiệu lực' }
+                    ];
+                    localStorage.setItem('db_contracts', JSON.stringify(initial));
+                    return initial;
+                }
+                return JSON.parse(data);
+            }
+
+            static async saveContract(contract) {
+                await this.delay();
+                const list = await this.getContracts();
+                contract.id = Date.now().toString();
+                contract.status = 'Hiệu lực';
+                list.unshift(contract);
+                localStorage.setItem('db_contracts', JSON.stringify(list));
+                return { success: true };
+            }
+
+            // ATTENDANCE MANAGEMENT (THỨ 2 -> THỨ 7)
             static async getAttendance() {
-                let data = localStorage.getItem('db_attendance');
+                await this.delay();
+                const data = localStorage.getItem('db_attendance');
                 if (!data) {
-                    data = JSON.stringify([
-                        { date: '2026-07-24', name: 'Nguyễn Văn An', in: '08:00', out: '17:30', status: 'Đúng giờ' },
-                        { date: '2026-07-24', name: 'Trần Thị Bình', in: '08:15', out: '17:30', status: 'Đi muộn' },
-                        { date: '2026-07-24', name: 'Lê Hoàng Cường', in: '07:55', out: '17:30', status: 'Đúng giờ' }
-                    ]);
-                    localStorage.setItem('db_attendance', data);
+                    const initial = [
+                        { id: '1', date: '2026-07-27', name: 'Nguyễn Văn An', in: '08:00', out: '17:30', status: 'Đúng giờ' },
+                        { id: '2', date: '2026-07-27', name: 'Trần Thị Bình', in: '08:15', out: '17:30', status: 'Đi muộn' },
+                        { id: '3', date: '2026-07-27', name: 'Lê Hoàng Cường', in: '07:55', out: '17:35', status: 'Đúng giờ' }
+                    ];
+                    localStorage.setItem('db_attendance', JSON.stringify(initial));
+                    return initial;
                 }
                 return JSON.parse(data);
             }
 
-            static async addAttendance(item) {
-                let list = await this.getAttendance();
-                list.unshift(item);
+            static async recordCheckin(username) {
+                await this.delay();
+                const list = await this.getAttendance();
+                const today = new Date().toISOString().split('T')[0];
+                const now = new Date();
+                const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                
+                const existing = list.find(a => a.date === today && a.name === username);
+                if (existing) {
+                    existing.out = timeStr;
+                } else {
+                    const hour = now.getHours();
+                    const status = (hour > 8 || (hour === 8 && now.getMinutes() > 15)) ? 'Đi muộn' : 'Đúng giờ';
+                    list.unshift({
+                        id: Date.now().toString(),
+                        date: today,
+                        name: username,
+                        in: timeStr,
+                        out: '--:--',
+                        status: status
+                    });
+                }
                 localStorage.setItem('db_attendance', JSON.stringify(list));
+                return { success: true };
             }
 
+            // LEAVE MANAGEMENT
             static async getLeaves() {
-                let data = localStorage.getItem('db_leaves');
+                await this.delay();
+                const data = localStorage.getItem('db_leaves');
                 if (!data) {
-                    data = JSON.stringify([
-                        { id: 'L1', name: 'Phạm Minh Đức', reason: 'Khám sức khỏe định kỳ', from: '2026-07-25', to: '2026-07-25', status: 'Chờ duyệt' },
-                        { id: 'L2', name: 'Đỗ Hải Yến', reason: 'Việc gia đình', from: '2026-07-28', to: '2026-07-29', status: 'Đã duyệt' }
-                    ]);
-                    localStorage.setItem('db_leaves', data);
+                    const initial = [
+                        { id: '1', name: 'Phạm Minh Đức', reason: 'Nghỉ phép năm', from: '2026-07-28', to: '2026-07-29', status: 'Chờ duyệt' },
+                        { id: '2', name: 'Lê Hoàng Cường', reason: 'Ốm đau có xác nhận', from: '2026-07-20', to: '2026-07-21', status: 'Đã duyệt' }
+                    ];
+                    localStorage.setItem('db_leaves', JSON.stringify(initial));
+                    return initial;
                 }
                 return JSON.parse(data);
             }
 
-            static async saveLeave(item) {
-                let list = await this.getLeaves();
-                list.push(item);
+            static async saveLeave(leave) {
+                await this.delay();
+                const list = await this.getLeaves();
+                leave.id = Date.now().toString();
+                leave.status = 'Chờ duyệt';
+                list.unshift(leave);
                 localStorage.setItem('db_leaves', JSON.stringify(list));
+                return { success: true };
             }
 
-            static async deleteLeave(id) {
-                let list = await this.getLeaves();
-                list = list.filter(l => l.id !== id);
+            static async updateLeaveStatus(id, status) {
+                await this.delay();
+                const list = await this.getLeaves();
+                const leave = list.find(l => l.id === id);
+                if (leave) leave.status = status;
                 localStorage.setItem('db_leaves', JSON.stringify(list));
+                return { success: true };
+            }
+
+            // KPI DATA
+            static async getKPIs() {
+                await this.delay();
+                return [
+                    { name: 'Nguyễn Văn An', dept: 'Kỹ thuật', goal: 'Hoàn thành Hệ thống HRMS', score: '95/100', rank: 'Xuất sắc' },
+                    { name: 'Trần Thị Bình', dept: 'Nhân sự', goal: 'Tuyển dụng 10 Dev Senior', score: '88/100', rank: 'Tốt' },
+                    { name: 'Lê Hoàng Cường', dept: 'Kinh doanh', goal: 'Đạt doanh số Q2', score: '92/100', rank: 'Xuất sắc' },
+                    { name: 'Phạm Minh Đức', dept: 'Kỹ thuật', goal: 'Tối ưu hóa DB & Security', score: '90/100', rank: 'Tốt' }
+                ];
             }
         }
 
-        const AppState = {
-            currentUser: null,
-            theme: localStorage.getItem('theme') || 'dark',
-            employees: [],
-            pagination: { currentPage: 1, pageSize: 4, totalPages: 1 },
-            charts: { deptChart: null, attendanceChart: null }
-        };
+        /**
+         * UI CONTROLLER & APP STATE MANAGEMENT
+         */
+        class HRMSApp {
+            constructor() {
+                this.currentUser = null;
+                this.employees = [];
+                this.currentPage = 1;
+                this.pageSize = 5;
+                this.charts = {};
 
-        const MENU_CONFIG = [
-            { id: 'overview', icon: 'fa-chart-pie', label: 'Tổng quan' },
-            { id: 'employees', icon: 'fa-users', label: 'Nhân sự' },
-            { id: 'contracts', icon: 'fa-folder-open', label: 'Tài liệu HĐ' },
-            { id: 'kpi', icon: 'fa-star', label: 'Đánh giá KPI' },
-            { id: 'attendance', icon: 'fa-fingerprint', label: 'Chấm công' },
-            { id: 'leave', icon: 'fa-file-lines', label: 'Nghỉ phép' },
-            { id: 'payroll', icon: 'fa-money-bill-wave', label: 'Bảng lương' }
-        ];
+                this.initEvents();
+                this.checkAutoLogin();
+            }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            bindEvents();
-        });
+            escapeHTML(str) {
+                if (!str) return '';
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
 
-        function showToast(msg, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'circle-exclamation'}"></i> <span>${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                const icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-circle-exclamation' : 'fa-info-circle');
+                toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${this.escapeHTML(message)}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 3500);
+            }
 
-        function initTheme() {
-            if (AppState.theme === 'dark') document.body.classList.add('dark-mode');
-            else document.body.classList.remove('dark-mode');
-        }
+            initEvents() {
+                document.getElementById('btn-toggle-pwd').addEventListener('click', () => {
+                    const pwdInput = document.getElementById('login-password');
+                    const eyeIcon = document.getElementById('eye-icon');
+                    if (pwdInput.type === 'password') {
+                        pwdInput.type = 'text';
+                        eyeIcon.className = 'fa-solid fa-eye-slash';
+                    } else {
+                        pwdInput.type = 'password';
+                        eyeIcon.className = 'fa-solid fa-eye';
+                    }
+                });
 
-        function toggleDarkMode() {
-            AppState.theme = AppState.theme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('theme', AppState.theme);
-            initTheme();
-            renderCharts(); // Re-render charts for dark mode compatibility if needed
-        }
-
-        function bindEvents() {
-            document.getElementById('btn-theme-login').addEventListener('click', toggleDarkMode);
-            document.getElementById('btn-theme-dash').addEventListener('click', toggleDarkMode);
-
-            document.getElementById('btn-toggle-pwd').addEventListener('click', () => {
-                const pwd = document.getElementById('login-password');
-                const icon = document.getElementById('eye-icon');
-                pwd.type = pwd.type === 'password' ? 'text' : 'password';
-                icon.className = pwd.type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
-            });
-
-            document.getElementById('login-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const username = document.getElementById('login-user').value.trim();
-                await APIClient.login(username);
-
-                const isAdmin = username.toLowerCase() === 'admin';
-                AppState.currentUser = { 
-                    name: isAdmin ? 'Administrator' : username, 
-                    role: isAdmin ? 'admin' : 'employee', 
-                    avatar: 'https://i.pravatar.cc/150?img=68' 
+                const toggleTheme = () => {
+                    document.body.classList.toggle('dark-mode');
+                    const isDark = document.body.classList.contains('dark-mode');
+                    const icons = [document.querySelector('#btn-theme-login i'), document.querySelector('#btn-theme-dash i')];
+                    icons.forEach(icon => {
+                        if (icon) icon.className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                    });
+                    if (this.currentUser) this.renderCharts();
                 };
+                document.getElementById('btn-theme-login').addEventListener('click', toggleTheme);
+                document.getElementById('btn-theme-dash').addEventListener('click', toggleTheme);
 
-                // Apply RBAC Class on Body
-                if (isAdmin) document.body.classList.add('is-admin');
-                else document.body.classList.remove('is-admin');
+                const userProfileTrigger = document.getElementById('user-profile-trigger');
+                const userDropdownMenu = document.getElementById('user-dropdown-menu');
+                userProfileTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdownMenu.classList.toggle('show');
+                });
+                document.addEventListener('click', () => userDropdownMenu.classList.remove('show'));
+
+                document.getElementById('login-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('login-user').value.trim();
+                    if (!username) return;
+
+                    const res = await APIClient.login(username);
+                    if (res.success) {
+                        this.showToast(`Chào mừng ${username} đã quay trở lại!`, 'success');
+                        this.onLoginSuccess(res.user);
+                    }
+                });
+
+                document.getElementById('btn-logout').addEventListener('click', () => {
+                    APIClient.logout();
+                    this.currentUser = null;
+                    document.getElementById('dashboard-view').style.display = 'none';
+                    document.getElementById('login-view').style.display = 'flex';
+                    this.showToast('Đã đăng xuất hệ thống', 'info');
+                });
+
+                document.querySelectorAll('.close-modal').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetModalId = btn.getAttribute('data-close');
+                        document.getElementById(targetModalId).classList.remove('open');
+                    });
+                });
+
+                document.getElementById('search-emp').addEventListener('input', () => {
+                    this.currentPage = 1;
+                    this.renderEmployeeTable();
+                });
+
+                // Open Modals
+                document.getElementById('btn-open-emp-modal').addEventListener('click', () => {
+                    document.getElementById('form-employee').reset();
+                    document.getElementById('emp-id').value = '';
+                    document.getElementById('modal-emp-title').textContent = 'Thêm Nhân Sự Mới';
+                    document.getElementById('employee-modal').classList.add('open');
+                });
+
+                document.getElementById('btn-open-task-modal').addEventListener('click', () => {
+                    document.getElementById('form-task').reset();
+                    document.getElementById('task-modal').classList.add('open');
+                });
+
+                document.getElementById('btn-open-contract-modal').addEventListener('click', () => {
+                    document.getElementById('form-contract').reset();
+                    document.getElementById('contract-modal').classList.add('open');
+                });
+
+                document.getElementById('btn-open-leave-modal').addEventListener('click', () => {
+                    document.getElementById('form-leave').reset();
+                    document.getElementById('leave-modal').classList.add('open');
+                });
+
+                document.getElementById('btn-open-pwd-modal').addEventListener('click', () => {
+                    document.getElementById('form-password').reset();
+                    document.getElementById('password-modal').classList.add('open');
+                });
+
+                // Auto Assign Trigger Event
+                document.getElementById('btn-auto-assign').addEventListener('click', async () => {
+                    const res = await APIClient.autoAssignTasks();
+                    if (res.count > 0) {
+                        this.showToast(`Hệ thống đã tự động phân công thành công ${res.count} công việc!`, 'success');
+                    } else {
+                        this.showToast('Không có công việc nào cần tự động phân công.', 'info');
+                    }
+                    await this.loadAllData();
+                });
+
+                // Form Submit Handling
+                document.getElementById('form-employee').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empData = {
+                        id: document.getElementById('emp-id').value,
+                        name: document.getElementById('emp-name').value.trim(),
+                        email: document.getElementById('emp-email').value.trim(),
+                        phone: document.getElementById('emp-phone').value.trim(),
+                        dept: document.getElementById('emp-dept').value.trim(),
+                        role: document.getElementById('emp-role').value.trim()
+                    };
+                    await APIClient.saveEmployee(empData);
+                    document.getElementById('employee-modal').classList.remove('open');
+                    this.showToast('Lưu thông tin nhân sự thành công!', 'success');
+                    await this.loadAllData();
+                });
+
+                document.getElementById('form-task').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const taskData = {
+                        title: document.getElementById('task-title').value.trim(),
+                        dept: document.getElementById('task-dept').value,
+                        priority: document.getElementById('task-priority').value
+                    };
+                    await APIClient.saveTask(taskData);
+                    document.getElementById('task-modal').classList.remove('open');
+                    this.showToast('Đã tạo công việc mới!', 'success');
+                    await this.loadAllData();
+                });
+
+                document.getElementById('form-contract').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const contractData = {
+                        code: document.getElementById('contract-code').value.trim(),
+                        name: document.getElementById('contract-name').value.trim(),
+                        type: document.getElementById('contract-type').value.trim(),
+                        date: document.getElementById('contract-date').value
+                    };
+                    await APIClient.saveContract(contractData);
+                    document.getElementById('contract-modal').classList.remove('open');
+                    this.showToast('Thêm hợp đồng lao động mới thành công!', 'success');
+                    await this.loadAllData();
+                });
+
+                document.getElementById('form-leave').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const leaveData = {
+                        name: this.currentUser.name,
+                        reason: document.getElementById('leave-reason').value.trim(),
+                        from: document.getElementById('leave-from').value,
+                        to: document.getElementById('leave-to').value
+                    };
+                    await APIClient.saveLeave(leaveData);
+                    document.getElementById('leave-modal').classList.remove('open');
+                    this.showToast('Tạo đơn nghỉ phép thành công!', 'success');
+                    await this.loadAllData();
+                });
+
+                document.getElementById('form-password').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newPwd = document.getElementById('new-pwd').value;
+                    const confirmPwd = document.getElementById('confirm-pwd').value;
+
+                    if (newPwd !== confirmPwd) {
+                        this.showToast('Mật khẩu xác nhận không khớp!', 'error');
+                        return;
+                    }
+                    document.getElementById('password-modal').classList.remove('open');
+                    this.showToast('Đổi mật khẩu thành công!', 'success');
+                });
+
+                document.getElementById('btn-checkin').addEventListener('click', async () => {
+                    await APIClient.recordCheckin(this.currentUser.name);
+                    this.showToast('Ghi nhận thông tin Check-in/Out thành công!', 'success');
+                    await this.loadAllData();
+                });
+
+                document.getElementById('btn-export-excel').addEventListener('click', () => {
+                    if (typeof XLSX === 'undefined') {
+                        this.showToast('Thư viện Excel chưa được tải xong!', 'error');
+                        return;
+                    }
+                    const ws = XLSX.utils.json_to_sheet(this.employees);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "NhanSu");
+                    XLSX.writeFile(wb, "Danh_Sach_Nhan_Su_HRMS.xlsx");
+                    this.showToast('Đã xuất file Excel thành công!', 'success');
+                });
+
+                document.getElementById('btn-export-payslip-pdf').addEventListener('click', () => {
+                    if (!window.jspdf) {
+                        this.showToast('Thư viện PDF chưa được tải xong!', 'error');
+                        return;
+                    }
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    doc.setFontSize(16);
+                    doc.text("PHIEU LUONG NHAN VIEN - HRMS PRO", 20, 20);
+                    doc.setFontSize(12);
+                    doc.text(`Nhan vien: ${this.currentUser.name}`, 20, 32);
+                    doc.text(`Ky luong: Thang 07/2026`, 20, 40);
+
+                    doc.autoTable({
+                        startY: 50,
+                        head: [['Muc', 'So tien (VND)']],
+                        body: [
+                            ['Luong co ban', '18,000,000'],
+                            ['Phu cap', '2,500,000'],
+                            ['Thuong KPI', '3,500,000'],
+                            ['Thuc linh', '24,000,000']
+                        ]
+                    });
+
+                    doc.save(`Phieu_Luong_${this.currentUser.name}_07_2026.pdf`);
+                    this.showToast('Đã xuất file PDF phiếu lương thành công!', 'success');
+                });
+            }
+
+            checkAutoLogin() {
+                const user = APIClient.getCurrentUser();
+                const token = localStorage.getItem('jwt_token');
+                if (token && user) {
+                    this.onLoginSuccess(user);
+                }
+            }
+
+            onLoginSuccess(user) {
+                this.currentUser = user;
+                
+                document.getElementById('display-username').textContent = user.name;
+                document.getElementById('display-role').innerHTML = `${this.escapeHTML(user.role)} <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>`;
+                document.getElementById('header-avatar').src = user.avatar;
+
+                if (user.role === 'SYSTEM ADMIN') {
+                    document.body.classList.add('is-admin');
+                } else {
+                    document.body.classList.remove('is-admin');
+                }
+
+                this.renderSidebar();
 
                 document.getElementById('login-view').style.display = 'none';
                 document.getElementById('dashboard-view').style.display = 'flex';
-                setupDashboard();
-                showToast(`Đăng nhập thành công với quyền: ${isAdmin ? 'Quản trị viên' : 'Nhân viên'}`);
-            });
 
-            document.getElementById('user-profile-trigger').addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.getElementById('user-dropdown-menu').classList.toggle('show');
-            });
+                this.loadAllData();
+            }
 
-            document.addEventListener('click', () => document.getElementById('user-dropdown-menu').classList.remove('show'));
+            renderSidebar() {
+                const menuList = document.getElementById('sidebar-menu-list');
+                const menuItems = [
+                    { id: 'tab-overview', icon: 'fa-chart-pie', label: 'Tổng quan' },
+                    { id: 'tab-employees', icon: 'fa-users', label: 'Quản lý Nhân sự' },
+                    { id: 'tab-tasks', icon: 'fa-list-check', label: 'Phân Công Công Việc' },
+                    { id: 'tab-contracts', icon: 'fa-file-contract', label: 'Tài liệu & Hợp đồng' },
+                    { id: 'tab-kpi', icon: 'fa-award', label: 'Đánh giá KPI' },
+                    { id: 'tab-attendance', icon: 'fa-clock', label: 'Chấm công' },
+                    { id: 'tab-leave', icon: 'fa-calendar-minus', label: 'Quản lý Nghỉ phép' },
+                    { id: 'tab-payroll', icon: 'fa-wallet', label: 'Bảng lương' }
+                ];
 
-            document.getElementById('btn-logout').addEventListener('click', () => {
-                localStorage.removeItem('jwt_token');
-                AppState.currentUser = null;
-                document.body.classList.remove('is-admin');
-                document.getElementById('dashboard-view').style.display = 'none';
-                document.getElementById('login-view').style.display = 'flex';
-                showToast('Đã đăng xuất hệ thống!');
-            });
+                menuList.innerHTML = menuItems.map((item, index) => `
+                    <li class="${index === 0 ? 'active' : ''}">
+                        <a data-tab="${item.id}">
+                            <i class="fa-solid ${item.icon}"></i>
+                            <span>${item.label}</span>
+                        </a>
+                    </li>
+                `).join('');
 
-            document.getElementById('btn-open-pwd-modal').addEventListener('click', () => {
-                document.getElementById('form-password').reset();
-                openModal('password-modal');
-            });
+                menuList.querySelectorAll('a').forEach(a => {
+                    a.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetTab = a.getAttribute('data-tab');
+                        
+                        menuList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                        a.parentElement.classList.add('active');
 
-            document.getElementById('form-password').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const newPwd = document.getElementById('new-pwd').value;
-                const confirmPwd = document.getElementById('confirm-pwd').value;
+                        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                        document.getElementById(targetTab).classList.add('active');
 
-                if (newPwd !== confirmPwd) {
-                    showToast('Mật khẩu mới không khớp!', 'error');
+                        document.getElementById('page-title').textContent = a.querySelector('span').textContent;
+
+                        if (targetTab === 'tab-overview') {
+                            this.renderCharts();
+                        }
+                    });
+                });
+            }
+
+            async loadAllData() {
+                this.employees = await APIClient.getEmployees();
+                const contracts = await APIClient.getContracts();
+                const leaves = await APIClient.getLeaves();
+                const attendance = await APIClient.getAttendance();
+                const kpis = await APIClient.getKPIs();
+                const tasks = await APIClient.getTasks();
+                const schedule = await APIClient.getWeeklySchedule();
+
+                // Stats Update
+                document.getElementById('stat-total-emp').textContent = this.employees.length;
+                document.getElementById('stat-total-contract').textContent = contracts.filter(c => c.status === 'Hiệu lực').length;
+                document.getElementById('stat-pending-leave').textContent = leaves.filter(l => l.status === 'Chờ duyệt').length;
+                document.getElementById('stat-pending-tasks').textContent = tasks.filter(t => t.status === 'Chưa gán').length;
+
+                // Tables Render
+                this.renderWeeklySchedule(schedule);
+                this.renderEmployeeTable();
+                this.renderTasksTable(tasks);
+                this.renderContractsTable(contracts);
+                this.renderLeavesTable(leaves);
+                this.renderAttendanceTable(attendance);
+                this.renderKPITable(kpis);
+
+                // Charts
+                this.renderCharts();
+            }
+
+            // RENDER WEEKLY SCHEDULE (THỨ 2 -> THỨ 7)
+            renderWeeklySchedule(scheduleData) {
+                const tbody = document.getElementById('weekly-schedule-body');
+                if (!tbody) return;
+
+                const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+                tbody.innerHTML = scheduleData.map(emp => `
+                    <tr>
+                        <td>
+                            <div class="emp-cell-info">
+                                <img src="${emp.avatar}" class="emp-table-avatar" alt="Avatar">
+                                <div>
+                                    <strong>${this.escapeHTML(emp.name)}</strong>
+                                    <div style="font-size:0.75rem; color: var(--text-muted);">${this.escapeHTML(emp.dept)}</div>
+                                </div>
+                            </div>
+                        </td>
+                        ${days.map(d => `
+                            <td>
+                                <span class="shift-label">Sáng</span>
+                                <span class="schedule-cell-task shift-morning">${this.escapeHTML(emp.schedule[d].morning)}</span>
+                                <span class="shift-label">Chiều</span>
+                                <span class="schedule-cell-task shift-afternoon">${this.escapeHTML(emp.schedule[d].afternoon)}</span>
+                            </td>
+                        `).join('')}
+                    </tr>
+                `).join('');
+            }
+
+            renderEmployeeTable() {
+                const search = document.getElementById('search-emp').value.toLowerCase().trim();
+                const filtered = this.employees.filter(e => 
+                    e.name.toLowerCase().includes(search) ||
+                    e.email.toLowerCase().includes(search) ||
+                    e.role.toLowerCase().includes(search) ||
+                    e.dept.toLowerCase().includes(search)
+                );
+
+                const total = filtered.length;
+                const start = (this.currentPage - 1) * this.pageSize;
+                const paginated = filtered.slice(start, start + this.pageSize);
+
+                const tbody = document.getElementById('employee-table-body');
+                if (paginated.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">Không tìm thấy dữ liệu nhân sự phù hợp</td></tr>`;
+                } else {
+                    tbody.innerHTML = paginated.map(emp => `
+                        <tr>
+                            <td>
+                                <div class="emp-cell-info">
+                                    <img src="${emp.avatar}" class="emp-table-avatar" alt="Avatar">
+                                    <strong>${this.escapeHTML(emp.name)}</strong>
+                                </div>
+                            </td>
+                            <td>${this.escapeHTML(emp.email)}</td>
+                            <td>${this.escapeHTML(emp.phone)}</td>
+                            <td><span class="badge badge-info">${this.escapeHTML(emp.dept)}</span></td>
+                            <td>${this.escapeHTML(emp.role)}</td>
+                            <td class="admin-only">
+                                <div class="action-btns">
+                                    <button class="btn-action" onclick="app.editEmployee('${emp.id}')" title="Sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="btn-action btn-delete" onclick="app.deleteEmployee('${emp.id}')" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                const totalPages = Math.ceil(total / this.pageSize) || 1;
+                document.getElementById('pagination-info').textContent = `Hiển thị ${total === 0 ? 0 : start + 1} - ${Math.min(start + this.pageSize, total)} trong số ${total} bản ghi`;
+
+                const btnContainer = document.getElementById('pagination-btns-container');
+                let pagesHtml = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    pagesHtml += `<button class="btn-page ${i === this.currentPage ? 'active' : ''}" onclick="app.gotoPage(${i})">${i}</button>`;
+                }
+                btnContainer.innerHTML = pagesHtml;
+            }
+
+            renderTasksTable(tasks) {
+                const tbody = document.getElementById('task-table-body');
+                if (tasks.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color: var(--text-muted);">Chưa có công việc nào</td></tr>`;
                     return;
                 }
-                if (newPwd.length < 6) {
-                    showToast('Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
-                    return;
+                tbody.innerHTML = tasks.map(t => {
+                    const priorityClass = t.priority === 'Cao' ? 'badge-danger' : (t.priority === 'Trung bình' ? 'badge-warning' : 'badge-info');
+                    const statusClass = t.status === 'Đang làm' ? 'badge-success' : 'badge-warning';
+                    return `
+                        <tr>
+                            <td><strong>${this.escapeHTML(t.title)}</strong></td>
+                            <td><span class="badge badge-info">${this.escapeHTML(t.dept)}</span></td>
+                            <td><span class="badge ${priorityClass}">${this.escapeHTML(t.priority)}</span></td>
+                            <td><strong>${this.escapeHTML(t.assignedTo)}</strong></td>
+                            <td><span class="badge ${statusClass}">${this.escapeHTML(t.status)}</span></td>
+                            <td class="admin-only">
+                                <button class="btn-action" title="Tự phân công việc này" onclick="app.assignSingleTask('${t.id}')"><i class="fa-solid fa-user-check"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            async assignSingleTask(taskId) {
+                const tasks = await APIClient.getTasks();
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.status = 'Chưa gán';
+                    await APIClient.autoAssignTasks();
+                    this.showToast(`Đã tự động phân công công việc "${task.title}"!`, 'success');
+                    await this.loadAllData();
                 }
-                showToast('Đổi mật khẩu thành công!');
-                closeModal('password-modal');
-            });
+            }
 
-            document.querySelectorAll('[data-close]').forEach(btn => {
-                btn.addEventListener('click', () => closeModal(btn.getAttribute('data-close')));
-            });
+            gotoPage(page) {
+                this.currentPage = page;
+                this.renderEmployeeTable();
+            }
 
-            document.getElementById('btn-open-emp-modal').addEventListener('click', () => {
-                document.getElementById('form-employee').reset();
-                document.getElementById('emp-id').value = '';
-                openModal('employee-modal');
-            });
+            async editEmployee(id) {
+                const emp = this.employees.find(e => e.id === id);
+                if (!emp) return;
+                document.getElementById('emp-id').value = emp.id;
+                document.getElementById('emp-name').value = emp.name;
+                document.getElementById('emp-email').value = emp.email;
+                document.getElementById('emp-phone').value = emp.phone;
+                document.getElementById('emp-dept').value = emp.dept;
+                document.getElementById('emp-role').value = emp.role;
 
-            document.getElementById('form-employee').addEventListener('submit', handleEmployeeSubmit);
-            document.getElementById('search-emp').addEventListener('input', () => {
-                AppState.pagination.currentPage = 1;
-                renderEmployeesTable();
-            });
+                document.getElementById('modal-emp-title').textContent = 'Cập Nhật Thông Tin Nhân Sự';
+                document.getElementById('employee-modal').classList.add('open');
+            }
 
-            document.getElementById('btn-export-excel').addEventListener('click', exportToExcel);
-            document.getElementById('btn-export-payslip-pdf').addEventListener('click', exportPayslipPDF);
+            async deleteEmployee(id) {
+                if (confirm('Bạn có chắc chắn muốn xóa nhân sự này khỏi hệ thống?')) {
+                    await APIClient.deleteEmployee(id);
+                    this.showToast('Đã xóa nhân sự khỏi hệ thống!', 'success');
+                    await this.loadAllData();
+                }
+            }
 
-            // Contracts
-            document.getElementById('btn-open-contract-modal').addEventListener('click', () => openModal('contract-modal'));
-            document.getElementById('form-contract').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await APIClient.saveContract({
-                    id: document.getElementById('contract-code').value,
-                    name: document.getElementById('contract-name').value,
-                    type: document.getElementById('contract-type').value,
-                    date: document.getElementById('contract-date').value,
-                    status: 'Hiệu lực'
-                });
-                showToast('Đã thêm hợp đồng mới!');
-                closeModal('contract-modal');
-                renderContracts();
-            });
+            renderContractsTable(contracts) {
+                const tbody = document.getElementById('contract-table-body');
+                tbody.innerHTML = contracts.map(c => `
+                    <tr>
+                        <td><strong>${this.escapeHTML(c.code)}</strong></td>
+                        <td>${this.escapeHTML(c.name)}</td>
+                        <td>${this.escapeHTML(c.type)}</td>
+                        <td>${this.escapeHTML(c.date)}</td>
+                        <td><span class="badge badge-success">${this.escapeHTML(c.status)}</span></td>
+                        <td>
+                            <button class="btn-action" title="Tải hợp đồng" onclick="app.showToast('Đang tải file hợp đồng...', 'info')"><i class="fa-solid fa-download"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
 
-            // Attendance check-in
-            document.getElementById('btn-checkin').addEventListener('click', async () => {
-                const now = new Date();
-                const timeStr = now.toTimeString().slice(0,5);
-                await APIClient.addAttendance({
-                    date: now.toISOString().slice(0,10),
-                    name: AppState.currentUser.name,
-                    in: timeStr,
-                    out: '--:--',
-                    status: 'Đang làm việc'
-                });
-                showToast('Chấm công thành công!');
-                renderAttendance();
-                renderCharts();
-            });
+            renderLeavesTable(leaves) {
+                const tbody = document.getElementById('leave-table-body');
+                const isAdmin = this.currentUser && this.currentUser.role === 'SYSTEM ADMIN';
 
-            // Leave modal
-            document.getElementById('btn-open-leave-modal').addEventListener('click', () => openModal('leave-modal'));
-            document.getElementById('form-leave').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await APIClient.saveLeave({
-                    id: 'L-' + Date.now().toString().slice(-4),
-                    name: AppState.currentUser.name,
-                    reason: document.getElementById('leave-reason').value,
-                    from: document.getElementById('leave-from').value,
-                    to: document.getElementById('leave-to').value,
-                    status: 'Chờ duyệt'
-                });
-                showToast('Đã gửi đơn nghỉ phép!');
-                closeModal('leave-modal');
-                renderLeaves();
-            });
-        }
+                tbody.innerHTML = leaves.map(l => `
+                    <tr>
+                        <td><strong>${this.escapeHTML(l.name)}</strong></td>
+                        <td>${this.escapeHTML(l.reason)}</td>
+                        <td>${this.escapeHTML(l.from)}</td>
+                        <td>${this.escapeHTML(l.to)}</td>
+                        <td>
+                            <span class="badge ${l.status === 'Đã duyệt' ? 'badge-success' : 'badge-warning'}">${this.escapeHTML(l.status)}</span>
+                        </td>
+                        <td>
+                            ${isAdmin && l.status === 'Chờ duyệt' ? `
+                                <div class="action-btns">
+                                    <button class="btn-action" style="color: var(--success);" onclick="app.approveLeave('${l.id}', 'Đã duyệt')" title="Duyệt"><i class="fa-solid fa-check"></i></button>
+                                    <button class="btn-action btn-delete" onclick="app.approveLeave('${l.id}', 'Từ chối')" title="Từ chối"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            ` : '--'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
 
-        async function setupDashboard() {
-            const isAdmin = AppState.currentUser.role === 'admin';
-            document.getElementById('display-username').innerText = AppState.currentUser.name;
-            document.getElementById('display-role').innerHTML = `${isAdmin ? 'Quản trị viên' : 'Nhân viên'} <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;"></i>`;
-            document.getElementById('header-avatar').src = AppState.currentUser.avatar;
+            async approveLeave(id, status) {
+                await APIClient.updateLeaveStatus(id, status);
+                this.showToast(`Đã ${status.toLowerCase()} đơn nghỉ phép!`, 'success');
+                await this.loadAllData();
+            }
 
-            const menuList = document.getElementById('sidebar-menu-list');
-            menuList.innerHTML = '';
+            renderAttendanceTable(attendance) {
+                const tbody = document.getElementById('attendance-table-body');
+                tbody.innerHTML = attendance.map(a => `
+                    <tr>
+                        <td>${this.escapeHTML(a.date)}</td>
+                        <td><strong>${this.escapeHTML(a.name)}</strong></td>
+                        <td>${this.escapeHTML(a.in)}</td>
+                        <td>${this.escapeHTML(a.out)}</td>
+                        <td><span class="badge ${a.status === 'Đúng giờ' ? 'badge-success' : 'badge-warning'}">${this.escapeHTML(a.status)}</span></td>
+                    </tr>
+                `).join('');
+            }
 
-            MENU_CONFIG.forEach((m, idx) => {
-                const li = document.createElement('li');
-                if (idx === 0) li.className = 'active';
-                li.innerHTML = `<a data-tab="${m.id}"><i class="fa-solid ${m.icon}"></i> <span>${m.label}</span></a>`;
-                li.querySelector('a').addEventListener('click', () => switchTab(m.id, li, m.label));
-                menuList.appendChild(li);
-            });
+            renderKPITable(kpis) {
+                const tbody = document.getElementById('kpi-table-body');
+                tbody.innerHTML = kpis.map(k => `
+                    <tr>
+                        <td><strong>${this.escapeHTML(k.name)}</strong></td>
+                        <td><span class="badge badge-info">${this.escapeHTML(k.dept)}</span></td>
+                        <td>${this.escapeHTML(k.goal)}</td>
+                        <td><strong>${this.escapeHTML(k.score)}</strong></td>
+                        <td><span class="badge badge-success">${this.escapeHTML(k.rank)}</span></td>
+                    </tr>
+                `).join('');
+            }
 
-            switchTab(MENU_CONFIG[0].id, menuList.querySelector('li'), MENU_CONFIG[0].label);
-            await refreshAllData();
-        }
+            // CHARTS UPDATED TO INCLUDE THỨ 2 -> THỨ 7
+            renderCharts() {
+                if (typeof Chart === 'undefined') return;
 
-        function switchTab(tabId, activeLi, labelText) {
-            document.querySelectorAll('#sidebar-menu-list li').forEach(li => li.classList.remove('active'));
-            if (activeLi) activeLi.classList.add('active');
-            if (labelText) document.getElementById('page-title').innerText = labelText;
+                const deptCtx = document.getElementById('chart-dept');
+                if (deptCtx) {
+                    if (this.charts.dept) this.charts.dept.destroy();
 
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            const targetTab = document.getElementById(`tab-${tabId}`);
-            if (targetTab) targetTab.classList.add('active');
+                    const depts = {};
+                    this.employees.forEach(e => depts[e.dept] = (depts[e.dept] || 0) + 1);
 
-            if (tabId === 'overview') {
-                renderCharts();
+                    this.charts.dept = new Chart(deptCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(depts),
+                            datasets: [{
+                                data: Object.values(depts),
+                                backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#ec4899']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { color: getComputedStyle(document.body).getPropertyValue('--text-main') } }
+                            }
+                        }
+                    });
+                }
+
+                const attCtx = document.getElementById('chart-attendance');
+                if (attCtx) {
+                    if (this.charts.att) this.charts.att.destroy();
+
+                    this.charts.att = new Chart(attCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'],
+                            datasets: [
+                                { label: 'Đúng giờ', data: [95, 98, 92, 96, 90, 88], backgroundColor: '#10b981' },
+                                { label: 'Đi muộn', data: [5, 2, 8, 4, 10, 12], backgroundColor: '#f59e0b' }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-muted') } },
+                                y: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-muted') } }
+                            },
+                            plugins: {
+                                legend: { position: 'bottom', labels: { color: getComputedStyle(document.body).getPropertyValue('--text-main') } }
+                            }
+                        }
+                    });
+                }
             }
         }
 
-        async function refreshAllData() {
-            AppState.employees = await APIClient.getEmployees();
-            document.getElementById('stat-total-emp').innerText = AppState.employees.length;
-            
-            const contracts = await APIClient.getContracts();
-            document.getElementById('stat-total-contract').innerText = contracts.length;
-
-            const leaves = await APIClient.getLeaves();
-            document.getElementById('stat-pending-leave').innerText = leaves.filter(l => l.status === 'Chờ duyệt').length;
-
-            renderEmployeesTable();
-            renderContracts();
-            renderKPIs();
-            renderAttendance();
-            renderLeaves();
-            renderCharts();
-        }
-
-        function renderEmployeesTable() {
-            const tbody = document.getElementById('employee-table-body');
-            const keyword = document.getElementById('search-emp').value.toLowerCase();
-            const isAdmin = AppState.currentUser.role === 'admin';
-            tbody.innerHTML = '';
-
-            const filtered = AppState.employees.filter(e => 
-                e.name.toLowerCase().includes(keyword) || 
-                e.email.toLowerCase().includes(keyword) ||
-                e.dept.toLowerCase().includes(keyword)
-            );
-
-            const totalItems = filtered.length;
-            AppState.pagination.totalPages = Math.ceil(totalItems / AppState.pagination.pageSize) || 1;
-            
-            if (AppState.pagination.currentPage > AppState.pagination.totalPages) {
-                AppState.pagination.currentPage = AppState.pagination.totalPages;
-            }
-
-            const startIdx = (AppState.pagination.currentPage - 1) * AppState.pagination.pageSize;
-            const endIdx = Math.min(startIdx + AppState.pagination.pageSize, totalItems);
-            const pageData = filtered.slice(startIdx, endIdx);
-
-            pageData.forEach(e => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><div class="emp-cell-info"><img src="${e.avatar}" class="emp-table-avatar"><strong>${e.name}</strong></div></td>
-                    <td>${e.email}</td>
-                    <td>${e.phone}</td>
-                    <td><span class="badge badge-info">${e.dept}</span></td>
-                    <td>${e.role}</td>
-                    <td class="admin-only">
-                        <div class="action-btns">
-                            <button class="btn-action" onclick="editEmployee('${e.id}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-action btn-delete" onclick="deleteEmployee('${e.id}')"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('pagination-info').innerText = totalItems > 0 
-                ? `Hiển thị ${startIdx + 1} - ${endIdx} trong số ${totalItems} bản ghi`
-                : 'Không tìm thấy dữ liệu';
-
-            renderPaginationControls();
-        }
-
-        function renderPaginationControls() {
-            const container = document.getElementById('pagination-btns-container');
-            container.innerHTML = '';
-
-            for (let i = 1; i <= AppState.pagination.totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.className = `btn-page ${i === AppState.pagination.currentPage ? 'active' : ''}`;
-                btn.innerText = i;
-                btn.addEventListener('click', () => {
-                    AppState.pagination.currentPage = i;
-                    renderEmployeesTable();
-                });
-                container.appendChild(btn);
-            }
-        }
-
-        async function renderContracts() {
-            const tbody = document.getElementById('contract-table-body');
-            tbody.innerHTML = '';
-            const list = await APIClient.getContracts();
-            list.forEach(c => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${c.id}</strong></td>
-                    <td>${c.name}</td>
-                    <td>${c.type}</td>
-                    <td>${c.date}</td>
-                    <td><span class="badge badge-success">${c.status}</span></td>
-                    <td><button class="btn-action" onclick="showToast('Đang tải file...')"><i class="fa-solid fa-download"></i></button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function renderKPIs() {
-            const tbody = document.getElementById('kpi-table-body');
-            tbody.innerHTML = '';
-            const list = await APIClient.getKPIs();
-            list.forEach(k => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${k.name}</strong></td>
-                    <td><span class="badge badge-info">${k.dept}</span></td>
-                    <td>${k.goal}</td>
-                    <td><strong>${k.score}</strong></td>
-                    <td><span class="badge badge-success">${k.rank}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function renderAttendance() {
-            const tbody = document.getElementById('attendance-table-body');
-            tbody.innerHTML = '';
-            const list = await APIClient.getAttendance();
-            list.forEach(a => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${a.date}</td>
-                    <td><strong>${a.name}</strong></td>
-                    <td>${a.in}</td>
-                    <td>${a.out}</td>
-                    <td><span class="badge ${a.status === 'Đúng giờ' ? 'badge-success' : 'badge-warning'}">${a.status}</span></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function renderLeaves() {
-            const tbody = document.getElementById('leave-table-body');
-            tbody.innerHTML = '';
-            const list = await APIClient.getLeaves();
-            const isAdmin = AppState.currentUser.role === 'admin';
-            list.forEach(l => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${l.name}</strong></td>
-                    <td>${l.reason}</td>
-                    <td>${l.from}</td>
-                    <td>${l.to}</td>
-                    <td><span class="badge ${l.status === 'Đã duyệt' ? 'badge-success' : 'badge-warning'}">${l.status}</span></td>
-                    <td>${isAdmin ? `<button class="btn-action btn-delete" onclick="cancelLeave('${l.id}')"><i class="fa-solid fa-xmark"></i></button>` : '--'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function renderCharts() {
-            const employees = await APIClient.getEmployees();
-            const attendance = await APIClient.getAttendance();
-
-            // 1. Department Distribution Chart
-            const deptCounts = {};
-            employees.forEach(e => { deptCounts[e.dept] = (deptCounts[e.dept] || 0) + 1; });
-
-            const ctxDept = document.getElementById('chart-dept')?.getContext('2d');
-            if (ctxDept) {
-                if (AppState.charts.deptChart) AppState.charts.deptChart.destroy();
-                AppState.charts.deptChart = new Chart(ctxDept, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(deptCounts),
-                        datasets: [{
-                            label: 'Số nhân sự',
-                            data: Object.values(deptCounts),
-                            backgroundColor: '#6366f1',
-                            borderRadius: 6
-                        }]
-                    },
-                    options: { responsive: true, plugins: { legend: { display: false } } }
-                });
-            }
-
-            // 2. Attendance Status Pie Chart
-            const statusCounts = {};
-            attendance.forEach(a => { statusCounts[a.status] = (statusCounts[a.status] || 0) + 1; });
-
-            const ctxAttendance = document.getElementById('chart-attendance')?.getContext('2d');
-            if (ctxAttendance) {
-                if (AppState.charts.attendanceChart) AppState.charts.attendanceChart.destroy();
-                AppState.charts.attendanceChart = new Chart(ctxAttendance, {
-                    type: 'doughnut',
-                    data: {
-                        labels: Object.keys(statusCounts),
-                        datasets: [{
-                            data: Object.values(statusCounts),
-                            backgroundColor: ['#10b981', '#f59e0b', '#3b82f6']
-                        }]
-                    },
-                    options: { responsive: true }
-                });
-            }
-        }
-
-        window.cancelLeave = async function(id) {
-            await APIClient.deleteLeave(id);
-            showToast('Đã xóa đơn nghỉ phép!', 'error');
-            renderLeaves();
-        };
-
-        async function handleEmployeeSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('emp-id').value;
-            const payload = {
-                id: id || null,
-                name: document.getElementById('emp-name').value,
-                email: document.getElementById('emp-email').value,
-                phone: document.getElementById('emp-phone').value,
-                dept: document.getElementById('emp-dept').value,
-                role: document.getElementById('emp-role').value
-            };
-
-            await APIClient.saveEmployee(payload);
-            showToast(id ? 'Đã cập nhật nhân sự!' : 'Đã thêm mới nhân sự!');
-            closeModal('employee-modal');
-            await refreshAllData();
-        }
-
-        window.editEmployee = function(id) {
-            const emp = AppState.employees.find(e => e.id === id);
-            if (!emp) return;
-            document.getElementById('emp-id').value = emp.id;
-            document.getElementById('emp-name').value = emp.name;
-            document.getElementById('emp-email').value = emp.email;
-            document.getElementById('emp-phone').value = emp.phone;
-            document.getElementById('emp-dept').value = emp.dept;
-            document.getElementById('emp-role').value = emp.role;
-            openModal('employee-modal');
-        };
-
-        window.deleteEmployee = async function(id) {
-            if (confirm('Xác nhận xóa nhân sự này khỏi hệ thống?')) {
-                await APIClient.deleteEmployee(id);
-                showToast('Đã xóa nhân sự!', 'error');
-                await refreshAllData();
-            }
-        };
-
-        function exportToExcel() {
-            const exportData = AppState.employees.map(e => ({
-                "Mã NV": e.id,
-                "Họ và Tên": e.name,
-                "Email": e.email,
-                "Số Điện Thoại": e.phone,
-                "Phòng Ban": e.dept,
-                "Chức Vụ": e.role
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(exportData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachNhanSu");
-            XLSX.writeFile(workbook, `HRMS_DanhSachNhanSu_${new Date().toISOString().slice(0,10)}.xlsx`);
-            showToast('Đã xuất file Excel thành công!');
-        }
-
-        function exportPayslipPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.setFontSize(18);
-            doc.text("PHIẾU LƯƠNG NHÂN VIÊN", 14, 20);
-            
-            doc.setFontSize(11);
-            doc.text(`Nguoi nhan: ${AppState.currentUser ? AppState.currentUser.name : 'Nhan vien'}`, 14, 30);
-            doc.text(`Ky luong: Thang 07/2026`, 14, 37);
-
-            doc.autoTable({
-                startY: 45,
-                head: [['Thanh phan', 'Gia tri (VND)']],
-                body: [
-                    ['Luong co ban', '18,000,000'],
-                    ['Phu cap cong viec', '2,500,000'],
-                    ['Thuong KPI', '3,500,000'],
-                    ['Tong thuc linh', '24,000,000']
-                ],
-                theme: 'grid',
-                headStyles: { fillColor: [99, 102, 241] }
-            });
-
-            doc.save(`PhieuLuong_${AppState.currentUser ? AppState.currentUser.name : 'ESS'}_07_2026.pdf`);
-            showToast('Đã tải xuống file PDF Phiếu lương!');
-        }
-
-        function openModal(id) { document.getElementById(id)?.classList.add('open'); }
-        function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+        // Initialize Application Singleton
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new HRMSApp();
+        });
     </script>
 </body>
 </html>
