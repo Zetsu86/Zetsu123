@@ -1758,6 +1758,8 @@
         function exportScheduleExcel() {
             const data = [];
             const start = new Date(state.currentMondayDate);
+            const dayNames = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
+            
             state.employees.forEach(emp => {
                 const row = { 'Nhân viên': emp.name, 'Phòng ban': emp.dept };
                 for (let i = 0; i < 7; i++) {
@@ -1767,15 +1769,17 @@
                     const dayData = state.schedules[dateStr]?.[emp.id];
                     const mTask = dayData?.morning ? state.tasks.find(t => t.id === dayData.morning)?.name : 'OFF';
                     const aTask = dayData?.afternoon ? state.tasks.find(t => t.id === dayData.afternoon)?.name : 'OFF';
-                    row[`Thứ ${i+2 === 8 ? 'CN' : i+2}`] = `Sáng: ${mTask} | Chiều: ${aTask}`;
+                    row[dayNames[i]] = `Sáng: ${mTask} | Chiều: ${aTask}`;
                 }
                 data.push(row);
             });
+            
             const worksheet = XLSX.utils.json_to_sheet(data);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "LichTrucCaTuan");
-            XLSX.writeFile(workbook, `LichTruc_CaTuan_${start.toISOString().split('T')[0]}.xlsx`);
-            showToast('Xuất Excel cả tuần thành công!');
+            XLSX.utils.book_append_sheet(workbook, worksheet, "LichTrucCaTuần");
+            const startStr = start.toISOString().split('T')[0];
+            XLSX.writeFile(workbook, `LichTrucTuan_${startStr}.xlsx`);
+            showToast('Xuất Excel cả tuần (Pro) thành công!');
         }
     </script>
 </body>
