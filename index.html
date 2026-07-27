@@ -377,7 +377,7 @@
                     </div>
                 </div>
             </div>
-            <!-- TAB CHẤM CÔNG THEO CA & GIỜ (ĐÃ NÂNG CẤP CA LÀM VÀ CHO PHÉP ADMIN ĐỔI GIỜ) -->
+            <!-- TAB CHẤM CÔNG THEO CA & GIỜ -->
             <div id="tab-timekeeping" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -865,7 +865,6 @@
             state.payrolls = storedPayrolls ? JSON.parse(storedPayrolls) : {};
             state.chatMessages = storedChats ? JSON.parse(storedChats) : [];
             if (storedShiftCfg) state.shiftConfig = JSON.parse(storedShiftCfg);
-
             state.employees.forEach(emp => {
                 if (!state.payrolls[emp.id]) {
                     state.payrolls[emp.id] = { hourlyRate: 40000, totalHours: 0, bonus: 0 };
@@ -1070,15 +1069,12 @@
             const actionCard = document.getElementById('timekeeping-action-card');
             const shiftInfoDisplay = document.getElementById('shift-time-info-display');
             const adminShiftEditAction = document.getElementById('admin-shift-edit-action');
-
             shiftInfoDisplay.textContent = `Ca Sáng: ${state.shiftConfig.morningStart} - ${state.shiftConfig.morningEnd} | Ca Chiều: ${state.shiftConfig.afternoonStart} - ${state.shiftConfig.afternoonEnd} (Định mức: 40.000 VNĐ / Giờ)`;
-
             if (!isEmp) {
                 adminShiftEditAction.innerHTML = `<button class="btn-warning-sm" onclick="openShiftConfigModal()"><i class="fa-solid fa-clock"></i> Sửa Giờ Ca Làm</button>`;
             } else {
                 adminShiftEditAction.innerHTML = '';
             }
-
             if (!isEmp) {
                 actionCard.style.display = 'none';
             } else {
