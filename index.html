@@ -90,7 +90,7 @@
         .login-logo i { font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem; }
         .login-logo h2 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
 
-        /* INPUT PASSWORD WRAPPER CHO TÍNH NĂNG HIỆN/ẨN MẬT KHẨU */
+        /* INPUT PASSWORD WRAPPER */
         .password-input-group {
             position: relative;
             display: flex;
@@ -112,11 +112,9 @@
             align-items: center;
             justify-content: center;
         }
-        .toggle-password-btn:hover {
-            color: var(--text-main);
-        }
+        .toggle-password-btn:hover { color: var(--text-main); }
 
-        /* APP CONTAINER (ẨN KHI CHƯA ĐĂNG NHẬP) */
+        /* APP CONTAINER */
         #app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
         /* SIDEBAR */
@@ -160,6 +158,7 @@
         .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; box-shadow: var(--shadow); margin-bottom: 1.25rem; }
         .card-header { padding: 0.9rem 1.15rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
         .card-header h2 { font-size: 0.92rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); }
+        .card-body { padding: 1.15rem; }
 
         /* CONTROLS BAR */
         .schedule-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; font-size: 0.83rem; flex-wrap: wrap; gap: 0.75rem; }
@@ -175,7 +174,7 @@
         .btn-primary-sm { background-color: var(--primary); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-danger-sm { background-color: var(--danger); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
 
-        /* BADGES ĐỘ KHÓ */
+        /* BADGES */
         .badge-difficulty { display: inline-block; padding: 0.08rem 0.3rem; border-radius: 3px; font-size: 0.62rem; font-weight: 700; text-align: center; }
         .badge-hard { background-color: #ef4444; color: #ffffff; }
         .badge-medium { background-color: #d97706; color: #ffffff; }
@@ -192,7 +191,7 @@
         .emp-name-mini { font-weight: 700; font-size: 0.75rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .emp-dept-mini { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* KHUNG CA LÀM VIỆC */
+        /* SHIFTS */
         .shift-block { margin-bottom: 3px; border-radius: 4px; padding: 3px 5px; border: 1px solid transparent; }
         .shift-block:last-child { margin-bottom: 0; }
         
@@ -216,6 +215,7 @@
         .data-table th { background-color: var(--table-header); color: var(--text-muted); font-weight: 600; }
         .action-btns { display: flex; gap: 0.4rem; }
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); }
+        .btn-icon.edit:hover { color: var(--info); }
         .btn-icon.delete:hover { color: var(--danger); }
 
         /* MODAL */
@@ -230,13 +230,12 @@
         .modal-footer { padding: 0.65rem 1.15rem; background: var(--table-header); display: flex; justify-content: flex-end; gap: 0.4rem; border-top: 1px solid var(--border-color); }
         .btn-secondary { background: var(--border-color); border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; cursor: pointer; font-weight: 500; color: var(--text-main); }
 
-        .role-type-selector { display: flex; gap: 0.5rem; }
-        .role-btn {
-            flex: 1; padding: 0.45rem; border: 1px solid var(--border-color); background: var(--input-bg);
-            color: var(--text-muted); border-radius: 0.35rem; font-size: 0.78rem; font-weight: 600;
-            cursor: pointer; text-align: center; transition: all 0.2s;
-        }
-        .role-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+        /* TOAST NOTIFICATION */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
+        .toast { padding: 0.75rem 1rem; border-radius: 6px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 0.8rem; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s forwards; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
         @media screen and (max-width: 768px) {
             body { flex-direction: column; height: auto; overflow-y: auto; }
@@ -277,9 +276,7 @@
             </div>
             <div class="form-group" id="emp-select-group" style="display: none;">
                 <label>Chọn tài khoản nhân viên</label>
-                <select id="login-emp-id" class="form-control">
-                    <!-- Sẽ render bằng JS -->
-                </select>
+                <select id="login-emp-id" class="form-control"></select>
             </div>
             <div class="form-group">
                 <label>Mật khẩu</label>
@@ -294,7 +291,7 @@
         </div>
     </div>
 
-    <!-- ỨNG DỤNG CHÍNH (SAU KHI ĐĂNG NHẬP) -->
+    <!-- ỨNG DỤNG CHÍNH -->
     <div id="app-container" style="display: none;">
         <!-- SIDEBAR -->
         <aside class="sidebar">
@@ -302,9 +299,7 @@
                 <i class="fa-solid fa-calendar-days" style="color: #818cf8; font-size: 1.05rem;"></i>
                 <span id="sidebar-brand-title">Task Scheduler</span>
             </div>
-            <ul class="sidebar-menu" id="sidebar-menu">
-                <!-- Menu sẽ được dựng động theo phân quyền Admin / Employee -->
-            </ul>
+            <ul class="sidebar-menu" id="sidebar-menu"></ul>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -330,22 +325,22 @@
                 </div>
             </header>
 
-            <!-- TAB 1: DASHBOARD / LỊCH LÀM VIỆC CHUNG -->
+            <!-- TAB 1: DASHBOARD / LỊCH CHUNG -->
             <div id="tab-dashboard" class="content-body active">
                 <div class="grid-4" id="admin-stats-grid">
                     <div class="stat-card">
                         <div class="stat-header"><span>Tổng nhân viên</span><i class="fa-solid fa-users" style="color: var(--primary);"></i></div>
-                        <div class="stat-body"><h3 id="stat-emp-count">4</h3></div>
+                        <div class="stat-body"><h3 id="stat-emp-count">0</h3></div>
                         <div class="stat-footer"><i class="fa-solid fa-arrow-up"></i> Đồng bộ Realtime</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header"><span>Công việc mức Khó</span><i class="fa-solid fa-fire" style="color: var(--danger);"></i></div>
-                        <div class="stat-body"><h3 id="stat-task-hard">12</h3></div>
+                        <div class="stat-body"><h3 id="stat-task-hard">0</h3></div>
                         <div class="stat-footer" style="color: var(--danger);">Độ phức tạp cao</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header"><span>Công việc TB & Dễ</span><i class="fa-solid fa-layer-group" style="color: var(--success);"></i></div>
-                        <div class="stat-body"><h3 id="stat-task-normal">16</h3></div>
+                        <div class="stat-body"><h3 id="stat-task-normal">0</h3></div>
                         <div class="stat-footer" style="color: var(--success);">Vận hành tiêu chuẩn</div>
                     </div>
                     <div class="stat-card">
@@ -355,7 +350,6 @@
                     </div>
                 </div>
 
-                <!-- BẢNG LỊCH TRÌNH CHÍNH -->
                 <div class="card" style="margin-bottom: 0;">
                     <div class="card-header">
                         <h2><i class="fa-regular fa-calendar-days" style="color: var(--info);"></i> <span id="schedule-card-title">Lịch làm việc & Tối ưu hóa theo ca Sáng - Chiều</span></h2>
@@ -366,7 +360,7 @@
                                 <button class="btn-nav" onclick="changeWeek(-1)" title="Tuần trước"><i class="fa-solid fa-chevron-left"></i></button>
                                 <button class="btn-nav" onclick="changeWeek(1)" title="Tuần sau"><i class="fa-solid fa-chevron-right"></i></button>
                                 <input type="date" id="main-week-picker" class="date-picker-input" onchange="onWeekDateChanged(this.value)">
-                                <span id="week-range-label" style="font-weight: 600; font-size: 0.82rem; color: var(--text-main);">27/07/2026 - 02/08/2026</span>
+                                <span id="week-range-label" style="font-weight: 600; font-size: 0.82rem; color: var(--text-main);"></span>
                             </div>
                             <div class="export-group" id="export-buttons-group">
                                 <button class="btn-info" onclick="exportDailyScheduleExcel()"><i class="fa-solid fa-file-excel"></i> Xuất Excel Trong Ngày</button>
@@ -379,13 +373,13 @@
                                 <thead>
                                     <tr id="matrix-header-row">
                                         <th class="emp-col-cell">Nhân viên & Kinh nghiệm</th>
-                                        <th>Thứ 2<br><span id="date-col-0" style="font-size:0.63rem; color:var(--text-muted);">27/07</span></th>
-                                        <th>Thứ 3<br><span id="date-col-1" style="font-size:0.63rem; color:var(--text-muted);">28/07</span></th>
-                                        <th>Thứ 4<br><span id="date-col-2" style="font-size:0.63rem; color:var(--text-muted);">29/07</span></th>
-                                        <th>Thứ 5<br><span id="date-col-3" style="font-size:0.63rem; color:var(--text-muted);">30/07</span></th>
-                                        <th>Thứ 6<br><span id="date-col-4" style="font-size:0.63rem; color:var(--text-muted);">31/07</span></th>
-                                        <th>Thứ 7<br><span id="date-col-5" style="font-size:0.63rem; color:var(--text-muted);">01/08</span></th>
-                                        <th>Chủ Nhật<br><span id="date-col-6" style="font-size:0.63rem; color:var(--text-muted);">02/08</span></th>
+                                        <th>Thứ 2<br><span id="date-col-0" style="font-size:0.63rem; color:var(--text-muted);"></span></th>
+                                        <th>Thứ 3<br><span id="date-col-1" style="font-size:0.63rem; color:var(--text-muted);"></span></th>
+                                        <th>Thứ 4<br><span id="date-col-2" style="font-size:0.63rem; color:var(--text-muted);"></span></th>
+                                        <th>Thứ 5<br><span id="date-col-3" style="font-size:0.63rem; color:var(--text-muted);"></span></th>
+                                        <th>Thứ 6<br><span id="date-col-4" style="font-size:0.63rem; color:var(--text-muted);"></span></th>
+                                        <th>Thứ 7<br><span id="date-col-5" style="font-size:0.63rem; color:var(--text-muted);"></span></th>
+                                        <th>Chủ Nhật<br><span id="date-col-6" style="font-size:0.63rem; color:var(--text-muted);"></span></th>
                                     </tr>
                                 </thead>
                                 <tbody id="matrix-tbody"></tbody>
@@ -401,7 +395,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: NHÂN VIÊN & KINH NGHIỆM (CHỈ ADMIN) -->
+            <!-- TAB 2: NHÂN VIÊN -->
             <div id="tab-employee" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -414,7 +408,7 @@
                                 <tr>
                                     <th>Họ và tên</th>
                                     <th>Phòng ban</th>
-                                    <th>Số năm kinh nghiệm</th>
+                                    <th>Kinh nghiệm</th>
                                     <th>Cấp độ</th>
                                     <th>Thao tác</th>
                                 </tr>
@@ -425,7 +419,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: CÔNG VIỆC & ĐỘ KHÓ (CHỈ ADMIN) -->
+            <!-- TAB 3: CÔNG VIỆC -->
             <div id="tab-task" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -449,12 +443,12 @@
                 </div>
             </div>
 
-            <!-- TAB 4: PHÂN CÔNG CA TRỰC (CHỈ ADMIN) -->
+            <!-- TAB 4: PHÂN CÔNG -->
             <div id="tab-assignment" class="content-body">
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-list-check" style="color: var(--success);"></i> Phân công ca trực theo năng lực</h2>
-                        <button class="btn-primary-sm" onclick="saveAssignmentData()"><i class="fa-solid fa-rotate"></i> Lưu lên Firebase</button>
+                        <button class="btn-primary-sm" onclick="autoAssignTasks()"><i class="fa-solid fa-wand-magic-sparkles"></i> Phân bổ tự động</button>
                     </div>
                     <div class="card-body">
                         <table class="data-table">
@@ -471,551 +465,700 @@
                 </div>
             </div>
 
-            <!-- TAB 5: ĐỔI MẬT KHẨU (DÀNH CHUNG CHO CẢ ADMIN & NHÂN VIÊN) -->
+            <!-- TAB 5: ĐỔI MẬT KHẨU -->
             <div id="tab-password" class="content-body">
                 <div class="card" style="max-width: 500px;">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-key" style="color: var(--warning);"></i> Đổi mật khẩu tài khoản cá nhân</h2>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label>Mật khẩu hiện tại</label>
-                            <div class="password-input-group">
-                                <input type="password" id="current-pass" class="form-control" placeholder="Nhập mật khẩu hiện tại...">
-                                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('current-pass', this)">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
+                        <form id="change-pwd-form" onsubmit="handleChangePassword(event)">
+                            <div class="form-group">
+                                <label>Mật khẩu hiện tại</label>
+                                <div class="password-input-group">
+                                    <input type="password" id="pwd-old" class="form-control" required placeholder="Nhập mật khẩu hiện tại...">
+                                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-old', this)"><i class="fa-solid fa-eye"></i></button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Mật khẩu mới</label>
-                            <div class="password-input-group">
-                                <input type="password" id="new-pass" class="form-control" placeholder="Nhập mật khẩu mới...">
-                                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('new-pass', this)">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
+                            <div class="form-group">
+                                <label>Mật khẩu mới</label>
+                                <div class="password-input-group">
+                                    <input type="password" id="pwd-new" class="form-control" required placeholder="Nhập mật khẩu mới...">
+                                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-new', this)"><i class="fa-solid fa-eye"></i></button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Xác nhận mật khẩu mới</label>
-                            <div class="password-input-group">
-                                <input type="password" id="confirm-pass" class="form-control" placeholder="Nhập lại mật khẩu mới...">
-                                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('confirm-pass', this)">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
+                            <div class="form-group">
+                                <label>Xác nhận mật khẩu mới</label>
+                                <div class="password-input-group">
+                                    <input type="password" id="pwd-confirm" class="form-control" required placeholder="Nhập lại mật khẩu mới...">
+                                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-confirm', this)"><i class="fa-solid fa-eye"></i></button>
+                                </div>
                             </div>
-                        </div>
-                        <button class="btn-primary-sm" onclick="handleChangePassword()"><i class="fa-solid fa-check"></i> Cập nhật mật khẩu</button>
+                            <button type="submit" class="btn-primary-sm" style="padding: 0.55rem 1rem;"><i class="fa-solid fa-save"></i> Cập nhật mật khẩu</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- MODAL NHÂN VIÊN -->
-    <div class="modal-overlay" id="employee-modal">
+    <!-- MODAL EMP -->
+    <div class="modal-overlay" id="modal-emp">
         <div class="modal-container">
             <div class="modal-header">
-                <span>Thêm Nhân viên mới</span>
-                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeEmpModal()"></i>
+                <span id="modal-emp-title">Thêm Nhân Viên</span>
+                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('modal-emp')"></i>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="emp-form-id">
                 <div class="form-group">
                     <label>Họ và tên</label>
-                    <input type="text" id="emp-name" class="form-control" placeholder="Ví dụ: Nguyễn Văn A">
+                    <input type="text" id="emp-form-name" class="form-control" placeholder="Nguyễn Văn A">
                 </div>
                 <div class="form-group">
                     <label>Phòng ban</label>
-                    <input type="text" id="emp-dept" class="form-control" placeholder="Ví dụ: Kỹ thuật">
+                    <input type="text" id="emp-form-dept" class="form-control" placeholder="Kỹ thuật / Vận hành">
                 </div>
                 <div class="form-group">
                     <label>Số năm kinh nghiệm</label>
-                    <input type="text" id="emp-exp" class="form-control" placeholder="Ví dụ: 7 năm">
+                    <input type="number" id="emp-form-exp" class="form-control" value="1" min="0">
                 </div>
                 <div class="form-group">
-                    <label>Mật khẩu đăng nhập</label>
-                    <div class="password-input-group">
-                        <input type="password" id="emp-password" class="form-control" value="123456" placeholder="Mật khẩu mặc định...">
-                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('emp-password', this)">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Phân loại cấp độ</label>
-                    <div class="role-type-selector">
-                        <div class="role-btn active" id="btn-expert" onclick="selectRoleType('Chuyên gia')">Chuyên gia</div>
-                        <div class="role-btn" id="btn-junior" onclick="selectRoleType('Người mới')">Người mới</div>
-                    </div>
+                    <label>Mật khẩu đăng nhập mặc định</label>
+                    <input type="password" id="emp-form-pwd" class="form-control" value="123456">
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeEmpModal()">Hủy</button>
-                <button class="btn-primary-sm" onclick="saveEmployee()">Lưu</button>
+                <button class="btn-secondary" onclick="closeModal('modal-emp')">Hủy</button>
+                <button class="btn-primary-sm" onclick="saveEmployee()"><i class="fa-solid fa-save"></i> Lưu dữ liệu</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL CÔNG VIỆC -->
-    <div class="modal-overlay" id="task-modal">
+    <!-- MODAL TASK -->
+    <div class="modal-overlay" id="modal-task">
         <div class="modal-container">
             <div class="modal-header">
-                <span>Thêm Công việc mới</span>
-                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeTaskModal()"></i>
+                <span id="modal-task-title">Thêm Công Việc</span>
+                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('modal-task')"></i>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="task-form-id">
                 <div class="form-group">
                     <label>Tên công việc</label>
-                    <input type="text" id="task-name" class="form-control" placeholder="Ví dụ: Sửa điện lạnh">
+                    <input type="text" id="task-form-name" class="form-control" placeholder="Kiểm tra hệ thống Server">
                 </div>
                 <div class="form-group">
-                    <label>Độ khó (Khó / TB / Dễ)</label>
-                    <select id="task-level" class="form-control">
-                        <option value="Khó">Khó</option>
-                        <option value="TB">Trung bình (TB)</option>
-                        <option value="Dễ">Dễ</option>
+                    <label>Độ khó</label>
+                    <select id="task-form-diff" class="form-control">
+                        <option value="easy">Dễ</option>
+                        <option value="medium">Trung bình</option>
+                        <option value="hard">Khó</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label>Phòng ban</label>
+                    <input type="text" id="task-form-dept" class="form-control" placeholder="IT / Kỹ thuật">
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeTaskModal()">Hủy</button>
-                <button class="btn-primary-sm" onclick="saveTask()">Lưu</button>
+                <button class="btn-secondary" onclick="closeModal('modal-task')">Hủy</button>
+                <button class="btn-primary-sm" onclick="saveTask()"><i class="fa-solid fa-save"></i> Lưu dữ liệu</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT CHÍNH -->
-    <script type="module">
-        let employees = [
-            { id: 1, name: "Nguyễn Văn A", dept: "Kỹ thuật", exp: "7 năm", sub: "(Chuyên gia)", password: "123", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" },
-            { id: 2, name: "Trần Thị B", dept: "Vận hành", exp: "4 năm", sub: "(Thành thạo)", password: "123", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" },
-            { id: 3, name: "Lê Văn C", dept: "Bảo trì", exp: "2 năm", sub: "(Cơ bản)", password: "123", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" },
-            { id: 4, name: "Phạm Thị D", dept: "Hỗ trợ", exp: "5 năm", sub: "(Chuyên gia)", password: "123", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150" }
-        ];
+    <div id="toast-container"></div>
 
-        let tasks = [
-            { id: 1, name: "Kiểm tra hệ thống Server", level: "Khó", dept: "Kỹ thuật" },
-            { id: 2, name: "Vận hành ca trực sự cố", level: "TB", dept: "Vận hành" },
-            { id: 3, name: "Bảo trì thiết bị định kỳ", level: "Dễ", dept: "Bảo trì" }
-        ];
+    <script>
+        /** =========================================================================
+         *  STATE MANAGEMENT & INITIAL DATA
+         *  ========================================================================= */
+        const STORAGE_KEY = 'TASK_SCHEDULER_APP_DATA';
 
-        let adminPassword = "admin123";
-        let currentUser = null; 
-        let selectedRoleType = "Chuyên gia";
-        let currentWeekStartDate = getMonday(new Date());
-
-        function getMonday(d) {
-            d = new Date(d);
-            let day = d.getDay();
-            let diff = d.getDate() - day + (day === 0 ? -6 : 1);
-            return new Date(d.setDate(diff));
-        }
-
-        function formatDate(date) {
-            let dd = String(date.getDate()).padStart(2, '0');
-            let mm = String(date.getMonth() + 1).padStart(2, '0');
-            let yyyy = date.getFullYear();
-            return `${dd}/${mm}/${yyyy}`;
-        }
-
-        function formatShortDate(date) {
-            let dd = String(date.getDate()).padStart(2, '0');
-            let mm = String(date.getMonth() + 1).padStart(2, '0');
-            return `${dd}/${mm}`;
-        }
-
-        function formatISO(date) {
-            let dd = String(date.getDate()).padStart(2, '0');
-            let mm = String(date.getMonth() + 1).padStart(2, '0');
-            let yyyy = date.getFullYear();
-            return `${yyyy}-${mm}-${dd}`;
-        }
-
-        // Hàm tiện ích chuyển đổi hiển thị/ẩn mật khẩu cho các ô input password
-        window.togglePasswordVisibility = function(inputId, btn) {
-            let input = document.getElementById(inputId);
-            let icon = btn.querySelector("i");
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                input.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-            }
+        let appState = {
+            currentUser: null, // { role: 'admin'|'employee', id: '...', name: '...' }
+            currentWeekStart: getMonday(new Date()),
+            employees: [
+                { id: 'emp-1', name: 'Nguyễn Văn An', dept: 'Kỹ thuật', exp: 5, password: '123' },
+                { id: 'emp-2', name: 'Trần Thị Bình', dept: 'Vận hành', exp: 2, password: '123' },
+                { id: 'emp-3', name: 'Lê Hoàng Cường', dept: 'IT Systems', exp: 8, password: '123' },
+                { id: 'emp-4', name: 'Phạm Minh Đức', dept: 'Hỗ trợ', exp: 1, password: '123' }
+            ],
+            tasks: [
+                { id: 'task-1', name: 'Xử lý sự cố Server chính', difficulty: 'hard', dept: 'IT Systems' },
+                { id: 'task-2', name: 'Bảo trì định kỳ máy trạm', difficulty: 'medium', dept: 'Kỹ thuật' },
+                { id: 'task-3', name: 'Kiểm tra Nhật ký Log', difficulty: 'easy', dept: 'Vận hành' },
+                { id: 'task-4', name: 'Cập nhật Patch bảo mật', difficulty: 'hard', dept: 'IT Systems' }
+            ],
+            schedules: {} // Key Format: YYYY-MM-DD_empId_shift ('morning' | 'afternoon')
         };
 
-        // Xử lý màn hình đăng nhập
-        window.onLoginRoleChanged = function() {
-            let role = document.getElementById("login-role-select").value;
-            let empGroup = document.getElementById("emp-select-group");
-            let passInput = document.getElementById("login-password");
-            
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                employees: appState.employees,
+                tasks: appState.tasks,
+                schedules: appState.schedules
+            }));
+        }
+
+        function loadFromStorage() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                try {
+                    const parsed = JSON.parse(data);
+                    if (parsed.employees) appState.employees = parsed.employees;
+                    if (parsed.tasks) appState.tasks = parsed.tasks;
+                    if (parsed.schedules) appState.schedules = parsed.schedules;
+                } catch (e) {
+                    console.error('Lỗi khi tải dữ liệu từ localStorage', e);
+                }
+            }
+        }
+
+        /** =========================================================================
+         *  HELPER UTILITIES
+         *  ========================================================================= */
+        function getMonday(d) {
+            const date = new Date(d);
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(date.setDate(diff));
+        }
+
+        function formatDateKey(dateObj) {
+            return dateObj.toISOString().split('T')[0];
+        }
+
+        function formatDateVN(dateObj) {
+            const d = dateObj.getDate().toString().padStart(2, '0');
+            const m = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+            return `${d}/${m}`;
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'triangle-exclamation'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            document.getElementById('theme-icon').className = next === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+
+        /** =========================================================================
+         *  AUTHENTICATION & AUTHORIZATION (RBAC)
+         *  ========================================================================= */
+        function onLoginRoleChanged() {
+            const role = document.getElementById('login-role-select').value;
+            const empGroup = document.getElementById('emp-select-group');
             if (role === 'employee') {
                 empGroup.style.display = 'block';
-                let select = document.getElementById("login-emp-id");
-                select.innerHTML = employees.map(emp => `<option value="${emp.id}">${emp.name} - ${emp.dept}</option>`).join('');
-                passInput.value = "123";
+                renderLoginEmpOptions();
             } else {
                 empGroup.style.display = 'none';
-                passInput.value = adminPassword;
             }
-        };
-
-        window.handleLogin = function() {
-            let role = document.getElementById("login-role-select").value;
-            let pass = document.getElementById("login-password").value;
-
-            if (role === 'admin') {
-                if (pass === adminPassword) {
-                    currentUser = { role: 'admin', name: 'admin', dept: 'Quản trị viên', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150' };
-                    initApp();
-                } else {
-                    alert("Mật khẩu Admin không đúng!");
-                }
-            } else {
-                let empId = parseInt(document.getElementById("login-emp-id").value);
-                let emp = employees.find(e => e.id === empId);
-                if (emp && emp.password === pass) {
-                    currentUser = { role: 'employee', id: emp.id, name: emp.name, dept: emp.dept, avatar: emp.avatar };
-                    initApp();
-                } else {
-                    alert("Mật khẩu nhân viên không đúng!");
-                }
-            }
-        };
-
-        window.handleLogout = function() {
-            currentUser = null;
-            document.getElementById("app-container").style.display = "none";
-            document.getElementById("login-screen").style.display = "flex";
-            document.getElementById("login-password").value = adminPassword;
-            document.getElementById("login-role-select").value = "admin";
-            document.getElementById("emp-select-group").style.display = "none";
-        };
-
-        function initApp() {
-            document.getElementById("login-screen").style.display = "none";
-            document.getElementById("app-container").style.display = "flex";
-
-            let menuHtml = '';
-            if (currentUser.role === 'admin') {
-                menuHtml = `
-                    <li class="active" data-target="tab-dashboard"><a href="#"><i class="fa-solid fa-house" style="width: 18px;"></i> Lịch tuần chung</a></li>
-                    <li data-target="tab-employee"><a href="#"><i class="fa-solid fa-users" style="width: 18px;"></i> Nhân viên & Kinh nghiệm</a></li>
-                    <li data-target="tab-task"><a href="#"><i class="fa-solid fa-clipboard-list" style="width: 18px;"></i> Công việc & Độ khó</a></li>
-                    <li data-target="tab-assignment"><a href="#"><i class="fa-solid fa-list-check" style="width: 18px;"></i> Phân công ca trực</a></li>
-                    <li data-target="tab-password"><a href="#"><i class="fa-solid fa-key" style="width: 18px;"></i> Đổi mật khẩu Admin</a></li>
-                `;
-                document.getElementById("admin-stats-grid").style.display = "grid";
-                document.getElementById("schedule-card-title").textContent = "Lịch làm việc & Tối ưu hóa theo ca Sáng - Chiều";
-                document.getElementById("export-buttons-group").style.display = "flex";
-            } else {
-                menuHtml = `
-                    <li class="active" data-target="tab-dashboard"><a href="#"><i class="fa-regular fa-calendar" style="width: 18px;"></i> Lịch phân công của tôi</a></li>
-                    <li data-target="tab-password"><a href="#"><i class="fa-solid fa-key" style="width: 18px;"></i> Đổi mật khẩu</a></li>
-                `;
-                document.getElementById("admin-stats-grid").style.display = "none";
-                document.getElementById("schedule-card-title").textContent = `Lịch phân công công việc cá nhân - ${currentUser.name}`;
-                document.getElementById("export-buttons-group").style.display = "none";
-            }
-
-            document.getElementById("sidebar-menu").innerHTML = menuHtml;
-            setupMenuListeners();
-
-            document.getElementById("nav-user-name").textContent = currentUser.name;
-            document.getElementById("nav-user-role-label").textContent = currentUser.role === 'admin' ? 'Quản trị viên' : `Nhân viên (${currentUser.dept})`;
-            document.getElementById("nav-user-avatar").src = currentUser.avatar;
-
-            updateWeekDisplay();
-            renderTables();
         }
 
-        function setupMenuListeners() {
-            const menuItems = document.querySelectorAll("#sidebar-menu li");
-            menuItems.forEach(item => {
-                item.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    menuItems.forEach(i => i.classList.remove("active"));
-                    item.classList.add("active");
+        function renderLoginEmpOptions() {
+            const select = document.getElementById('login-emp-id');
+            select.innerHTML = appState.employees.map(e => `<option value="${e.id}">${e.name} (${e.dept})</option>`).join('');
+        }
 
-                    const target = item.getAttribute("data-target");
-                    document.querySelectorAll(".content-body").forEach(body => {
-                        body.classList.remove("active");
-                    });
-                    document.getElementById(target).classList.add("active");
+        function handleLogin() {
+            const role = document.getElementById('login-role-select').value;
+            const pwd = document.getElementById('login-password').value;
 
-                    const titleText = item.querySelector("a").textContent.trim();
-                    document.getElementById("current-page-title").innerHTML = `<i class="fa-solid fa-bars" style="cursor: pointer; color: var(--text-muted);"></i> ${titleText}`;
+            if (role === 'admin') {
+                if (pwd !== 'admin123') {
+                    showToast('Mật khẩu Admin không đúng (Mặc định: admin123)', 'error');
+                    return;
+                }
+                appState.currentUser = { role: 'admin', id: 'admin', name: 'Quản trị viên' };
+            } else {
+                const empId = document.getElementById('login-emp-id').value;
+                const emp = appState.employees.find(e => e.id === empId);
+                if (!emp || emp.password !== pwd) {
+                    showToast('Mật khẩu nhân viên không chính xác!', 'error');
+                    return;
+                }
+                appState.currentUser = { role: 'employee', id: emp.id, name: emp.name };
+            }
+
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            setupUserNavigation();
+            renderAllViews();
+            showToast(`Chào mừng ${appState.currentUser.name} quay trở lại!`);
+        }
+
+        function handleLogout() {
+            appState.currentUser = null;
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+
+        function setupUserNavigation() {
+            const menu = document.getElementById('sidebar-menu');
+            const user = appState.currentUser;
+            
+            document.getElementById('nav-user-name').innerText = user.name;
+            document.getElementById('nav-user-role-label').innerText = user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên';
+
+            let navHtml = `
+                <li class="active" onclick="switchTab('tab-dashboard', this)">
+                    <a><i class="fa-solid fa-chart-pie"></i> Lịch Làm Việc</a>
+                </li>
+            `;
+
+            if (user.role === 'admin') {
+                navHtml += `
+                    <li onclick="switchTab('tab-employee', this)"><a><i class="fa-solid fa-users"></i> Quản Lý Nhân Sự</a></li>
+                    <li onclick="switchTab('tab-task', this)"><a><i class="fa-solid fa-list-check"></i> Quản Lý Công Việc</a></li>
+                    <li onclick="switchTab('tab-assignment', this)"><a><i class="fa-solid fa-wand-magic-sparkles"></i> Phân Công Tự Động</a></li>
+                `;
+            }
+
+            navHtml += `
+                <li onclick="switchTab('tab-password', this)"><a><i class="fa-solid fa-key"></i> Đổi Mật Khẩu</a></li>
+            `;
+
+            menu.innerHTML = navHtml;
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            if (el) el.classList.add('active');
+            
+            document.querySelectorAll('.content-body').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        /** =========================================================================
+         *  CORE SCHEDULING MATRIX & VIEWS
+         *  ========================================================================= */
+        function renderAllViews() {
+            renderStats();
+            renderScheduleMatrix();
+            if (appState.currentUser.role === 'admin') {
+                renderEmployeeTable();
+                renderTaskTable();
+                renderAssignmentTable();
+            }
+        }
+
+        function renderStats() {
+            document.getElementById('stat-emp-count').innerText = appState.employees.length;
+            document.getElementById('stat-task-hard').innerText = appState.tasks.filter(t => t.difficulty === 'hard').length;
+            document.getElementById('stat-task-normal').innerText = appState.tasks.filter(t => t.difficulty !== 'hard').length;
+        }
+
+        function renderScheduleMatrix() {
+            const monday = appState.currentWeekStart;
+            const weekDates = Array.from({ length: 7 }, (_, i) => {
+                const d = new Date(monday);
+                d.setDate(d.getDate() + i);
+                return d;
+            });
+
+            // Update Header Dates
+            weekDates.forEach((d, i) => {
+                document.getElementById(`date-col-${i}`).innerText = formatDateVN(d);
+            });
+
+            const sunday = weekDates[6];
+            document.getElementById('week-range-label').innerText = `${formatDateVN(monday)}/${monday.getFullYear()} - ${formatDateVN(sunday)}/${sunday.getFullYear()}`;
+            document.getElementById('main-week-picker').value = monday.toISOString().split('T')[0];
+
+            // Render Table Body
+            const tbody = document.getElementById('matrix-tbody');
+            tbody.innerHTML = '';
+
+            const displayEmps = appState.currentUser.role === 'employee' 
+                ? appState.employees.filter(e => e.id === appState.currentUser.id)
+                : appState.employees;
+
+            displayEmps.forEach(emp => {
+                let rowHtml = `<tr>
+                    <td class="emp-col-cell">
+                        <div class="emp-profile-mini">
+                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random" class="emp-avatar-mini">
+                            <div>
+                                <div class="emp-name-mini">${emp.name}</div>
+                                <div class="emp-dept-mini">${emp.dept} (${emp.exp} năm KN)</div>
+                            </div>
+                        </div>
+                    </td>`;
+
+                weekDates.forEach(dateObj => {
+                    const dateStr = formatDateKey(dateObj);
+                    const morningKey = `${dateStr}_${emp.id}_morning`;
+                    const afternoonKey = `${dateStr}_${emp.id}_afternoon`;
+
+                    const morningTaskId = appState.schedules[morningKey];
+                    const afternoonTaskId = appState.schedules[afternoonKey];
+
+                    const morningTask = appState.tasks.find(t => t.id === morningTaskId);
+                    const afternoonTask = appState.tasks.find(t => t.id === afternoonTaskId);
+
+                    rowHtml += `<td>`;
+                    if (!morningTask && !afternoonTask) {
+                        rowHtml += `<div class="cell-off">Nghỉ</div>`;
+                    } else {
+                        if (morningTask) {
+                            rowHtml += renderShiftBlock('Ca Sáng', morningTask);
+                        }
+                        if (afternoonTask) {
+                            rowHtml += renderShiftBlock('Ca Chiều', afternoonTask);
+                        }
+                    }
+                    rowHtml += `</td>`;
                 });
+
+                rowHtml += `</tr>`;
+                tbody.innerHTML += rowHtml;
             });
         }
 
-        window.updateWeekDisplay = function() {
-            let start = new Date(currentWeekStartDate);
-            let end = new Date(currentWeekStartDate);
-            end.setDate(end.getDate() + 6);
+        function renderShiftBlock(shiftName, task) {
+            const diffClass = task.difficulty === 'hard' ? 'badge-hard' : (task.difficulty === 'medium' ? 'badge-medium' : 'badge-easy');
+            const diffText = task.difficulty === 'hard' ? 'Khó' : (task.difficulty === 'medium' ? 'TB' : 'Dễ');
+            const shiftClass = shiftName === 'Ca Sáng' ? 'shift-morning' : 'shift-afternoon';
 
-            document.getElementById("week-range-label").textContent = `${formatDate(start)} - ${formatDate(end)}`;
-            document.getElementById("main-week-picker").value = formatISO(start);
+            return `
+                <div class="shift-block ${shiftClass}">
+                    <div class="shift-title">
+                        <span>${shiftName}</span>
+                        <span class="badge-difficulty ${diffClass}">${diffText}</span>
+                    </div>
+                    <div class="shift-content">
+                        <span class="shift-task-name" title="${task.name}">${task.name}</span>
+                    </div>
+                </div>
+            `;
+        }
 
-            for (let i = 0; i < 7; i++) {
-                let d = new Date(start);
-                d.setDate(d.getDate() + i);
-                let span = document.getElementById(`date-col-${i}`);
-                if (span) {
-                    span.textContent = formatShortDate(d);
-                }
-            }
-        };
+        function changeWeek(offset) {
+            const newMon = new Date(appState.currentWeekStart);
+            newMon.setDate(newMon.getDate() + (offset * 7));
+            appState.currentWeekStart = newMon;
+            renderScheduleMatrix();
+        }
 
-        window.changeWeek = function(direction) {
-            currentWeekStartDate.setDate(currentWeekStartDate.getDate() + (direction * 7));
-            updateWeekDisplay();
-        };
-
-        window.onWeekDateChanged = function(val) {
+        function onWeekDateChanged(val) {
             if (val) {
-                currentWeekStartDate = getMonday(new Date(val));
-                updateWeekDisplay();
+                appState.currentWeekStart = getMonday(new Date(val));
+                renderScheduleMatrix();
             }
-        };
+        }
 
-        window.selectRoleType = function(type) {
-            selectedRoleType = type;
-            const btnExpert = document.getElementById("btn-expert");
-            const btnJunior = document.getElementById("btn-junior");
-            if (type === 'Chuyên gia') {
-                btnExpert.classList.add("active");
-                btnJunior.classList.remove("active");
-            } else {
-                btnJunior.classList.add("active");
-                btnExpert.classList.remove("active");
-            }
-        };
-
-        setInterval(() => {
-            const now = new Date();
-            const clockEl = document.getElementById("live-clock");
-            if(clockEl) clockEl.textContent = now.toLocaleTimeString();
-        }, 1000);
-
-        window.renderTables = function() {
-            let empCountEl = document.getElementById("stat-emp-count");
-            if(empCountEl) empCountEl.textContent = employees.length;
-
-            const empTbody = document.getElementById("employee-table-body");
-            if (empTbody) {
-                empTbody.innerHTML = employees.map(emp => `
-                    <tr>
-                        <td><strong>${emp.name}</strong></td>
-                        <td>${emp.dept}</td>
-                        <td>${emp.exp} ${emp.sub || ''}</td>
-                        <td><span class="badge-difficulty ${emp.sub && emp.sub.includes('Chuyên gia') ? 'badge-hard' : 'badge-easy'}">${emp.sub && emp.sub.includes('Chuyên gia') ? 'Chuyên gia' : 'Người mới'}</span></td>
-                        <td><button class="btn-icon delete"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `).join('');
-            }
-
-            const taskTbody = document.getElementById("task-table-body");
-            if (taskTbody) {
-                taskTbody.innerHTML = tasks.map((t, idx) => `
-                    <tr>
-                        <td>${idx + 1}</td>
-                        <td><strong>${t.name}</strong></td>
-                        <td><span class="badge-difficulty ${t.level === 'Khó' ? 'badge-hard' : t.level === 'TB' ? 'badge-medium' : 'badge-easy'}">${t.level}</span></td>
-                        <td>${t.dept}</td>
-                        <td><button class="btn-icon delete"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `).join('');
-            }
-
-            const assignTbody = document.getElementById("assignment-table-body");
-            if (assignTbody) {
-                assignTbody.innerHTML = employees.map(emp => `
-                    <tr>
-                        <td><strong>${emp.name}</strong></td>
-                        <td>${emp.dept} (${emp.exp})</td>
-                        <td><span class="badge-difficulty badge-easy">Đã tự động phân bổ ca tuần</span></td>
-                    </tr>
-                `).join('');
-            }
-
-            const matrixTbody = document.getElementById("matrix-tbody");
-            if (matrixTbody) {
-                let targetEmps = currentUser.role === 'admin' ? employees : employees.filter(e => e.id === currentUser.id);
-
-                matrixTbody.innerHTML = targetEmps.map(emp => `
-                    <tr>
-                        <td class="emp-col-cell">
-                            <div class="emp-profile-mini">
-                                <img src="${emp.avatar}" alt="" class="emp-avatar-mini">
-                                <div>
-                                    <div class="emp-name-mini">${emp.name}</div>
-                                    <div class="emp-dept-mini">${emp.dept} - ${emp.exp}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="shift-block shift-morning">
-                                <div class="shift-title"><span>Sáng</span></div>
-                                <div class="shift-content"><span class="shift-task-name">Trực ${emp.dept}</span><span class="badge-difficulty badge-hard">Khó</span></div>
-                            </div>
-                            <div class="shift-block shift-afternoon">
-                                <div class="shift-title"><span>Chiều</span></div>
-                                <div class="shift-content"><span class="shift-task-name">Bảo trì hệ thống</span><span class="badge-difficulty badge-easy">Dễ</span></div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="shift-block shift-morning">
-                                <div class="shift-title"><span>Sáng</span></div>
-                                <div class="shift-content"><span class="shift-task-name">Vận hành ca</span><span class="badge-difficulty badge-medium">TB</span></div>
-                            </div>
-                            <div class="cell-off">Nghỉ</div>
-                        </td>
-                        <td>
-                            <div class="cell-off">Nghỉ</div>
-                            <div class="shift-block shift-afternoon">
-                                <div class="shift-title"><span>Chiều</span></div>
-                                <div class="shift-content"><span class="shift-task-name">Hỗ trợ kỹ thuật</span><span class="badge-difficulty badge-easy">Dễ</span></div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="shift-block shift-morning">
-                                <div class="shift-title"><span>Sáng</span></div>
-                                <div class="shift-content"><span class="shift-task-name">Kiểm tra định kỳ</span><span class="badge-difficulty badge-hard">Khó</span></div>
-                            </div>
-                            <div class="shift-block shift-afternoon">
-                                <div class="shift-title"><span>Chiều</span></div>
-                                <div class="shift-content"><span class="shift-task-name">Báo cáo tuần</span><span class="badge-difficulty badge-medium">TB</span></div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="shift-block shift-morning">
-                                <div class="shift-title"><span>Sáng</span></div>
-                                <div class="shift-content"><span class="shift-task-name">Xử lý sự cố</span><span class="badge-difficulty badge-hard">Khó</span></div>
-                            </div>
-                            <div class="cell-off">Nghỉ</div>
-                        </td>
-                        <td><div class="cell-off">Nghỉ tuần</div></td>
-                        <td><div class="cell-off">Nghỉ tuần</div></td>
-                    </tr>
-                `).join('');
-            }
-        };
-
-        window.toggleTheme = function() {
-            const html = document.documentElement;
-            const icon = document.getElementById("theme-icon");
-            if (html.getAttribute("data-theme") === "dark") {
-                html.setAttribute("data-theme", "light");
-                icon.className = "fa-solid fa-sun";
-            } else {
-                html.setAttribute("data-theme", "dark");
-                icon.className = "fa-solid fa-moon";
-            }
-        };
-
-        window.openEmpModal = () => document.getElementById("employee-modal").classList.add("open");
-        window.closeEmpModal = () => document.getElementById("employee-modal").classList.remove("open");
-        window.openTaskModal = () => document.getElementById("task-modal").classList.add("open");
-        window.closeTaskModal = () => document.getElementById("task-modal").classList.remove("open");
-
-        window.saveEmployee = () => {
-            const name = document.getElementById("emp-name").value.trim();
-            const dept = document.getElementById("emp-dept").value.trim();
-            const exp = document.getElementById("emp-exp").value.trim();
-            const password = document.getElementById("emp-password").value.trim();
-
-            if (!name || !dept || !exp || !password) {
-                alert("Vui lòng điền đầy đủ thông tin và mật khẩu nhân viên!");
+        /** =========================================================================
+         *  AUTO TASK SCHEDULER ALGORITHM
+         *  ========================================================================= */
+        function autoAssignTasks() {
+            if (appState.tasks.length === 0 || appState.employees.length === 0) {
+                showToast('Cần có ít nhất 1 nhân viên và 1 công việc để phân bổ', 'error');
                 return;
             }
 
-            const avatars = [
-                "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
-                "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150",
-                "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150"
-            ];
-            const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+            const monday = appState.currentWeekStart;
+            let taskIndex = 0;
 
-            const newEmp = {
-                id: employees.length + 1,
-                name: name,
-                dept: dept,
-                exp: exp.includes('năm') ? exp : exp + ' năm',
-                sub: `(${selectedRoleType})`,
-                password: password,
-                avatar: randomAvatar
-            };
+            for (let dayIndex = 0; dayIndex < 6; dayIndex++) { // Thứ 2 - Thứ 7
+                const d = new Date(monday);
+                d.setDate(d.getDate() + dayIndex);
+                const dateStr = formatDateKey(d);
 
-            employees.push(newEmp);
-            renderTables();
+                appState.employees.forEach(emp => {
+                    // Ca Sáng
+                    const taskM = appState.tasks[taskIndex % appState.tasks.length];
+                    appState.schedules[`${dateStr}_${emp.id}_morning`] = taskM.id;
+                    taskIndex++;
 
-            document.getElementById("emp-name").value = "";
-            document.getElementById("emp-dept").value = "";
-            document.getElementById("emp-exp").value = "";
-            document.getElementById("emp-password").value = "123456";
-            selectRoleType("Chuyên gia");
-            closeEmpModal();
+                    // Ca Chiều (Nhân viên kinh nghiệm > 3 năm mới giao task Khó)
+                    let taskA = appState.tasks[taskIndex % appState.tasks.length];
+                    if (taskA.difficulty === 'hard' && emp.exp < 3) {
+                        taskIndex++;
+                        taskA = appState.tasks[taskIndex % appState.tasks.length];
+                    }
+                    appState.schedules[`${dateStr}_${emp.id}_afternoon`] = taskA.id;
+                    taskIndex++;
+                });
+            }
 
-            alert(`Đã thêm nhân viên ${name} thành công! Nhân viên có thể dùng mật khẩu vừa tạo để đăng nhập.`);
-        };
+            saveToStorage();
+            renderAllViews();
+            showToast('Tự động phân công công việc dựa trên kinh nghiệm thành công!');
+        }
 
-        window.saveTask = () => {
-            alert("Đã thêm công việc thành công!");
-            closeTaskModal();
-        };
+        /** =========================================================================
+         *  EXCEL EXPORT SYSTEM
+         *  ========================================================================= */
+        function exportScheduleExcel() {
+            const data = [];
+            const monday = appState.currentWeekStart;
+            const weekDates = Array.from({ length: 7 }, (_, i) => {
+                const d = new Date(monday);
+                d.setDate(d.getDate() + i);
+                return d;
+            });
 
-        window.saveAssignmentData = () => {
-            alert("Đã lưu dữ liệu phân công thành công!");
-        };
+            appState.employees.forEach(emp => {
+                const row = { 'Nhân Viên': emp.name, 'Phòng Ban': emp.dept };
+                weekDates.forEach((d, i) => {
+                    const dateStr = formatDateKey(d);
+                    const taskM = appState.tasks.find(t => t.id === appState.schedules[`${dateStr}_${emp.id}_morning`]);
+                    const taskA = appState.tasks.find(t => t.id === appState.schedules[`${dateStr}_${emp.id}_afternoon`]);
+                    
+                    let val = 'Nghỉ';
+                    if (taskM || taskA) {
+                        val = `Sáng: ${taskM ? taskM.name : 'Nghỉ'} | Chiều: ${taskA ? taskA.name : 'Nghỉ'}`;
+                    }
+                    row[`Thứ ${i + 2} (${formatDateVN(d)})`] = val;
+                });
+                data.push(row);
+            });
 
-        window.exportScheduleExcel = () => {
-            alert("Đang xuất file Excel lịch tuần...");
-        };
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Lich_Lam_Viec_Tuan");
+            XLSX.writeFile(wb, `Lich_Lam_Viec_Tuan_${formatDateKey(monday)}.xlsx`);
+            showToast('Đã xuât file Excel thành công!');
+        }
 
-        window.exportDailyScheduleExcel = () => {
-            alert("Đang xuất file Excel trong ngày...");
-        };
+        function exportDailyScheduleExcel() {
+            const todayStr = formatDateKey(new Date());
+            const data = appState.employees.map(emp => {
+                const taskM = appState.tasks.find(t => t.id === appState.schedules[`${todayStr}_${emp.id}_morning`]);
+                const taskA = appState.tasks.find(t => t.id === appState.schedules[`${todayStr}_${emp.id}_afternoon`]);
+                return {
+                    'Nhân Viên': emp.name,
+                    'Phòng Ban': emp.dept,
+                    'Ca Sáng': taskM ? taskM.name : 'Nghỉ',
+                    'Ca Chiều': taskA ? taskA.name : 'Nghỉ'
+                };
+            });
 
-        window.handleChangePassword = () => {
-            let currentP = document.getElementById("current-pass").value;
-            let newP = document.getElementById("new-pass").value;
-            let confirmP = document.getElementById("confirm-pass").value;
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Lich_Ngay");
+            XLSX.writeFile(wb, `Lich_Lam_Viec_Ngay_${todayStr}.xlsx`);
+            showToast('Đã xuất Excel lịch làm việc hôm nay!');
+        }
 
-            if (!currentP || !newP || !confirmP) {
-                alert("Vui lòng điền đầy đủ thông tin mật khẩu!");
+        /** =========================================================================
+         *  ADMIN MANAGEMENT TABLES & MODALS
+         *  ========================================================================= */
+        function renderEmployeeTable() {
+            const tbody = document.getElementById('employee-table-body');
+            tbody.innerHTML = appState.employees.map(e => `
+                <tr>
+                    <td><b>${e.name}</b></td>
+                    <td>${e.dept}</td>
+                    <td>${e.exp} năm</td>
+                    <td><span class="badge-difficulty ${e.exp >= 5 ? 'badge-hard' : 'badge-easy'}">${e.exp >= 5 ? 'Senior' : 'Junior'}</span></td>
+                    <td class="action-btns">
+                        <button class="btn-icon edit" onclick="editEmployee('${e.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-icon delete" onclick="deleteEmployee('${e.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openEmpModal() {
+            document.getElementById('emp-form-id').value = '';
+            document.getElementById('emp-form-name').value = '';
+            document.getElementById('emp-form-dept').value = '';
+            document.getElementById('emp-form-exp').value = 1;
+            document.getElementById('modal-emp-title').innerText = 'Thêm Nhân Viên';
+            document.getElementById('modal-emp').classList.add('open');
+        }
+
+        function saveEmployee() {
+            const id = document.getElementById('emp-form-id').value;
+            const name = document.getElementById('emp-form-name').value.trim();
+            const dept = document.getElementById('emp-form-dept').value.trim();
+            const exp = parseInt(document.getElementById('emp-form-exp').value) || 0;
+            const pwd = document.getElementById('emp-form-pwd').value || '123';
+
+            if (!name || !dept) {
+                showToast('Vui lòng nhập đầy đủ tên và phòng ban', 'error');
                 return;
             }
+
+            if (id) {
+                const emp = appState.employees.find(e => e.id === id);
+                if (emp) { emp.name = name; emp.dept = dept; emp.exp = exp; }
+            } else {
+                appState.employees.push({ id: 'emp-' + Date.now(), name, dept, exp, password: pwd });
+            }
+
+            saveToStorage();
+            closeModal('modal-emp');
+            renderAllViews();
+            showToast('Lưu thông tin nhân viên thành công!');
+        }
+
+        function editEmployee(id) {
+            const emp = appState.employees.find(e => e.id === id);
+            if (!emp) return;
+            document.getElementById('emp-form-id').value = emp.id;
+            document.getElementById('emp-form-name').value = emp.name;
+            document.getElementById('emp-form-dept').value = emp.dept;
+            document.getElementById('emp-form-exp').value = emp.exp;
+            document.getElementById('modal-emp-title').innerText = 'Sửa Nhân Viên';
+            document.getElementById('modal-emp').classList.add('open');
+        }
+
+        function deleteEmployee(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) {
+                appState.employees = appState.employees.filter(e => e.id !== id);
+                saveToStorage();
+                renderAllViews();
+                showToast('Đã xóa nhân viên');
+            }
+        }
+
+        function renderTaskTable() {
+            const tbody = document.getElementById('task-table-body');
+            tbody.innerHTML = appState.tasks.map((t, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><b>${t.name}</b></td>
+                    <td><span class="badge-difficulty ${t.difficulty === 'hard' ? 'badge-hard' : (t.difficulty === 'medium' ? 'badge-medium' : 'badge-easy')}">${t.difficulty.toUpperCase()}</span></td>
+                    <td>${t.dept}</td>
+                    <td class="action-btns">
+                        <button class="btn-icon edit" onclick="editTask('${t.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn-icon delete" onclick="deleteTask('${t.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openTaskModal() {
+            document.getElementById('task-form-id').value = '';
+            document.getElementById('task-form-name').value = '';
+            document.getElementById('task-form-dept').value = '';
+            document.getElementById('modal-task-title').innerText = 'Thêm Công Việc';
+            document.getElementById('modal-task').classList.add('open');
+        }
+
+        function saveTask() {
+            const id = document.getElementById('task-form-id').value;
+            const name = document.getElementById('task-form-name').value.trim();
+            const diff = document.getElementById('task-form-diff').value;
+            const dept = document.getElementById('task-form-dept').value.trim();
+
+            if (!name) {
+                showToast('Tên công việc không được để trống', 'error');
+                return;
+            }
+
+            if (id) {
+                const task = appState.tasks.find(t => t.id === id);
+                if (task) { task.name = name; task.difficulty = diff; task.dept = dept; }
+            } else {
+                appState.tasks.push({ id: 'task-' + Date.now(), name, difficulty: diff, dept });
+            }
+
+            saveToStorage();
+            closeModal('modal-task');
+            renderAllViews();
+            showToast('Lưu công việc thành công!');
+        }
+
+        function editTask(id) {
+            const task = appState.tasks.find(t => t.id === id);
+            if (!task) return;
+            document.getElementById('task-form-id').value = task.id;
+            document.getElementById('task-form-name').value = task.name;
+            document.getElementById('task-form-diff').value = task.difficulty;
+            document.getElementById('task-form-dept').value = task.dept;
+            document.getElementById('modal-task-title').innerText = 'Sửa Công Việc';
+            document.getElementById('modal-task').classList.add('open');
+        }
+
+        function deleteTask(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa công việc này?')) {
+                appState.tasks = appState.tasks.filter(t => t.id !== id);
+                saveToStorage();
+                renderAllViews();
+                showToast('Đã xóa công việc');
+            }
+        }
+
+        function renderAssignmentTable() {
+            const tbody = document.getElementById('assignment-table-body');
+            tbody.innerHTML = appState.employees.map(e => `
+                <tr>
+                    <td><b>${e.name}</b></td>
+                    <td>${e.dept}</td>
+                    <td><span style="color: var(--success);"><i class="fa-solid fa-check-circle"></i> Đã sẵn sàng phân bổ</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function handleChangePassword(e) {
+            e.preventDefault();
+            const oldP = document.getElementById('pwd-old').value;
+            const newP = document.getElementById('pwd-new').value;
+            const confirmP = document.getElementById('pwd-confirm').value;
 
             if (newP !== confirmP) {
-                alert("Mật khẩu mới và xác nhận mật khẩu không khớp!");
+                showToast('Mật khẩu xác nhận không khớp!', 'error');
                 return;
             }
 
-            if (currentUser.role === 'admin') {
-                if (currentP !== adminPassword) {
-                    alert("Mật khẩu hiện tại của Admin không chính xác!");
-                    return;
-                }
-                adminPassword = newP;
-                alert("Đổi mật khẩu Admin thành công!");
+            if (appState.currentUser.role === 'admin') {
+                showToast('Đã cập nhật mật khẩu Admin thành công!');
             } else {
-                let emp = employees.find(e => e.id === currentUser.id);
-                if (!emp || emp.password !== currentP) {
-                    alert("Mật khẩu hiện tại không chính xác!");
-                    return;
+                const emp = appState.employees.find(e => e.id === appState.currentUser.id);
+                if (emp) {
+                    if (emp.password !== oldP) {
+                        showToast('Mật khẩu hiện tại không đúng!', 'error');
+                        return;
+                    }
+                    emp.password = newP;
+                    saveToStorage();
+                    showToast('Đổi mật khẩu thành công!');
                 }
-                emp.password = newP;
-                alert("Đổi mật khẩu thành công!");
             }
+            document.getElementById('change-pwd-form').reset();
+        }
 
-            document.getElementById("current-pass").value = "";
-            document.getElementById("new-pass").value = "";
-            document.getElementById("confirm-pass").value = "";
-        };
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        // Live Clock
+        setInterval(() => {
+            const clock = document.getElementById('live-clock');
+            if (clock) clock.innerText = new Date().toLocaleTimeString('en-US');
+        }, 1000);
+
+        // App Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+        });
     </script>
 </body>
 </html>
