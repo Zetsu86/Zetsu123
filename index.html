@@ -916,7 +916,6 @@
             localStorage.setItem('app_payrolls', JSON.stringify(state.payrolls));
             localStorage.setItem('app_chat_messages', JSON.stringify(state.chatMessages));
             localStorage.setItem('app_shift_config', JSON.stringify(state.shiftConfig));
-            // Đồng bộ lên Firebase Realtime Database
             if (dbRef) {
                 dbRef.set({
                     employees: state.employees,
@@ -1676,8 +1675,6 @@
         function openTaskModal() {
             document.getElementById('task-id').value = '';
             document.getElementById('task-name').value = '';
-            document.getElementById('task-difficulty').value = 'Khó';
-            document.getElementById('task-dept').value = '';
             document.getElementById('task-modal-title').textContent = 'Thêm Công Việc';
             document.getElementById('task-modal').classList.add('open');
         }
@@ -1689,7 +1686,7 @@
             const dept = document.getElementById('task-dept').value;
             const existingIdx = state.tasks.findIndex(t => t.id === id);
             if (existingIdx > -1) {
-                state.tasks[existingIdx] = { id, name, difficulty, dept };
+                state.tasks[existingIdx] = { ...state.tasks[existingIdx], name, difficulty, dept };
             } else {
                 state.tasks.push({ id, name, difficulty, dept });
             }
@@ -1697,7 +1694,7 @@
             renderTasks();
             renderDashboard();
             closeModal('task-modal');
-            showToast('Đã lưu thông tin công việc!');
+            showToast('Đã lưu công việc!');
         }
         function editTask(id) {
             const task = state.tasks.find(t => t.id === id);
@@ -1725,10 +1722,10 @@
             if (newPwd !== confirmPwd) return showToast('Mật khẩu mới không khớp!', 'error');
             
             if (state.currentUser.role === 'admin') {
-                if (oldPwd !== 'admin123') return showToast('Mật khẩu hiện tại không chính xác!', 'error');
-                showToast('Mật khẩu Admin đã được ghi nhận!');
+                if (oldPwd !== 'admin123') return showToast('Mật khẩu hiện tại của Admin không chính xác!', 'error');
+                showToast('Mật khẩu Admin đã được ghi nhận thay đổi (Mặc định admin123).');
             } else {
-                const emp = state.employees.find(e => e.id === state.currentUser.id);
+                const emp = state.employees.find(x => x.id === state.currentUser.id);
                 if (!emp || (emp.password || '123') !== oldPwd) return showToast('Mật khẩu hiện tại không chính xác!', 'error');
                 emp.password = newPwd;
                 saveDataToStorage();
@@ -1737,52 +1734,48 @@
             }
             document.getElementById('change-pwd-form').reset();
         }
-        function exportScheduleExcel() {
-            if (typeof XLSX === 'undefined') return showToast('Thư viện Excel chưa sẵn sàng!', 'error');
-            const wb = XLSX.utils.book_new();
+        function exportDailyScheduleExcel() {
+            const todayStr = new Date().toISOString().split('T')[0];
             const data = [];
-            const header = ['Nhân viên', 'Phòng ban', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
-            data.push(header);
-            
             state.employees.forEach(emp => {
-                const row = [emp.name, emp.dept];
+                const dayData = state.schedules[todayStr]?.[emp.id];
+                const mTask = dayData?.morning ? state.tasks.find(t => t.id === dayData.morning)?.name : 'OFF';
+                const aTask = dayData?.afternoon ? state.tasks.find(t => t.id === dayData.afternoon)?.name : 'OFF';
+                data.push({
+                    'Mã NV': emp.id,
+                    'Họ và Tên': emp.name,
+                    'Phòng Ban': emp.dept,
+                    'Ca Sáng': mTask,
+                    'Ca Chiều': aTask
+                });
+            });
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "LichTrucTrongNgay");
+            XLSX.writeFile(workbook, `LichTruc_${todayStr}.xlsx`);
+            showToast('Xuất Excel thành công!');
+        }
+        function exportScheduleExcel() {
+            const data = [];
+            const start = new Date(state.currentMondayDate);
+            state.employees.forEach(emp => {
+                const row = { 'Nhân viên': emp.name, 'Phòng ban': emp.dept };
                 for (let i = 0; i < 7; i++) {
-                    const d = new Date(state.currentMondayDate);
+                    const d = new Date(start);
                     d.setDate(d.getDate() + i);
                     const dateStr = d.toISOString().split('T')[0];
                     const dayData = state.schedules[dateStr]?.[emp.id];
-                    if (dayData && (dayData.morning || dayData.afternoon)) {
-                        const m = state.tasks.find(t => t.id === dayData.morning)?.name || '';
-                        const a = state.tasks.find(t => t.id === dayData.afternoon)?.name || '';
-                        row.push(`Sáng: ${m} | Chiều: ${a}`);
-                    } else {
-                        row.push('OFF');
-                    }
+                    const mTask = dayData?.morning ? state.tasks.find(t => t.id === dayData.morning)?.name : 'OFF';
+                    const aTask = dayData?.afternoon ? state.tasks.find(t => t.id === dayData.afternoon)?.name : 'OFF';
+                    row[`Thứ ${i+2 === 8 ? 'CN' : i+2}`] = `Sáng: ${mTask} | Chiều: ${aTask}`;
                 }
                 data.push(row);
             });
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            XLSX.utils.book_append_sheet(wb, ws, "LichTuan");
-            XLSX.writeFile(wb, `LichLamViec_Tuan_${state.currentMondayDate.toISOString().split('T')[0]}.xlsx`);
-            showToast('Xuất Excel thành công!');
-        }
-        function exportDailyScheduleExcel() {
-            if (typeof XLSX === 'undefined') return showToast('Thư viện Excel chưa sẵn sàng!', 'error');
-            const todayStr = new Date().toISOString().split('T')[0];
-            const wb = XLSX.utils.book_new();
-            const data = [
-                ['STT', 'Nhân viên', 'Phòng ban', 'Ca Sáng', 'Ca Chiều']
-            ];
-            state.employees.forEach((emp, idx) => {
-                const dayData = state.schedules[todayStr]?.[emp.id];
-                const m = dayData?.morning ? state.tasks.find(t => t.id === dayData.morning)?.name || '' : 'OFF';
-                const a = dayData?.afternoon ? state.tasks.find(t => t.id === dayData.afternoon)?.name || '' : 'OFF';
-                data.push([idx + 1, emp.name, emp.dept, m, a]);
-            });
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            XLSX.utils.book_append_sheet(wb, ws, "LichHomNay");
-            XLSX.writeFile(wb, `LichLamViec_Ngay_${todayStr}.xlsx`);
-            showToast('Xuất Excel trong ngày thành công!');
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "LichTuanPro");
+            XLSX.writeFile(workbook, `LichTrucTuan_${start.toISOString().split('T')[0]}.xlsx`);
+            showToast('Xuất Excel cả tuần thành công!');
         }
     </script>
 </body>
