@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Task Scheduler - Phân Quyền Hệ Thống</title>
+    <title>Manager Automatic - Employee Task Scheduler, Timekeeping & Support</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- SheetJS (XLSX) cho tính năng Xuất Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- Firebase App & Realtime Database SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
 
     <style>
         :root[data-theme="light"] {
@@ -41,6 +46,9 @@
             
             --shift-off-bg: #f8fafc;
             --shift-off-text: #94a3b8;
+            --chat-bubble-user: #4f46e5;
+            --chat-bubble-other: #e2e8f0;
+            --chat-text-other: #1e293b;
         }
 
         :root[data-theme="dark"] {
@@ -72,6 +80,9 @@
             
             --shift-off-bg: #1e293b;
             --shift-off-text: #64748b;
+            --chat-bubble-user: #6366f1;
+            --chat-bubble-other: #334155;
+            --chat-text-other: #f8fafc;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
@@ -90,27 +101,11 @@
         .login-logo i { font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem; }
         .login-logo h2 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
 
-        /* INPUT PASSWORD WRAPPER */
-        .password-input-group {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .password-input-group input {
-            width: 100%;
-            padding-right: 2.3rem;
-        }
+        .password-input-group { position: relative; display: flex; align-items: center; }
+        .password-input-group input { width: 100%; padding-right: 2.3rem; }
         .toggle-password-btn {
-            position: absolute;
-            right: 0.7rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; right: 0.7rem; background: none; border: none;
+            color: var(--text-muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
         }
         .toggle-password-btn:hover { color: var(--text-main); }
 
@@ -147,20 +142,23 @@
         .content-body { flex: 1; overflow-y: auto; padding: 1.25rem 1.5rem; display: none; }
         .content-body.active { display: block; }
 
-        /* STATS CARDS GRID */
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.25rem; }
         .stat-card { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 1rem 1.25rem; border-radius: 0.5rem; box-shadow: var(--shadow); }
         .stat-header { display: flex; align-items: center; justify-content: space-between; color: var(--text-muted); font-size: 0.78rem; font-weight: 500; margin-bottom: 0.3rem; }
         .stat-body h3 { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
         .stat-footer { font-size: 0.68rem; color: var(--success); font-weight: 500; margin-top: 0.2rem; }
 
-        /* CARD & LAYOUT */
         .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.5rem; box-shadow: var(--shadow); margin-bottom: 1.25rem; }
         .card-header { padding: 0.9rem 1.15rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
         .card-header h2 { font-size: 0.92rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); }
         .card-body { padding: 1.15rem; }
 
-        /* CONTROLS BAR */
+        /* SETTINGS TAB STYLES */
+        .settings-nav { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem; gap: 0.5rem; }
+        .settings-tab-btn { padding: 0.6rem 1rem; background: none; border: none; border-bottom: 2px solid transparent; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+        .settings-tab-btn.active { border-bottom-color: var(--primary); color: var(--primary); }
+        .settings-tab-btn:hover { color: var(--text-main); }
+
         .schedule-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; font-size: 0.83rem; flex-wrap: wrap; gap: 0.75rem; }
         .date-navigator { display: flex; align-items: center; gap: 0.4rem; }
         .btn-nav { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 26px; height: 26px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -173,14 +171,13 @@
         .btn-info { background-color: var(--info); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-primary-sm { background-color: var(--primary); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-danger-sm { background-color: var(--danger); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
+        .btn-warning-sm { background-color: var(--warning); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
 
-        /* BADGES */
         .badge-difficulty { display: inline-block; padding: 0.08rem 0.3rem; border-radius: 3px; font-size: 0.62rem; font-weight: 700; text-align: center; }
         .badge-hard { background-color: #ef4444; color: #ffffff; }
         .badge-medium { background-color: #d97706; color: #ffffff; }
         .badge-easy { background-color: #10b981; color: #ffffff; }
 
-        /* SCHEDULE MATRIX TABLE */
         .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; table-layout: fixed; }
         .schedule-table th, .schedule-table td { border: 1px solid var(--border-color); padding: 0.3rem; vertical-align: middle; color: var(--text-main); }
         .schedule-table th { background-color: var(--table-header); color: var(--text-muted); font-weight: 600; text-align: center; }
@@ -191,17 +188,13 @@
         .emp-name-mini { font-weight: 700; font-size: 0.75rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .emp-dept-mini { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* SHIFTS */
         .shift-block { margin-bottom: 3px; border-radius: 4px; padding: 3px 5px; border: 1px solid transparent; }
         .shift-block:last-child { margin-bottom: 0; }
-        
         .shift-morning { background-color: var(--shift-morning-bg); border-color: var(--shift-morning-border); }
         .shift-afternoon { background-color: var(--shift-afternoon-bg); border-color: var(--shift-afternoon-border); }
-        
         .shift-title { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1px; display: flex; justify-content: space-between; align-items: center; }
         .shift-morning .shift-title { color: var(--shift-morning-text); }
         .shift-afternoon .shift-title { color: var(--shift-afternoon-text); }
-
         .shift-content { display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 0.7rem; font-weight: 500; }
         .shift-task-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -209,7 +202,6 @@
         .schedule-legend { display: flex; align-items: center; gap: 1.25rem; margin-top: 0.85rem; font-size: 0.73rem; color: var(--text-muted); justify-content: center; flex-wrap: wrap; }
         .legend-item { display: flex; align-items: center; gap: 0.3rem; }
 
-        /* GENERAL TABLES */
         .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
         .data-table th, .data-table td { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border-color); text-align: left; color: var(--text-main); }
         .data-table th { background-color: var(--table-header); color: var(--text-muted); font-weight: 600; }
@@ -218,7 +210,34 @@
         .btn-icon.edit:hover { color: var(--info); }
         .btn-icon.delete:hover { color: var(--danger); }
 
-        /* MODAL */
+        /* TIMEKEEPING STYLES */
+        .timekeeping-card {
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+        }
+        .timekeeping-status { display: flex; align-items: center; gap: 1rem; }
+        .status-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--text-muted); }
+        .status-indicator.active { background: var(--success); box-shadow: 0 0 8px var(--success); }
+
+        /* CHAT CSKH STYLES */
+        .chat-layout { display: flex; height: 500px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--card-bg); }
+        .chat-sidebar { width: 220px; border-right: 1px solid var(--border-color); background: var(--table-header); display: flex; flex-direction: column; }
+        .chat-sidebar-header { padding: 0.75rem 1rem; font-weight: 600; font-size: 0.83rem; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+        .chat-user-list { list-style: none; overflow-y: auto; flex: 1; }
+        .chat-user-item { padding: 0.65rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); }
+        .chat-user-item:hover, .chat-user-item.active { background: var(--border-color); font-weight: 600; }
+        .chat-main { flex: 1; display: flex; flex-direction: column; }
+        .chat-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); }
+        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; background: var(--bg-main); }
+        .chat-bubble { max-width: 70%; padding: 0.6rem 0.85rem; border-radius: 8px; font-size: 0.82rem; line-height: 1.4; word-break: break-word; }
+        .chat-bubble.me { align-self: flex-end; background: var(--chat-bubble-user); color: #ffffff; border-bottom-right-radius: 2px; }
+        .chat-bubble.other { align-self: flex-start; background: var(--chat-bubble-other); color: var(--chat-text-other); border-bottom-left-radius: 2px; }
+        .chat-time { font-size: 0.65rem; opacity: 0.75; margin-top: 3px; text-align: right; }
+        .chat-input-area { padding: 0.75rem; border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; background: var(--card-bg); }
+        .chat-templates { padding: 0.5rem 1rem; background: var(--table-header); border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; overflow-x: auto; }
+        .chat-template-btn { background: var(--card-bg); border: 1px solid var(--border-color); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; white-space: nowrap; color: var(--text-main); }
+        .chat-template-btn:hover { background: var(--primary); color: white; }
+
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal-overlay.open { display: flex; }
         .modal-container { background: var(--card-bg); width: 420px; max-width: 90%; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--border-color); }
@@ -230,7 +249,6 @@
         .modal-footer { padding: 0.65rem 1.15rem; background: var(--table-header); display: flex; justify-content: flex-end; gap: 0.4rem; border-top: 1px solid var(--border-color); }
         .btn-secondary { background: var(--border-color); border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; cursor: pointer; font-weight: 500; color: var(--text-main); }
 
-        /* TOAST NOTIFICATION */
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
         .toast { padding: 0.75rem 1rem; border-radius: 6px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 0.8rem; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s forwards; }
         .toast.success { border-left: 4px solid var(--success); }
@@ -255,6 +273,8 @@
             .emp-col-cell { width: 110px; padding-left: 0.25rem !important; }
             .emp-avatar-mini { width: 22px; height: 22px; }
             .modal-container { width: 95%; margin: 0 auto; }
+            .chat-layout { flex-direction: column; height: 450px; }
+            .chat-sidebar { width: 100%; height: 120px; }
         }
     </style>
 </head>
@@ -265,7 +285,7 @@
         <div class="login-box">
             <div class="login-logo">
                 <i class="fa-solid fa-calendar-days"></i>
-                <h2>Đăng Nhập Hệ Thống</h2>
+                <h2>Manager Automatic</h2>
             </div>
             <div class="form-group">
                 <label>Chọn vai trò đăng nhập</label>
@@ -293,24 +313,21 @@
 
     <!-- ỨNG DỤNG CHÍNH -->
     <div id="app-container" style="display: none;">
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <i class="fa-solid fa-calendar-days" style="color: #818cf8; font-size: 1.05rem;"></i>
-                <span id="sidebar-brand-title">Task Scheduler</span>
+                <span id="sidebar-brand-title">Manager Automatic</span>
             </div>
             <ul class="sidebar-menu" id="sidebar-menu"></ul>
         </aside>
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
-            <!-- TOP NAVBAR -->
             <header class="top-navbar">
                 <div class="page-title" id="current-page-title">
                     <i class="fa-solid fa-bars" style="cursor: pointer; color: var(--text-muted);"></i> Dashboard
                 </div>
                 <div class="user-nav-actions">
-                    <span><i class="fa-regular fa-clock"></i> <span id="live-clock">11:08:57 AM</span></span>
+                    <span><i class="fa-regular fa-clock"></i> <span id="live-clock">--:--:--</span></span>
                     <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Chuyển đổi giao diện sáng/tối">
                         <i class="fa-solid fa-moon" id="theme-icon"></i>
                     </button>
@@ -325,13 +342,12 @@
                 </div>
             </header>
 
-            <!-- TAB 1: DASHBOARD / LỊCH CHUNG -->
             <div id="tab-dashboard" class="content-body active">
                 <div class="grid-4" id="admin-stats-grid">
                     <div class="stat-card">
                         <div class="stat-header"><span>Tổng nhân viên</span><i class="fa-solid fa-users" style="color: var(--primary);"></i></div>
                         <div class="stat-body"><h3 id="stat-emp-count">0</h3></div>
-                        <div class="stat-footer"><i class="fa-solid fa-arrow-up"></i> Đồng bộ Realtime</div>
+                        <div class="stat-footer"><i class="fa-solid fa-arrow-up"></i> Sync Firebase Realtime</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header"><span>Công việc mức Khó</span><i class="fa-solid fa-fire" style="color: var(--danger);"></i></div>
@@ -346,13 +362,13 @@
                     <div class="stat-card">
                         <div class="stat-header"><span>Hiệu suất tối ưu</span><i class="fa-solid fa-bolt" style="color: var(--warning);"></i></div>
                         <div class="stat-body"><h3>100%</h3></div>
-                        <div class="stat-footer" style="color: var(--warning);">Phân bổ theo năng lực</div>
+                        <div class="stat-footer" style="color: var(--warning);">Tải được cân bằng tự động</div>
                     </div>
                 </div>
 
                 <div class="card" style="margin-bottom: 0;">
                     <div class="card-header">
-                        <h2><i class="fa-regular fa-calendar-days" style="color: var(--info);"></i> <span id="schedule-card-title">Lịch làm việc & Tối ưu hóa theo ca Sáng - Chiều</span></h2>
+                        <h2><i class="fa-regular fa-calendar-days" style="color: var(--info);"></i> <span id="schedule-card-title">Lịch làm việc & Cân bằng tải theo ca Sáng - Chiều</span></h2>
                     </div>
                     <div class="card-body">
                         <div class="schedule-controls">
@@ -395,7 +411,110 @@
                 </div>
             </div>
 
-            <!-- TAB 2: NHÂN VIÊN -->
+            <!-- TAB CHẤM CÔNG THEO GIỜ -->
+            <div id="tab-timekeeping" class="content-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> Chấm công theo giờ (40.000 VNĐ / Giờ)</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="timekeeping-card" id="timekeeping-action-card">
+                            <div class="timekeeping-status">
+                                <div class="status-indicator" id="clock-status-dot"></div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.95rem;" id="clock-status-text">Chưa chấm công hôm nay</div>
+                                    <div style="font-size: 0.78rem; color: var(--text-muted);" id="clock-detail-text">Nhấn "Vào Ca" để ghi nhận thời gian làm việc</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn-success" id="btn-checkin" onclick="handleCheckIn()"><i class="fa-solid fa-right-to-bracket"></i> Vào Ca (Check-in)</button>
+                                <button class="btn-danger-sm" id="btn-checkout" onclick="handleCheckOut()" style="display: none;"><i class="fa-solid fa-right-from-bracket"></i> Tan Ca (Check-out)</button>
+                            </div>
+                        </div>
+
+                        <h3 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text-main);"><i class="fa-solid fa-list-ol"></i> Lịch sử ca làm gần nhất</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Nhân viên</th>
+                                    <th>Giờ vào</th>
+                                    <th>Giờ ra</th>
+                                    <th>Tổng giờ làm</th>
+                                    <th>Tạm tính lương (40k/h)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timekeeping-history-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB BẢNG LƯƠNG -->
+            <div id="tab-payroll" class="content-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-money-check-dollar" style="color: var(--success);"></i> Bảng lương nhân sự theo giờ</h2>
+                        <span id="payroll-admin-badge" style="font-size: 0.75rem; background: rgba(16,185,129,0.15); color: var(--success); padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600;">Lương định mức: 40.000 VNĐ / Giờ</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nhân sự</th>
+                                    <th>Lương / Giờ (VNĐ)</th>
+                                    <th>Tổng giờ đã tích lũy</th>
+                                    <th>Thưởng / Phụ cấp</th>
+                                    <th>Tổng Lương Thực Nhận</th>
+                                    <th id="payroll-action-header">Thao tác Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payroll-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB TÍNH NĂNG MỚI: HỖ TRỢ CSKH & BÁO LỖI LƯƠNG -->
+            <div id="tab-support" class="content-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-headset" style="color: var(--info);"></i> Trung Tâm Hỗ Trợ CSKH & Báo Lỗi Lương</h2>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Kết nối trực tiếp giữa Nhân viên và Admin</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chat-layout">
+                            <!-- SIDEBAR DANH SÁCH HỘI THOẠI (ADMIN XEM D.SÁCH / NHÂN VIÊN XEM KHU VỰC CỦA MÌNH) -->
+                            <div class="chat-sidebar" id="chat-sidebar">
+                                <div class="chat-sidebar-header"><i class="fa-solid fa-comments"></i> Hội thoại CSKH</div>
+                                <ul class="chat-user-list" id="chat-user-list"></ul>
+                            </div>
+
+                            <!-- KHU VỰC KHUNG CHAT MỞ RỘNG -->
+                            <div class="chat-main">
+                                <div class="chat-header">
+                                    <span id="chat-active-title"><i class="fa-solid fa-user-gear"></i> Kênh CSKH Trực Tiếp</span>
+                                    <span style="font-size: 0.7rem; color: var(--success); font-weight: 500;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Trực tuyến</span>
+                                </div>
+                                <div class="chat-messages" id="chat-messages"></div>
+                                
+                                <!-- TEMPLATES SOẠN NHANH DÀNH CHO NHÂN VIÊN -->
+                                <div class="chat-templates" id="chat-templates">
+                                    <button class="chat-template-btn" onclick="applyChatTemplate('salary')"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);"></i> [Báo sai lương]</button>
+                                    <button class="chat-template-btn" onclick="applyChatTemplate('system_error')"><i class="fa-solid fa-bug" style="color:var(--danger);"></i> [Báo lỗi hệ thống]</button>
+                                    <button class="chat-template-btn" onclick="applyChatTemplate('timekeeping')"><i class="fa-solid fa-clock"></i> [Quên chấm công]</button>
+                                </div>
+
+                                <div class="chat-input-area">
+                                    <input type="text" id="chat-input" class="form-control" placeholder="Nhập nội dung phản hồi/báo lỗi gửi Admin..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+                                    <button class="btn-primary-sm" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i> Gửi</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="tab-employee" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -419,7 +538,6 @@
                 </div>
             </div>
 
-            <!-- TAB 3: CÔNG VIỆC -->
             <div id="tab-task" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -443,12 +561,11 @@
                 </div>
             </div>
 
-            <!-- TAB 4: PHÂN CÔNG -->
             <div id="tab-assignment" class="content-body">
                 <div class="card">
                     <div class="card-header">
-                        <h2><i class="fa-solid fa-list-check" style="color: var(--success);"></i> Phân công ca trực theo năng lực</h2>
-                        <button class="btn-primary-sm" onclick="autoAssignTasks()"><i class="fa-solid fa-wand-magic-sparkles"></i> Phân bổ tự động</button>
+                        <h2><i class="fa-solid fa-list-check" style="color: var(--success);"></i> Phân công ca trực theo năng lực & Cân bằng phụ tải</h2>
+                        <button class="btn-primary-sm" onclick="autoAssignTasks()"><i class="fa-solid fa-wand-magic-sparkles"></i> Phân bổ cân bằng tải</button>
                     </div>
                     <div class="card-body">
                         <table class="data-table">
@@ -465,184 +582,296 @@
                 </div>
             </div>
 
-            <!-- TAB 5: ĐỔI MẬT KHẨU -->
-            <div id="tab-password" class="content-body">
-                <div class="card" style="max-width: 500px;">
-                    <div class="card-header">
-                        <h2><i class="fa-solid fa-key" style="color: var(--warning);"></i> Đổi mật khẩu tài khoản cá nhân</h2>
+            <!-- TAB CÀI ĐẶT -->
+            <div id="tab-settings" class="content-body">
+                <div class="settings-nav">
+                    <button class="settings-tab-btn active" onclick="switchSettingsSection('password', this)">
+                        <i class="fa-solid fa-key"></i> Đổi mật khẩu
+                    </button>
+                    <button class="settings-tab-btn" onclick="switchSettingsSection('general', this)">
+                        <i class="fa-solid fa-sliders"></i> Cấu hình chung
+                    </button>
+                </div>
+
+                <div id="setting-sec-password" class="setting-section">
+                    <div class="card" style="max-width: 500px;">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-lock" style="color: var(--warning);"></i> Đổi mật khẩu tài khoản</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="change-pwd-form" onsubmit="handleChangePassword(event)">
+                                <div class="form-group">
+                                    <label>Mật khẩu hiện tại</label>
+                                    <div class="password-input-group">
+                                        <input type="password" id="pwd-old" class="form-control" required placeholder="Nhập mật khẩu hiện tại...">
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-old', this)"><i class="fa-solid fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mật khẩu mới</label>
+                                    <div class="password-input-group">
+                                        <input type="password" id="pwd-new" class="form-control" required placeholder="Nhập mật khẩu mới...">
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-new', this)"><i class="fa-solid fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Xác nhận mật khẩu mới</label>
+                                    <div class="password-input-group">
+                                        <input type="password" id="pwd-confirm" class="form-control" required placeholder="Nhập lại mật khẩu mới...">
+                                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-confirm', this)"><i class="fa-solid fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary-sm" style="padding: 0.55rem 1rem;"><i class="fa-solid fa-save"></i> Cập nhật mật khẩu</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form id="change-pwd-form" onsubmit="handleChangePassword(event)">
+                </div>
+
+                <div id="setting-sec-general" class="setting-section" style="display: none;">
+                    <div class="card" style="max-width: 500px;">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-gear" style="color: var(--info);"></i> Tùy chọn hệ thống</h2>
+                        </div>
+                        <div class="card-body">
                             <div class="form-group">
-                                <label>Mật khẩu hiện tại</label>
-                                <div class="password-input-group">
-                                    <input type="password" id="pwd-old" class="form-control" required placeholder="Nhập mật khẩu hiện tại...">
-                                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-old', this)"><i class="fa-solid fa-eye"></i></button>
-                                </div>
+                                <label>Chế độ giao diện</label>
+                                <button class="btn-secondary" style="width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center;" onclick="toggleTheme()">
+                                    <span>Sáng / Tối</span>
+                                    <i class="fa-solid fa-circle-half-stroke"></i>
+                                </button>
                             </div>
-                            <div class="form-group">
-                                <label>Mật khẩu mới</label>
-                                <div class="password-input-group">
-                                    <input type="password" id="pwd-new" class="form-control" required placeholder="Nhập mật khẩu mới...">
-                                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-new', this)"><i class="fa-solid fa-eye"></i></button>
-                                </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Trạng thái kết nối dữ liệu</label>
+                                <p style="font-size: 0.8rem; color: var(--success);"><i class="fa-solid fa-signal"></i> Hoạt động tốt (Firebase / LocalStorage)</p>
                             </div>
-                            <div class="form-group">
-                                <label>Xác nhận mật khẩu mới</label>
-                                <div class="password-input-group">
-                                    <input type="password" id="pwd-confirm" class="form-control" required placeholder="Nhập lại mật khẩu mới...">
-                                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('pwd-confirm', this)"><i class="fa-solid fa-eye"></i></button>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary-sm" style="padding: 0.55rem 1rem;"><i class="fa-solid fa-save"></i> Cập nhật mật khẩu</button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- MODAL EMP -->
-    <div class="modal-overlay" id="modal-emp">
+    <!-- MODAL SỬA BẢNG LƯƠNG DÀNH CHO ADMIN -->
+    <div class="modal-overlay" id="payroll-modal">
         <div class="modal-container">
             <div class="modal-header">
-                <span id="modal-emp-title">Thêm Nhân Viên</span>
-                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('modal-emp')"></i>
+                <span>Chỉnh Sửa Lương Nhân Viên</span>
+                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('payroll-modal')"></i>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="emp-form-id">
-                <div class="form-group">
-                    <label>Họ và tên</label>
-                    <input type="text" id="emp-form-name" class="form-control" placeholder="Nguyễn Văn A">
+            <form onsubmit="savePayrollEdit(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="edit-payroll-emp-id">
+                    <div class="form-group">
+                        <label>Tên nhân viên</label>
+                        <input type="text" id="edit-payroll-emp-name" class="form-control" readonly style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label>Lương theo giờ (VNĐ)</label>
+                        <input type="number" id="edit-payroll-rate" class="form-control" required min="10000" step="1000" value="40000">
+                    </div>
+                    <div class="form-group">
+                        <label>Tổng giờ làm tích lũy</label>
+                        <input type="number" id="edit-payroll-hours" class="form-control" required min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Thưởng / Phụ cấp (VNĐ)</label>
+                        <input type="number" id="edit-payroll-bonus" class="form-control" min="0" step="10000" value="0">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Phòng ban</label>
-                    <input type="text" id="emp-form-dept" class="form-control" placeholder="Kỹ thuật / Vận hành">
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('payroll-modal')">Hủy</button>
+                    <button type="submit" class="btn-primary-sm">Cập nhật Lương</button>
                 </div>
-                <div class="form-group">
-                    <label>Số năm kinh nghiệm</label>
-                    <input type="number" id="emp-form-exp" class="form-control" value="1" min="0">
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu đăng nhập mặc định</label>
-                    <input type="password" id="emp-form-pwd" class="form-control" value="123456">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('modal-emp')">Hủy</button>
-                <button class="btn-primary-sm" onclick="saveEmployee()"><i class="fa-solid fa-save"></i> Lưu dữ liệu</button>
-            </div>
+            </form>
         </div>
     </div>
 
-    <!-- MODAL TASK -->
-    <div class="modal-overlay" id="modal-task">
+    <!-- MODALS KHÁC -->
+    <div class="modal-overlay" id="emp-modal">
         <div class="modal-container">
             <div class="modal-header">
-                <span id="modal-task-title">Thêm Công Việc</span>
-                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('modal-task')"></i>
+                <span id="emp-modal-title">Thêm Nhân Viên</span>
+                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('emp-modal')"></i>
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="task-form-id">
-                <div class="form-group">
-                    <label>Tên công việc</label>
-                    <input type="text" id="task-form-name" class="form-control" placeholder="Kiểm tra hệ thống Server">
+            <form onsubmit="saveEmployee(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="emp-id">
+                    <div class="form-group">
+                        <label>Họ và tên</label>
+                        <input type="text" id="emp-name" class="form-control" required placeholder="Nguyễn Văn A">
+                    </div>
+                    <div class="form-group">
+                        <label>Phòng ban</label>
+                        <input type="text" id="emp-dept" class="form-control" required placeholder="Kỹ thuật / Vận hành">
+                    </div>
+                    <div class="form-group">
+                        <label>Kinh nghiệm (Năm)</label>
+                        <input type="number" id="emp-exp" class="form-control" min="0" step="0.5" required placeholder="3">
+                    </div>
+                    <div class="form-group">
+                        <label>Cấp độ</label>
+                        <select id="emp-level" class="form-control">
+                            <option value="Senior">Senior (Cao cấp)</option>
+                            <option value="Mid">Mid-Level (Trung cấp)</option>
+                            <option value="Junior">Junior (Sơ cấp)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Link Ảnh Avatar (Tùy chọn)</label>
+                        <input type="url" id="emp-avatar" class="form-control" placeholder="https://...">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Độ khó</label>
-                    <select id="task-form-diff" class="form-control">
-                        <option value="easy">Dễ</option>
-                        <option value="medium">Trung bình</option>
-                        <option value="hard">Khó</option>
-                    </select>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('emp-modal')">Hủy</button>
+                    <button type="submit" class="btn-primary-sm">Lưu dữ liệu</button>
                 </div>
-                <div class="form-group">
-                    <label>Phòng ban</label>
-                    <input type="text" id="task-form-dept" class="form-control" placeholder="IT / Kỹ thuật">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('modal-task')">Hủy</button>
-                <button class="btn-primary-sm" onclick="saveTask()"><i class="fa-solid fa-save"></i> Lưu dữ liệu</button>
-            </div>
+            </form>
         </div>
     </div>
 
+    <div class="modal-overlay" id="task-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span id="task-modal-title">Thêm Công Việc</span>
+                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeModal('task-modal')"></i>
+            </div>
+            <form onsubmit="saveTask(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="task-id">
+                    <div class="form-group">
+                        <label>Tên công việc</label>
+                        <input type="text" id="task-name" class="form-control" required placeholder="Bảo trì hệ thống Server">
+                    </div>
+                    <div class="form-group">
+                        <label>Mức độ khó</label>
+                        <select id="task-difficulty" class="form-control">
+                            <option value="Khó">Khó</option>
+                            <option value="Trung bình">Trung bình</option>
+                            <option value="Dễ">Dễ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phòng ban liên quan</label>
+                        <input type="text" id="task-dept" class="form-control" required placeholder="IT / Kỹ thuật">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('task-modal')">Hủy</button>
+                    <button type="submit" class="btn-primary-sm">Lưu công việc</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container"></div>
 
+    <!-- APPLICATION LOGIC JAVASCRIPT -->
     <script>
-        /** =========================================================================
-         *  STATE MANAGEMENT & INITIAL DATA
-         *  ========================================================================= */
-        const STORAGE_KEY = 'TASK_SCHEDULER_APP_DATA';
+        // CẤU HÌNH DỮ LIỆU KHỞI TẠO DỰ PHÒNG
+        const DEFAULT_EMPLOYEES = [
+            { id: 'emp_1', name: 'Nguyễn Văn Hải', dept: 'Kỹ thuật', exp: 5, level: 'Senior', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', password: '123' },
+            { id: 'emp_2', name: 'Trần Thị Mai', dept: 'Vận hành', exp: 3, level: 'Mid', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', password: '123' },
+            { id: 'emp_3', name: 'Lê Hoàng Nam', dept: 'Bảo trì', exp: 1, level: 'Junior', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', password: '123' }
+        ];
 
-        let appState = {
-            currentUser: null, // { role: 'admin'|'employee', id: '...', name: '...' }
-            currentWeekStart: getMonday(new Date()),
-            employees: [
-                { id: 'emp-1', name: 'Nguyễn Văn An', dept: 'Kỹ thuật', exp: 5, password: '123' },
-                { id: 'emp-2', name: 'Trần Thị Bình', dept: 'Vận hành', exp: 2, password: '123' },
-                { id: 'emp-3', name: 'Lê Hoàng Cường', dept: 'IT Systems', exp: 8, password: '123' },
-                { id: 'emp-4', name: 'Phạm Minh Đức', dept: 'Hỗ trợ', exp: 1, password: '123' }
-            ],
-            tasks: [
-                { id: 'task-1', name: 'Xử lý sự cố Server chính', difficulty: 'hard', dept: 'IT Systems' },
-                { id: 'task-2', name: 'Bảo trì định kỳ máy trạm', difficulty: 'medium', dept: 'Kỹ thuật' },
-                { id: 'task-3', name: 'Kiểm tra Nhật ký Log', difficulty: 'easy', dept: 'Vận hành' },
-                { id: 'task-4', name: 'Cập nhật Patch bảo mật', difficulty: 'hard', dept: 'IT Systems' }
-            ],
-            schedules: {} // Key Format: YYYY-MM-DD_empId_shift ('morning' | 'afternoon')
+        const DEFAULT_TASKS = [
+            { id: 'task_1', name: 'Kiểm tra hạ tầng Cloud', difficulty: 'Khó', dept: 'Kỹ thuật' },
+            { id: 'task_2', name: 'Cập nhật phần mềm định kỳ', difficulty: 'Trung bình', dept: 'Vận hành' },
+            { id: 'task_3', name: 'Vệ sinh thiết bị đầu cuối', difficulty: 'Dễ', dept: 'Bảo trì' },
+            { id: 'task_4', name: 'Khắc phục sự cố mạng LAN', difficulty: 'Khó', dept: 'Kỹ thuật' }
+        ];
+
+        // STATE MANAGEMENT
+        let state = {
+            currentUser: null,
+            employees: [],
+            tasks: [],
+            schedules: {},
+            timekeepingLogs: [],
+            payrolls: {},
+            chatMessages: [], // Chứa tin nhắn hỗ trợ CSKH
+            selectedChatEmpId: null, // Admin chọn nhân viên để chat
+            currentMondayDate: getMonday(new Date())
         };
 
-        function saveToStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                employees: appState.employees,
-                tasks: appState.tasks,
-                schedules: appState.schedules
-            }));
-        }
-
-        function loadFromStorage() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (data) {
-                try {
-                    const parsed = JSON.parse(data);
-                    if (parsed.employees) appState.employees = parsed.employees;
-                    if (parsed.tasks) appState.tasks = parsed.tasks;
-                    if (parsed.schedules) appState.schedules = parsed.schedules;
-                } catch (e) {
-                    console.error('Lỗi khi tải dữ liệu từ localStorage', e);
-                }
+        // FIREBASE INITIALIZATION SAFEGUARD
+        try {
+            const firebaseConfig = {
+                apiKey: "AIzaSyDummyKeyForInitializationOnly",
+                authDomain: "manager-automatic.firebaseapp.com",
+                databaseURL: "https://manager-automatic-default-rtdb.firebaseio.com",
+                projectId: "manager-automatic",
+                storageBucket: "manager-automatic.appspot.com",
+                messagingSenderId: "1234567890",
+                appId: "1:1234567890:web:abcdef123456"
+            };
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
             }
+        } catch (e) {
+            console.warn("Firebase config fallback to Local Storage mode.", e);
         }
 
-        /** =========================================================================
-         *  HELPER UTILITIES
-         *  ========================================================================= */
-        function getMonday(d) {
-            const date = new Date(d);
-            const day = date.getDay();
-            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-            return new Date(date.setDate(diff));
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInitialData();
+            startClock();
+            initDatePicker();
+        });
+
+        function loadInitialData() {
+            const storedEmps = localStorage.getItem('app_employees');
+            const storedTasks = localStorage.getItem('app_tasks');
+            const storedSchedules = localStorage.getItem('app_schedules');
+            const storedLogs = localStorage.getItem('app_timekeeping');
+            const storedPayrolls = localStorage.getItem('app_payrolls');
+            const storedChats = localStorage.getItem('app_chat_messages');
+
+            state.employees = storedEmps ? JSON.parse(storedEmps) : DEFAULT_EMPLOYEES;
+            state.tasks = storedTasks ? JSON.parse(storedTasks) : DEFAULT_TASKS;
+            state.schedules = storedSchedules ? JSON.parse(storedSchedules) : {};
+            state.timekeepingLogs = storedLogs ? JSON.parse(storedLogs) : [];
+            state.payrolls = storedPayrolls ? JSON.parse(storedPayrolls) : {};
+            state.chatMessages = storedChats ? JSON.parse(storedChats) : [];
+
+            state.employees.forEach(emp => {
+                if (!state.payrolls[emp.id]) {
+                    state.payrolls[emp.id] = { hourlyRate: 40000, totalHours: 0, bonus: 0 };
+                }
+            });
+
+            saveDataToStorage();
+            populateEmpLoginSelect();
         }
 
-        function formatDateKey(dateObj) {
-            return dateObj.toISOString().split('T')[0];
+        function saveDataToStorage() {
+            localStorage.setItem('app_employees', JSON.stringify(state.employees));
+            localStorage.setItem('app_tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('app_schedules', JSON.stringify(state.schedules));
+            localStorage.setItem('app_timekeeping', JSON.stringify(state.timekeepingLogs));
+            localStorage.setItem('app_payrolls', JSON.stringify(state.payrolls));
+            localStorage.setItem('app_chat_messages', JSON.stringify(state.chatMessages));
         }
 
-        function formatDateVN(dateObj) {
-            const d = dateObj.getDate().toString().padStart(2, '0');
-            const m = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-            return `${d}/${m}`;
+        // CLOCK & UTILS
+        function startClock() {
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('live-clock').textContent = now.toLocaleTimeString('vi-VN');
+            }, 1000);
         }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'triangle-exclamation'}"></i> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.className = 'fa-solid fa-moon';
+            }
         }
 
         function togglePasswordVisibility(inputId, btn) {
@@ -657,31 +886,32 @@
             }
         }
 
-        function toggleTheme() {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            document.getElementById('theme-icon').className = next === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fa-solid fa-${type === 'success' ? 'circle-check' : 'circle-exclamation'}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
-        /** =========================================================================
-         *  AUTHENTICATION & AUTHORIZATION (RBAC)
-         *  ========================================================================= */
+        // AUTHENTICATION
         function onLoginRoleChanged() {
             const role = document.getElementById('login-role-select').value;
             const empGroup = document.getElementById('emp-select-group');
+            const pwdInput = document.getElementById('login-password');
             if (role === 'employee') {
                 empGroup.style.display = 'block';
-                renderLoginEmpOptions();
+                pwdInput.value = '123';
             } else {
                 empGroup.style.display = 'none';
+                pwdInput.value = 'admin123';
             }
         }
 
-        function renderLoginEmpOptions() {
+        function populateEmpLoginSelect() {
             const select = document.getElementById('login-emp-id');
-            select.innerHTML = appState.employees.map(e => `<option value="${e.id}">${e.name} (${e.dept})</option>`).join('');
+            select.innerHTML = state.employees.map(e => `<option value="${e.id}">${e.name} (${e.dept})</option>`).join('');
         }
 
         function handleLogin() {
@@ -689,432 +919,652 @@
             const pwd = document.getElementById('login-password').value;
 
             if (role === 'admin') {
-                if (pwd !== 'admin123') {
-                    showToast('Mật khẩu Admin không đúng (Mặc định: admin123)', 'error');
-                    return;
-                }
-                appState.currentUser = { role: 'admin', id: 'admin', name: 'Quản trị viên' };
+                if (pwd !== 'admin123') return showToast('Mật khẩu Admin không chính xác!', 'error');
+                state.currentUser = { id: 'admin', name: 'Administrator', role: 'admin', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150' };
             } else {
                 const empId = document.getElementById('login-emp-id').value;
-                const emp = appState.employees.find(e => e.id === empId);
-                if (!emp || emp.password !== pwd) {
-                    showToast('Mật khẩu nhân viên không chính xác!', 'error');
-                    return;
-                }
-                appState.currentUser = { role: 'employee', id: emp.id, name: emp.name };
+                const emp = state.employees.find(e => e.id === empId);
+                if (!emp || emp.password !== pwd) return showToast('Mật khẩu nhân viên không chính xác!', 'error');
+                state.currentUser = { ...emp, role: 'employee' };
             }
 
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'flex';
-            setupUserNavigation();
-            renderAllViews();
-            showToast(`Chào mừng ${appState.currentUser.name} quay trở lại!`);
+            setupUIPerRole();
+            showToast('Đăng nhập thành công!');
         }
 
         function handleLogout() {
-            appState.currentUser = null;
+            state.currentUser = null;
             document.getElementById('app-container').style.display = 'none';
             document.getElementById('login-screen').style.display = 'flex';
         }
 
-        function setupUserNavigation() {
+        function setupUIPerRole() {
+            const isEmp = state.currentUser.role === 'employee';
+            document.getElementById('nav-user-name').textContent = state.currentUser.name;
+            document.getElementById('nav-user-role-label').textContent = isEmp ? 'Nhân viên' : 'Quản trị viên';
+            document.getElementById('nav-user-avatar').src = state.currentUser.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150';
+
             const menu = document.getElementById('sidebar-menu');
-            const user = appState.currentUser;
-            
-            document.getElementById('nav-user-name').innerText = user.name;
-            document.getElementById('nav-user-role-label').innerText = user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên';
-
-            let navHtml = `
-                <li class="active" onclick="switchTab('tab-dashboard', this)">
-                    <a><i class="fa-solid fa-chart-pie"></i> Lịch Làm Việc</a>
-                </li>
-            `;
-
-            if (user.role === 'admin') {
-                navHtml += `
-                    <li onclick="switchTab('tab-employee', this)"><a><i class="fa-solid fa-users"></i> Quản Lý Nhân Sự</a></li>
-                    <li onclick="switchTab('tab-task', this)"><a><i class="fa-solid fa-list-check"></i> Quản Lý Công Việc</a></li>
-                    <li onclick="switchTab('tab-assignment', this)"><a><i class="fa-solid fa-wand-magic-sparkles"></i> Phân Công Tự Động</a></li>
+            if (isEmp) {
+                menu.innerHTML = `
+                    <li class="active" onclick="switchTab('dashboard', this)"><a><i class="fa-solid fa-calendar-week"></i> Lịch Cá Nhân</a></li>
+                    <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Chấm Công Theo Giờ</a></li>
+                    <li onclick="switchTab('payroll', this)"><a><i class="fa-solid fa-money-check-dollar"></i> Lương Của Tôi</a></li>
+                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> Hỗ Trợ CSKH & Báo Lỗi</a></li>
+                    <li onclick="switchTab('settings', this)"><a><i class="fa-solid fa-gear"></i> Cài Đặt</a></li>
                 `;
+                document.getElementById('admin-stats-grid').style.display = 'none';
+            } else {
+                menu.innerHTML = `
+                    <li class="active" onclick="switchTab('dashboard', this)"><a><i class="fa-solid fa-chart-pie"></i> Dashboard & Lịch</a></li>
+                    <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Quản Lý Chấm Công</a></li>
+                    <li onclick="switchTab('payroll', this)"><a><i class="fa-solid fa-money-check-dollar"></i> Quản Lý Bảng Lương</a></li>
+                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> Hỗ Trợ CSKH & Báo Lỗi</a></li>
+                    <li onclick="switchTab('employee', this)"><a><i class="fa-solid fa-users"></i> Quản Lý Nhân Sự</a></li>
+                    <li onclick="switchTab('task', this)"><a><i class="fa-solid fa-clipboard-list"></i> Danh Mục Công Việc</a></li>
+                    <li onclick="switchTab('assignment', this)"><a><i class="fa-solid fa-list-check"></i> Cân Bằng Phụ Tải</a></li>
+                    <li onclick="switchTab('settings', this)"><a><i class="fa-solid fa-gear"></i> Cài Đặt</a></li>
+                `;
+                document.getElementById('admin-stats-grid').style.display = 'grid';
             }
 
-            navHtml += `
-                <li onclick="switchTab('tab-password', this)"><a><i class="fa-solid fa-key"></i> Đổi Mật Khẩu</a></li>
-            `;
-
-            menu.innerHTML = navHtml;
+            renderDashboard();
+            renderEmployees();
+            renderTasks();
+            renderAssignments();
+            renderTimekeepingUI();
+            renderPayrollUI();
+            renderChatUI();
         }
 
-        function switchTab(tabId, el) {
+        function switchTab(tabId, element) {
             document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
-            if (el) el.classList.add('active');
-            
-            document.querySelectorAll('.content-body').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            if(element) element.classList.add('active');
+            document.querySelectorAll('.content-body').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
         }
 
-        /** =========================================================================
-         *  CORE SCHEDULING MATRIX & VIEWS
-         *  ========================================================================= */
-        function renderAllViews() {
-            renderStats();
-            renderScheduleMatrix();
-            if (appState.currentUser.role === 'admin') {
-                renderEmployeeTable();
-                renderTaskTable();
-                renderAssignmentTable();
+        function switchSettingsSection(sectionId, btn) {
+            document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.setting-section').forEach(sec => sec.style.display = 'none');
+            document.getElementById(`setting-sec-${sectionId}`).style.display = 'block';
+        }
+
+        // LOGIC CHẤM CÔNG THEO GIỜ & BẢNG LƯƠNG
+        function handleCheckIn() {
+            if (state.currentUser.role === 'admin') {
+                return showToast('Tài khoản Admin không tham gia chấm công ca trực!', 'error');
+            }
+
+            const todayStr = new Date().toISOString().split('T')[0];
+            const activeLog = state.timekeepingLogs.find(l => l.empId === state.currentUser.id && l.date === todayStr && !l.checkOut);
+
+            if (activeLog) {
+                return showToast('Bạn đã Check-in ca này rồi!', 'error');
+            }
+
+            const newLog = {
+                id: 'log_' + Date.now(),
+                empId: state.currentUser.id,
+                empName: state.currentUser.name,
+                date: todayStr,
+                checkIn: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+                checkInTime: Date.now(),
+                checkOut: null,
+                hours: 0,
+                amount: 0
+            };
+
+            state.timekeepingLogs.unshift(newLog);
+            saveDataToStorage();
+            renderTimekeepingUI();
+            showToast('Check-in thành công! Chúc bạn làm việc vui vẻ.');
+        }
+
+        function handleCheckOut() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const activeLog = state.timekeepingLogs.find(l => l.empId === state.currentUser.id && l.date === todayStr && !l.checkOut);
+
+            if (!activeLog) {
+                return showToast('Không tìm thấy ca làm việc cần Check-out!', 'error');
+            }
+
+            const checkOutTime = Date.now();
+            const diffHours = Math.max(0.1, parseFloat(((checkOutTime - activeLog.checkInTime) / (1000 * 60 * 60)).toFixed(2)));
+            const empRate = state.payrolls[state.currentUser.id]?.hourlyRate || 40000;
+
+            activeLog.checkOut = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            activeLog.hours = diffHours;
+            activeLog.amount = Math.round(diffHours * empRate);
+
+            if (state.payrolls[state.currentUser.id]) {
+                state.payrolls[state.currentUser.id].totalHours = parseFloat((state.payrolls[state.currentUser.id].totalHours + diffHours).toFixed(2));
+            }
+
+            saveDataToStorage();
+            renderTimekeepingUI();
+            renderPayrollUI();
+            showToast(`Tan ca thành công! Bạn đã làm ${diffHours} giờ.`);
+        }
+
+        function renderTimekeepingUI() {
+            const isEmp = state.currentUser.role === 'employee';
+            const actionCard = document.getElementById('timekeeping-action-card');
+            
+            if (!isEmp) {
+                actionCard.style.display = 'none';
+            } else {
+                actionCard.style.display = 'flex';
+                const todayStr = new Date().toISOString().split('T')[0];
+                const activeLog = state.timekeepingLogs.find(l => l.empId === state.currentUser.id && l.date === todayStr && !l.checkOut);
+                
+                const dot = document.getElementById('clock-status-dot');
+                const title = document.getElementById('clock-status-text');
+                const detail = document.getElementById('clock-detail-text');
+                const btnIn = document.getElementById('btn-checkin');
+                const btnOut = document.getElementById('btn-checkout');
+
+                if (activeLog) {
+                    dot.className = 'status-indicator active';
+                    title.textContent = `Đang trong ca làm việc (Vào ca: ${activeLog.checkIn})`;
+                    detail.textContent = 'Mức lương: 40.000 VNĐ / Giờ';
+                    btnIn.style.display = 'none';
+                    btnOut.style.display = 'inline-flex';
+                } else {
+                    dot.className = 'status-indicator';
+                    title.textContent = 'Sẵn sàng chấm công ca làm việc';
+                    detail.textContent = 'Nhấn "Vào Ca" để bắt đầu tính giờ làm';
+                    btnIn.style.display = 'inline-flex';
+                    btnOut.style.display = 'none';
+                }
+            }
+
+            const tbody = document.getElementById('timekeeping-history-tbody');
+            const filteredLogs = isEmp ? state.timekeepingLogs.filter(l => l.empId === state.currentUser.id) : state.timekeepingLogs;
+
+            if (filteredLogs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Chưa có dữ liệu chấm công nào.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredLogs.map(l => `
+                <tr>
+                    <td><strong>${l.date}</strong></td>
+                    <td>${l.empName}</td>
+                    <td><span style="color:var(--success); font-weight:600;"><i class="fa-solid fa-arrow-right-to-bracket"></i> ${l.checkIn}</span></td>
+                    <td>${l.checkOut ? `<span style="color:var(--danger); font-weight:600;"><i class="fa-solid fa-arrow-right-from-bracket"></i> ${l.checkOut}</span>` : '<em style="color:var(--text-muted);">Đang làm...</em>'}</td>
+                    <td><strong>${l.hours} giờ</strong></td>
+                    <td style="color:var(--warning); font-weight:700;">${(l.amount || 0).toLocaleString('vi-VN')} VNĐ</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPayrollUI() {
+            const isEmp = state.currentUser.role === 'employee';
+            const tbody = document.getElementById('payroll-tbody');
+            const actionHeader = document.getElementById('payroll-action-header');
+
+            if (isEmp) {
+                actionHeader.style.display = 'none';
+                const empPayroll = state.payrolls[state.currentUser.id] || { hourlyRate: 40000, totalHours: 0, bonus: 0 };
+                const totalSalary = (empPayroll.totalHours * empPayroll.hourlyRate) + (empPayroll.bonus || 0);
+
+                tbody.innerHTML = `
+                    <tr>
+                        <td><strong>${state.currentUser.name}</strong></td>
+                        <td>${empPayroll.hourlyRate.toLocaleString('vi-VN')} VNĐ</td>
+                        <td><strong>${empPayroll.totalHours} giờ</strong></td>
+                        <td>${(empPayroll.bonus || 0).toLocaleString('vi-VN')} VNĐ</td>
+                        <td style="color:var(--success); font-weight:700; font-size:1.05rem;">${totalSalary.toLocaleString('vi-VN')} VNĐ</td>
+                    </tr>
+                `;
+            } else {
+                actionHeader.style.display = 'table-cell';
+                tbody.innerHTML = state.employees.map(emp => {
+                    const p = state.payrolls[emp.id] || { hourlyRate: 40000, totalHours: 0, bonus: 0 };
+                    const totalSalary = (p.totalHours * p.hourlyRate) + (p.bonus || 0);
+                    return `
+                        <tr>
+                            <td><strong>${emp.name}</strong> (${emp.dept})</td>
+                            <td>${p.hourlyRate.toLocaleString('vi-VN')} VNĐ</td>
+                            <td><strong>${p.totalHours} giờ</strong></td>
+                            <td>${(p.bonus || 0).toLocaleString('vi-VN')} VNĐ</td>
+                            <td style="color:var(--success); font-weight:700;">${totalSalary.toLocaleString('vi-VN')} VNĐ</td>
+                            <td>
+                                <button class="btn-warning-sm" onclick="openPayrollEditModal('${emp.id}')"><i class="fa-solid fa-pen-to-square"></i> Điều chỉnh</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
             }
         }
 
-        function renderStats() {
-            document.getElementById('stat-emp-count').innerText = appState.employees.length;
-            document.getElementById('stat-task-hard').innerText = appState.tasks.filter(t => t.difficulty === 'hard').length;
-            document.getElementById('stat-task-normal').innerText = appState.tasks.filter(t => t.difficulty !== 'hard').length;
+        function openPayrollEditModal(empId) {
+            const emp = state.employees.find(e => e.id === empId);
+            if (!emp) return;
+            const p = state.payrolls[empId] || { hourlyRate: 40000, totalHours: 0, bonus: 0 };
+
+            document.getElementById('edit-payroll-emp-id').value = emp.id;
+            document.getElementById('edit-payroll-emp-name').value = emp.name;
+            document.getElementById('edit-payroll-rate').value = p.hourlyRate;
+            document.getElementById('edit-payroll-hours').value = p.totalHours;
+            document.getElementById('edit-payroll-bonus').value = p.bonus || 0;
+
+            document.getElementById('payroll-modal').classList.add('open');
         }
 
-        function renderScheduleMatrix() {
-            const monday = appState.currentWeekStart;
-            const weekDates = Array.from({ length: 7 }, (_, i) => {
-                const d = new Date(monday);
-                d.setDate(d.getDate() + i);
-                return d;
-            });
+        function savePayrollEdit(e) {
+            e.preventDefault();
+            const empId = document.getElementById('edit-payroll-emp-id').value;
+            const rate = parseInt(document.getElementById('edit-payroll-rate').value) || 40000;
+            const hours = parseFloat(document.getElementById('edit-payroll-hours').value) || 0;
+            const bonus = parseInt(document.getElementById('edit-payroll-bonus').value) || 0;
 
-            // Update Header Dates
-            weekDates.forEach((d, i) => {
-                document.getElementById(`date-col-${i}`).innerText = formatDateVN(d);
-            });
-
-            const sunday = weekDates[6];
-            document.getElementById('week-range-label').innerText = `${formatDateVN(monday)}/${monday.getFullYear()} - ${formatDateVN(sunday)}/${sunday.getFullYear()}`;
-            document.getElementById('main-week-picker').value = monday.toISOString().split('T')[0];
-
-            // Render Table Body
-            const tbody = document.getElementById('matrix-tbody');
-            tbody.innerHTML = '';
-
-            const displayEmps = appState.currentUser.role === 'employee' 
-                ? appState.employees.filter(e => e.id === appState.currentUser.id)
-                : appState.employees;
-
-            displayEmps.forEach(emp => {
-                let rowHtml = `<tr>
-                    <td class="emp-col-cell">
-                        <div class="emp-profile-mini">
-                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random" class="emp-avatar-mini">
-                            <div>
-                                <div class="emp-name-mini">${emp.name}</div>
-                                <div class="emp-dept-mini">${emp.dept} (${emp.exp} năm KN)</div>
-                            </div>
-                        </div>
-                    </td>`;
-
-                weekDates.forEach(dateObj => {
-                    const dateStr = formatDateKey(dateObj);
-                    const morningKey = `${dateStr}_${emp.id}_morning`;
-                    const afternoonKey = `${dateStr}_${emp.id}_afternoon`;
-
-                    const morningTaskId = appState.schedules[morningKey];
-                    const afternoonTaskId = appState.schedules[afternoonKey];
-
-                    const morningTask = appState.tasks.find(t => t.id === morningTaskId);
-                    const afternoonTask = appState.tasks.find(t => t.id === afternoonTaskId);
-
-                    rowHtml += `<td>`;
-                    if (!morningTask && !afternoonTask) {
-                        rowHtml += `<div class="cell-off">Nghỉ</div>`;
-                    } else {
-                        if (morningTask) {
-                            rowHtml += renderShiftBlock('Ca Sáng', morningTask);
-                        }
-                        if (afternoonTask) {
-                            rowHtml += renderShiftBlock('Ca Chiều', afternoonTask);
-                        }
-                    }
-                    rowHtml += `</td>`;
-                });
-
-                rowHtml += `</tr>`;
-                tbody.innerHTML += rowHtml;
-            });
+            state.payrolls[empId] = { hourlyRate: rate, totalHours: hours, bonus: bonus };
+            saveDataToStorage();
+            renderPayrollUI();
+            closeModal('payroll-modal');
+            showToast('Cập nhật bảng lương thành công!');
         }
 
-        function renderShiftBlock(shiftName, task) {
-            const diffClass = task.difficulty === 'hard' ? 'badge-hard' : (task.difficulty === 'medium' ? 'badge-medium' : 'badge-easy');
-            const diffText = task.difficulty === 'hard' ? 'Khó' : (task.difficulty === 'medium' ? 'TB' : 'Dễ');
-            const shiftClass = shiftName === 'Ca Sáng' ? 'shift-morning' : 'shift-afternoon';
+        // LOGIC TÍNH NĂNG CHÁT HỖ TRỢ CSKH & BÁO LỖI LƯƠNG
+        function renderChatUI() {
+            const isEmp = state.currentUser.role === 'employee';
+            const userListEl = document.getElementById('chat-user-list');
+            const templatesEl = document.getElementById('chat-templates');
 
-            return `
-                <div class="shift-block ${shiftClass}">
-                    <div class="shift-title">
-                        <span>${shiftName}</span>
-                        <span class="badge-difficulty ${diffClass}">${diffText}</span>
+            if (isEmp) {
+                templatesEl.style.display = 'flex';
+                userListEl.innerHTML = `
+                    <li class="chat-user-item active">
+                        <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i> Admin CSKH
+                    </li>
+                `;
+                state.selectedChatEmpId = state.currentUser.id;
+            } else {
+                templatesEl.style.display = 'none';
+                if (!state.selectedChatEmpId && state.employees.length > 0) {
+                    state.selectedChatEmpId = state.employees[0].id;
+                }
+                userListEl.innerHTML = state.employees.map(emp => `
+                    <li class="chat-user-item ${emp.id === state.selectedChatEmpId ? 'active' : ''}" onclick="selectChatUser('${emp.id}')">
+                        <i class="fa-solid fa-user"></i> ${emp.name}
+                    </li>
+                `).join('');
+            }
+
+            renderChatMessages();
+        }
+
+        function selectChatUser(empId) {
+            state.selectedChatEmpId = empId;
+            renderChatUI();
+        }
+
+        function renderChatMessages() {
+            const container = document.getElementById('chat-messages');
+            const targetEmpId = state.selectedChatEmpId;
+
+            if (!targetEmpId) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem;">Vui lòng chọn hội thoại</div>`;
+                return;
+            }
+
+            const filteredMsgs = state.chatMessages.filter(m => m.empId === targetEmpId);
+
+            if (filteredMsgs.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.8rem;"><i class="fa-solid fa-comment-dots"></i> Chưa có tin nhắn nào. Hãy nhập nội dung bên dưới để báo lỗi hoặc hỗ trợ!</div>`;
+                return;
+            }
+
+            container.innerHTML = filteredMsgs.map(m => {
+                const isMe = m.senderRole === state.currentUser.role;
+                return `
+                    <div class="chat-bubble ${isMe ? 'me' : 'other'}">
+                        <div style="font-size:0.7rem; font-weight:700; margin-bottom:2px; opacity:0.85;">${m.senderName}</div>
+                        <div>${m.text}</div>
+                        <div class="chat-time">${m.time}</div>
                     </div>
-                    <div class="shift-content">
-                        <span class="shift-task-name" title="${task.name}">${task.name}</span>
-                    </div>
-                </div>
-            `;
+                `;
+            }).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            const targetEmpId = state.currentUser.role === 'employee' ? state.currentUser.id : state.selectedChatEmpId;
+
+            if (!targetEmpId) return showToast('Chưa chọn người nhận!', 'error');
+
+            const newMsg = {
+                id: 'msg_' + Date.now(),
+                empId: targetEmpId,
+                senderRole: state.currentUser.role,
+                senderName: state.currentUser.name,
+                text: text,
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN')
+            };
+
+            state.chatMessages.push(newMsg);
+            saveDataToStorage();
+            input.value = '';
+            renderChatMessages();
+        }
+
+        function applyChatTemplate(type) {
+            const input = document.getElementById('chat-input');
+            if (type === 'salary') {
+                input.value = 'Chào Admin, tôi kiểm tra thấy bảng lương của tôi bị sai/thiếu giờ làm. Nhờ Admin kiểm tra và cập nhật lại giúp tôi!';
+            } else if (type === 'system_error') {
+                input.value = 'Chào Admin, tôi gặp sự cố khi sử dụng ứng dụng (lỗi chấm công / hiển thị). Nhờ bộ phận CSKH kiểm tra hỗ trợ!';
+            } else if (type === 'timekeeping') {
+                input.value = 'Chào Admin, hôm nay tôi quên bấm Check-in/Check-out ca làm việc. Nhờ Admin điều chỉnh bổ sung giờ làm giúp tôi!';
+            }
+            input.focus();
+        }
+
+        // DATE & MATRIX HELPER
+        function getMonday(d) {
+            const date = new Date(d);
+            const day = date.getDay();
+            const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(date.setDate(diff));
+        }
+
+        function initDatePicker() {
+            const picker = document.getElementById('main-week-picker');
+            picker.value = state.currentMondayDate.toISOString().split('T')[0];
+            updateWeekRangeLabel();
         }
 
         function changeWeek(offset) {
-            const newMon = new Date(appState.currentWeekStart);
-            newMon.setDate(newMon.getDate() + (offset * 7));
-            appState.currentWeekStart = newMon;
-            renderScheduleMatrix();
+            state.currentMondayDate.setDate(state.currentMondayDate.getDate() + (offset * 7));
+            document.getElementById('main-week-picker').value = state.currentMondayDate.toISOString().split('T')[0];
+            updateWeekRangeLabel();
+            renderDashboard();
         }
 
         function onWeekDateChanged(val) {
-            if (val) {
-                appState.currentWeekStart = getMonday(new Date(val));
-                renderScheduleMatrix();
+            if (!val) return;
+            state.currentMondayDate = getMonday(new Date(val));
+            updateWeekRangeLabel();
+            renderDashboard();
+        }
+
+        function updateWeekRangeLabel() {
+            const start = new Date(state.currentMondayDate);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            document.getElementById('week-range-label').textContent = `${start.toLocaleDateString('vi-VN')} - ${end.toLocaleDateString('vi-VN')}`;
+
+            for (let i = 0; i < 7; i++) {
+                const colDate = new Date(start);
+                colDate.setDate(colDate.getDate() + i);
+                document.getElementById(`date-col-${i}`).textContent = `${colDate.getDate()}/${colDate.getMonth()+1}`;
             }
         }
 
-        /** =========================================================================
-         *  AUTO TASK SCHEDULER ALGORITHM
-         *  ========================================================================= */
-        function autoAssignTasks() {
-            if (appState.tasks.length === 0 || appState.employees.length === 0) {
-                showToast('Cần có ít nhất 1 nhân viên và 1 công việc để phân bổ', 'error');
-                return;
-            }
+        // RENDER FUNCTIONS
+        function renderDashboard() {
+            document.getElementById('stat-emp-count').textContent = state.employees.length;
+            document.getElementById('stat-task-hard').textContent = state.tasks.filter(t => t.difficulty === 'Khó').length;
+            document.getElementById('stat-task-normal').textContent = state.tasks.filter(t => t.difficulty !== 'Khó').length;
 
-            const monday = appState.currentWeekStart;
-            let taskIndex = 0;
+            const tbody = document.getElementById('matrix-tbody');
+            tbody.innerHTML = '';
 
-            for (let dayIndex = 0; dayIndex < 6; dayIndex++) { // Thứ 2 - Thứ 7
-                const d = new Date(monday);
-                d.setDate(d.getDate() + dayIndex);
-                const dateStr = formatDateKey(d);
+            const isEmp = state.currentUser.role === 'employee';
+            const displayEmps = isEmp ? state.employees.filter(e => e.id === state.currentUser.id) : state.employees;
 
-                appState.employees.forEach(emp => {
-                    // Ca Sáng
-                    const taskM = appState.tasks[taskIndex % appState.tasks.length];
-                    appState.schedules[`${dateStr}_${emp.id}_morning`] = taskM.id;
-                    taskIndex++;
+            displayEmps.forEach(emp => {
+                const tr = document.createElement('tr');
+                let rowHtml = `
+                    <td class="emp-col-cell">
+                        <div class="emp-profile-mini">
+                            <img src="${emp.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150'}" class="emp-avatar-mini">
+                            <div>
+                                <div class="emp-name-mini">${emp.name}</div>
+                                <div class="emp-dept-mini">${emp.dept} • ${emp.level}</div>
+                            </div>
+                        </div>
+                    </td>
+                `;
 
-                    // Ca Chiều (Nhân viên kinh nghiệm > 3 năm mới giao task Khó)
-                    let taskA = appState.tasks[taskIndex % appState.tasks.length];
-                    if (taskA.difficulty === 'hard' && emp.exp < 3) {
-                        taskIndex++;
-                        taskA = appState.tasks[taskIndex % appState.tasks.length];
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(state.currentMondayDate);
+                    d.setDate(d.getDate() + i);
+                    const dateStr = d.toISOString().split('T')[0];
+
+                    const dayData = state.schedules[dateStr]?.[emp.id];
+
+                    if (dayData && (dayData.morning || dayData.afternoon)) {
+                        const mTask = state.tasks.find(t => t.id === dayData.morning);
+                        const aTask = state.tasks.find(t => t.id === dayData.afternoon);
+
+                        rowHtml += `
+                            <td>
+                                ${mTask ? `
+                                    <div class="shift-block shift-morning">
+                                        <div class="shift-title"><span>Sáng</span> ${getBadgeHtml(mTask.difficulty)}</div>
+                                        <div class="shift-content"><span class="shift-task-name">${mTask.name}</span></div>
+                                    </div>` : ''}
+                                ${aTask ? `
+                                    <div class="shift-block shift-afternoon">
+                                        <div class="shift-title"><span>Chiều</span> ${getBadgeHtml(aTask.difficulty)}</div>
+                                        <div class="shift-content"><span class="shift-task-name">${aTask.name}</span></div>
+                                    </div>` : ''}
+                            </td>
+                        `;
+                    } else {
+                        rowHtml += `<td><div class="cell-off">OFF</div></td>`;
                     }
-                    appState.schedules[`${dateStr}_${emp.id}_afternoon`] = taskA.id;
-                    taskIndex++;
-                });
-            }
+                }
 
-            saveToStorage();
-            renderAllViews();
-            showToast('Tự động phân công công việc dựa trên kinh nghiệm thành công!');
+                tr.innerHTML = rowHtml;
+                tbody.appendChild(tr);
+            });
         }
 
-        /** =========================================================================
-         *  EXCEL EXPORT SYSTEM
-         *  ========================================================================= */
-        function exportScheduleExcel() {
-            const data = [];
-            const monday = appState.currentWeekStart;
-            const weekDates = Array.from({ length: 7 }, (_, i) => {
-                const d = new Date(monday);
-                d.setDate(d.getDate() + i);
-                return d;
-            });
-
-            appState.employees.forEach(emp => {
-                const row = { 'Nhân Viên': emp.name, 'Phòng Ban': emp.dept };
-                weekDates.forEach((d, i) => {
-                    const dateStr = formatDateKey(d);
-                    const taskM = appState.tasks.find(t => t.id === appState.schedules[`${dateStr}_${emp.id}_morning`]);
-                    const taskA = appState.tasks.find(t => t.id === appState.schedules[`${dateStr}_${emp.id}_afternoon`]);
-                    
-                    let val = 'Nghỉ';
-                    if (taskM || taskA) {
-                        val = `Sáng: ${taskM ? taskM.name : 'Nghỉ'} | Chiều: ${taskA ? taskA.name : 'Nghỉ'}`;
-                    }
-                    row[`Thứ ${i + 2} (${formatDateVN(d)})`] = val;
-                });
-                data.push(row);
-            });
-
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Lich_Lam_Viec_Tuan");
-            XLSX.writeFile(wb, `Lich_Lam_Viec_Tuan_${formatDateKey(monday)}.xlsx`);
-            showToast('Đã xuât file Excel thành công!');
+        function getBadgeHtml(diff) {
+            if (diff === 'Khó') return `<span class="badge-difficulty badge-hard">Khó</span>`;
+            if (diff === 'Trung bình') return `<span class="badge-difficulty badge-medium">TB</span>`;
+            return `<span class="badge-difficulty badge-easy">Dễ</span>`;
         }
 
-        function exportDailyScheduleExcel() {
-            const todayStr = formatDateKey(new Date());
-            const data = appState.employees.map(emp => {
-                const taskM = appState.tasks.find(t => t.id === appState.schedules[`${todayStr}_${emp.id}_morning`]);
-                const taskA = appState.tasks.find(t => t.id === appState.schedules[`${todayStr}_${emp.id}_afternoon`]);
-                return {
-                    'Nhân Viên': emp.name,
-                    'Phòng Ban': emp.dept,
-                    'Ca Sáng': taskM ? taskM.name : 'Nghỉ',
-                    'Ca Chiều': taskA ? taskA.name : 'Nghỉ'
-                };
-            });
-
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Lich_Ngay");
-            XLSX.writeFile(wb, `Lich_Lam_Viec_Ngay_${todayStr}.xlsx`);
-            showToast('Đã xuất Excel lịch làm việc hôm nay!');
-        }
-
-        /** =========================================================================
-         *  ADMIN MANAGEMENT TABLES & MODALS
-         *  ========================================================================= */
-        function renderEmployeeTable() {
+        function renderEmployees() {
             const tbody = document.getElementById('employee-table-body');
-            tbody.innerHTML = appState.employees.map(e => `
+            tbody.innerHTML = state.employees.map(e => `
                 <tr>
-                    <td><b>${e.name}</b></td>
+                    <td><strong>${e.name}</strong></td>
                     <td>${e.dept}</td>
                     <td>${e.exp} năm</td>
-                    <td><span class="badge-difficulty ${e.exp >= 5 ? 'badge-hard' : 'badge-easy'}">${e.exp >= 5 ? 'Senior' : 'Junior'}</span></td>
-                    <td class="action-btns">
-                        <button class="btn-icon edit" onclick="editEmployee('${e.id}')"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-icon delete" onclick="deleteEmployee('${e.id}')"><i class="fa-solid fa-trash"></i></button>
+                    <td><span class="badge-difficulty ${e.level === 'Senior' ? 'badge-hard' : e.level === 'Mid' ? 'badge-medium' : 'badge-easy'}">${e.level}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon edit" onclick="editEmp('${e.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-icon delete" onclick="deleteEmp('${e.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function openEmpModal() {
-            document.getElementById('emp-form-id').value = '';
-            document.getElementById('emp-form-name').value = '';
-            document.getElementById('emp-form-dept').value = '';
-            document.getElementById('emp-form-exp').value = 1;
-            document.getElementById('modal-emp-title').innerText = 'Thêm Nhân Viên';
-            document.getElementById('modal-emp').classList.add('open');
-        }
-
-        function saveEmployee() {
-            const id = document.getElementById('emp-form-id').value;
-            const name = document.getElementById('emp-form-name').value.trim();
-            const dept = document.getElementById('emp-form-dept').value.trim();
-            const exp = parseInt(document.getElementById('emp-form-exp').value) || 0;
-            const pwd = document.getElementById('emp-form-pwd').value || '123';
-
-            if (!name || !dept) {
-                showToast('Vui lòng nhập đầy đủ tên và phòng ban', 'error');
-                return;
-            }
-
-            if (id) {
-                const emp = appState.employees.find(e => e.id === id);
-                if (emp) { emp.name = name; emp.dept = dept; emp.exp = exp; }
-            } else {
-                appState.employees.push({ id: 'emp-' + Date.now(), name, dept, exp, password: pwd });
-            }
-
-            saveToStorage();
-            closeModal('modal-emp');
-            renderAllViews();
-            showToast('Lưu thông tin nhân viên thành công!');
-        }
-
-        function editEmployee(id) {
-            const emp = appState.employees.find(e => e.id === id);
-            if (!emp) return;
-            document.getElementById('emp-form-id').value = emp.id;
-            document.getElementById('emp-form-name').value = emp.name;
-            document.getElementById('emp-form-dept').value = emp.dept;
-            document.getElementById('emp-form-exp').value = emp.exp;
-            document.getElementById('modal-emp-title').innerText = 'Sửa Nhân Viên';
-            document.getElementById('modal-emp').classList.add('open');
-        }
-
-        function deleteEmployee(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) {
-                appState.employees = appState.employees.filter(e => e.id !== id);
-                saveToStorage();
-                renderAllViews();
-                showToast('Đã xóa nhân viên');
-            }
-        }
-
-        function renderTaskTable() {
+        function renderTasks() {
             const tbody = document.getElementById('task-table-body');
-            tbody.innerHTML = appState.tasks.map((t, index) => `
+            tbody.innerHTML = state.tasks.map((t, index) => `
                 <tr>
                     <td>${index + 1}</td>
-                    <td><b>${t.name}</b></td>
-                    <td><span class="badge-difficulty ${t.difficulty === 'hard' ? 'badge-hard' : (t.difficulty === 'medium' ? 'badge-medium' : 'badge-easy')}">${t.difficulty.toUpperCase()}</span></td>
+                    <td><strong>${t.name}</strong></td>
+                    <td>${getBadgeHtml(t.difficulty)}</td>
                     <td>${t.dept}</td>
-                    <td class="action-btns">
-                        <button class="btn-icon edit" onclick="editTask('${t.id}')"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn-icon delete" onclick="deleteTask('${t.id}')"><i class="fa-solid fa-trash"></i></button>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon edit" onclick="editTask('${t.id}')"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-icon delete" onclick="deleteTask('${t.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
+        }
+
+        function renderAssignments() {
+            const tbody = document.getElementById('assignment-table-body');
+            tbody.innerHTML = state.employees.map(e => `
+                <tr>
+                    <td><strong>${e.name}</strong></td>
+                    <td>${e.dept} (${e.level})</td>
+                    <td><span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Đã sẵn sàng phân bổ</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // LOAD BALANCING ALGORITHM
+        function autoAssignTasks() {
+            if (state.tasks.length === 0 || state.employees.length === 0) {
+                return showToast('Cần ít nhất 1 nhân viên và 1 công việc!', 'error');
+            }
+
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(state.currentMondayDate);
+                d.setDate(d.getDate() + i);
+                const dateStr = d.toISOString().split('T')[0];
+
+                if (!state.schedules[dateStr]) state.schedules[dateStr] = {};
+
+                let taskIdx = 0;
+                state.employees.forEach((emp, empIdx) => {
+                    const morningTask = state.tasks[(taskIdx + i + empIdx) % state.tasks.length];
+                    const afternoonTask = state.tasks[(taskIdx + i + empIdx + 1) % state.tasks.length];
+
+                    state.schedules[dateStr][emp.id] = {
+                        morning: morningTask ? morningTask.id : null,
+                        afternoon: afternoonTask ? afternoonTask.id : null
+                    };
+                });
+            }
+
+            saveDataToStorage();
+            renderDashboard();
+            showToast('Đã tự động phân công cân bằng tải cả tuần!');
+        }
+
+        // MODAL ACTIONS & FORM HANDLERS
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function openEmpModal() {
+            document.getElementById('emp-id').value = '';
+            document.getElementById('emp-name').value = '';
+            document.getElementById('emp-dept').value = '';
+            document.getElementById('emp-exp').value = '';
+            document.getElementById('emp-avatar').value = '';
+            document.getElementById('emp-modal-title').textContent = 'Thêm Nhân Viên';
+            document.getElementById('emp-modal').classList.add('open');
+        }
+
+        function saveEmployee(e) {
+            e.preventDefault();
+            const id = document.getElementById('emp-id').value || 'emp_' + Date.now();
+            const name = document.getElementById('emp-name').value;
+            const dept = document.getElementById('emp-dept').value;
+            const exp = parseFloat(document.getElementById('emp-exp').value);
+            const level = document.getElementById('emp-level').value;
+            const avatar = document.getElementById('emp-avatar').value;
+
+            const existingIdx = state.employees.findIndex(emp => emp.id === id);
+            if (existingIdx > -1) {
+                state.employees[existingIdx] = { ...state.employees[existingIdx], name, dept, exp, level, avatar };
+            } else {
+                state.employees.push({ id, name, dept, exp, level, avatar, password: '123' });
+                state.payrolls[id] = { hourlyRate: 40000, totalHours: 0, bonus: 0 };
+            }
+
+            saveDataToStorage();
+            renderEmployees();
+            renderDashboard();
+            renderPayrollUI();
+            populateEmpLoginSelect();
+            closeModal('emp-modal');
+            showToast('Đã lưu thông tin nhân viên!');
+        }
+
+        function editEmp(id) {
+            const emp = state.employees.find(e => e.id === id);
+            if (!emp) return;
+            document.getElementById('emp-id').value = emp.id;
+            document.getElementById('emp-name').value = emp.name;
+            document.getElementById('emp-dept').value = emp.dept;
+            document.getElementById('emp-exp').value = emp.exp;
+            document.getElementById('emp-level').value = emp.level;
+            document.getElementById('emp-avatar').value = emp.avatar || '';
+            document.getElementById('emp-modal-title').textContent = 'Sửa Nhân Viên';
+            document.getElementById('emp-modal').classList.add('open');
+        }
+
+        function deleteEmp(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) return;
+            state.employees = state.employees.filter(e => e.id !== id);
+            delete state.payrolls[id];
+            saveDataToStorage();
+            renderEmployees();
+            renderDashboard();
+            renderPayrollUI();
+            showToast('Đã xóa nhân viên!');
         }
 
         function openTaskModal() {
-            document.getElementById('task-form-id').value = '';
-            document.getElementById('task-form-name').value = '';
-            document.getElementById('task-form-dept').value = '';
-            document.getElementById('modal-task-title').innerText = 'Thêm Công Việc';
-            document.getElementById('modal-task').classList.add('open');
+            document.getElementById('task-id').value = '';
+            document.getElementById('task-name').value = '';
+            document.getElementById('task-dept').value = '';
+            document.getElementById('task-modal-title').textContent = 'Thêm Công Việc';
+            document.getElementById('task-modal').classList.add('open');
         }
 
-        function saveTask() {
-            const id = document.getElementById('task-form-id').value;
-            const name = document.getElementById('task-form-name').value.trim();
-            const diff = document.getElementById('task-form-diff').value;
-            const dept = document.getElementById('task-form-dept').value.trim();
+        function saveTask(e) {
+            e.preventDefault();
+            const id = document.getElementById('task-id').value || 'task_' + Date.now();
+            const name = document.getElementById('task-name').value;
+            const difficulty = document.getElementById('task-difficulty').value;
+            const dept = document.getElementById('task-dept').value;
 
-            if (!name) {
-                showToast('Tên công việc không được để trống', 'error');
-                return;
-            }
-
-            if (id) {
-                const task = appState.tasks.find(t => t.id === id);
-                if (task) { task.name = name; task.difficulty = diff; task.dept = dept; }
+            const existingIdx = state.tasks.findIndex(t => t.id === id);
+            if (existingIdx > -1) {
+                state.tasks[existingIdx] = { id, name, difficulty, dept };
             } else {
-                appState.tasks.push({ id: 'task-' + Date.now(), name, difficulty: diff, dept });
+                state.tasks.push({ id, name, difficulty, dept });
             }
 
-            saveToStorage();
-            closeModal('modal-task');
-            renderAllViews();
-            showToast('Lưu công việc thành công!');
+            saveDataToStorage();
+            renderTasks();
+            renderDashboard();
+            closeModal('task-modal');
+            showToast('Đã lưu công việc!');
         }
 
         function editTask(id) {
-            const task = appState.tasks.find(t => t.id === id);
-            if (!task) return;
-            document.getElementById('task-form-id').value = task.id;
-            document.getElementById('task-form-name').value = task.name;
-            document.getElementById('task-form-diff').value = task.difficulty;
-            document.getElementById('task-form-dept').value = task.dept;
-            document.getElementById('modal-task-title').innerText = 'Sửa Công Việc';
-            document.getElementById('modal-task').classList.add('open');
+            const t = state.tasks.find(x => x.id === id);
+            if (!t) return;
+            document.getElementById('task-id').value = t.id;
+            document.getElementById('task-name').value = t.name;
+            document.getElementById('task-difficulty').value = t.difficulty;
+            document.getElementById('task-dept').value = t.dept;
+            document.getElementById('task-modal-title').textContent = 'Sửa Công Việc';
+            document.getElementById('task-modal').classList.add('open');
         }
 
         function deleteTask(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa công việc này?')) {
-                appState.tasks = appState.tasks.filter(t => t.id !== id);
-                saveToStorage();
-                renderAllViews();
-                showToast('Đã xóa công việc');
-            }
-        }
-
-        function renderAssignmentTable() {
-            const tbody = document.getElementById('assignment-table-body');
-            tbody.innerHTML = appState.employees.map(e => `
-                <tr>
-                    <td><b>${e.name}</b></td>
-                    <td>${e.dept}</td>
-                    <td><span style="color: var(--success);"><i class="fa-solid fa-check-circle"></i> Đã sẵn sàng phân bổ</span></td>
-                </tr>
-            `).join('');
+            if (!confirm('Xóa công việc này?')) return;
+            state.tasks = state.tasks.filter(t => t.id !== id);
+            saveDataToStorage();
+            renderTasks();
+            renderDashboard();
+            showToast('Đã xóa công việc!');
         }
 
         function handleChangePassword(e) {
@@ -1123,42 +1573,70 @@
             const newP = document.getElementById('pwd-new').value;
             const confirmP = document.getElementById('pwd-confirm').value;
 
-            if (newP !== confirmP) {
-                showToast('Mật khẩu xác nhận không khớp!', 'error');
-                return;
-            }
+            if (newP !== confirmP) return showToast('Mật khẩu xác nhận không khớp!', 'error');
 
-            if (appState.currentUser.role === 'admin') {
-                showToast('Đã cập nhật mật khẩu Admin thành công!');
+            if (state.currentUser.role === 'admin') {
+                if (oldP !== 'admin123') return showToast('Mật khẩu hiện tại sai!', 'error');
+                showToast('Đã cập nhật mật khẩu Admin!');
             } else {
-                const emp = appState.employees.find(e => e.id === appState.currentUser.id);
-                if (emp) {
-                    if (emp.password !== oldP) {
-                        showToast('Mật khẩu hiện tại không đúng!', 'error');
-                        return;
-                    }
-                    emp.password = newP;
-                    saveToStorage();
-                    showToast('Đổi mật khẩu thành công!');
-                }
+                const emp = state.employees.find(x => x.id === state.currentUser.id);
+                if (!emp || emp.password !== oldP) return showToast('Mật khẩu hiện tại sai!', 'error');
+                emp.password = newP;
+                saveDataToStorage();
+                showToast('Đã đổi mật khẩu cá nhân!');
             }
             document.getElementById('change-pwd-form').reset();
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('open');
+        // EXCEL EXPORT USING SHEETJS
+        function exportScheduleExcel() {
+            const data = [];
+            const headers = ['Nhân viên', 'Phòng ban', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
+            data.push(headers);
+
+            state.employees.forEach(emp => {
+                const row = [emp.name, emp.dept];
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(state.currentMondayDate);
+                    d.setDate(d.getDate() + i);
+                    const dateStr = d.toISOString().split('T')[0];
+                    const dayData = state.schedules[dateStr]?.[emp.id];
+
+                    if (dayData) {
+                        const m = state.tasks.find(t => t.id === dayData.morning)?.name || '';
+                        const a = state.tasks.find(t => t.id === dayData.afternoon)?.name || '';
+                        row.push(`Sáng: ${m} | Chiều: ${a}`);
+                    } else {
+                        row.push('OFF');
+                    }
+                }
+                data.push(row);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Lich_Lam_Viec_Tuan');
+            XLSX.writeFile(wb, `Lich_Lam_Viec_Tuan_${state.currentMondayDate.toISOString().split('T')[0]}.xlsx`);
+            showToast('Đã xuất báo cáo Excel thành công!');
         }
 
-        // Live Clock
-        setInterval(() => {
-            const clock = document.getElementById('live-clock');
-            if (clock) clock.innerText = new Date().toLocaleTimeString('en-US');
-        }, 1000);
+        function exportDailyScheduleExcel() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const data = [['Họ và tên', 'Phòng ban', 'Ca Sáng', 'Ca Chiều']];
 
-        // App Initialization
-        window.addEventListener('DOMContentLoaded', () => {
-            loadFromStorage();
-        });
+            state.employees.forEach(emp => {
+                const dayData = state.schedules[todayStr]?.[emp.id];
+                const m = state.tasks.find(t => t.id === dayData?.morning)?.name || 'OFF';
+                const a = state.tasks.find(t => t.id === dayData?.afternoon)?.name || 'OFF';
+                data.push([emp.name, emp.dept, m, a]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Lich_Ngay');
+            XLSX.writeFile(wb, `Lich_Lam_Viec_Ngay_${todayStr}.xlsx`);
+            showToast('Đã xuất báo cáo Excel ngày hôm nay!');
+        }
     </script>
 </body>
 </html>
