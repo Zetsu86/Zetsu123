@@ -84,7 +84,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
         body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; }
         
-        /* MÀN HÌNH ĐĂNG NHẬP */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 2000;
@@ -103,11 +102,8 @@
             color: var(--text-muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
         }
         .toggle-password-btn:hover { color: var(--text-main); }
-
-        /* APP CONTAINER */
-        #app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
         
-        /* SIDEBAR */
+        #app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
         .sidebar { width: 240px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid var(--border-color); flex-shrink: 0; }
         .sidebar-brand { padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 0.65rem; font-size: 0.95rem; font-weight: 700; color: white; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .sidebar-menu { list-style: none; padding: 0.75rem 0.5rem; flex: 1; overflow-y: auto; }
@@ -119,8 +115,7 @@
         }
         .sidebar-menu a:hover { color: #ffffff; background-color: rgba(255,255,255,0.05); }
         .sidebar-menu li.active a { background-color: var(--sidebar-active); color: #ffffff; font-weight: 600; }
-
-        /* MAIN CONTENT */
+        
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-navbar { height: 60px; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; flex-shrink: 0; }
         .page-title { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.75rem; color: var(--text-main); }
@@ -143,8 +138,7 @@
         .card-header { padding: 0.9rem 1.15rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
         .card-header h2 { font-size: 0.92rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); }
         .card-body { padding: 1.15rem; }
-
-        /* SETTINGS TAB STYLES */
+        
         .settings-nav { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem; gap: 0.5rem; }
         .settings-tab-btn { padding: 0.6rem 1rem; background: none; border: none; border-bottom: 2px solid transparent; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
         .settings-tab-btn.active { border-bottom-color: var(--primary); color: var(--primary); }
@@ -166,7 +160,6 @@
         .badge-hard { background-color: #ef4444; color: #ffffff; }
         .badge-medium { background-color: #d97706; color: #ffffff; }
         .badge-easy { background-color: #10b981; color: #ffffff; }
-
         .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; table-layout: fixed; min-width: 700px; }
         .schedule-table th, .schedule-table td { border: 1px solid var(--border-color); padding: 0.3rem; vertical-align: middle; color: var(--text-main); }
         .schedule-table th { background-color: var(--table-header); color: var(--text-muted); font-weight: 600; text-align: center; }
@@ -189,7 +182,6 @@
         .cell-off { background-color: var(--shift-off-bg); color: var(--shift-off-text); text-align: center; font-weight: 600; padding: 0.8rem 0; border-radius: 4px; font-size: 0.72rem; }
         .schedule-legend { display: flex; align-items: center; gap: 1.25rem; margin-top: 0.85rem; font-size: 0.73rem; color: var(--text-muted); justify-content: center; flex-wrap: wrap; }
         .legend-item { display: flex; align-items: center; gap: 0.3rem; }
-
         .data-table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 550px; }
         .data-table th, .data-table td { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border-color); text-align: left; color: var(--text-main); }
@@ -198,8 +190,7 @@
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); }
         .btn-icon.edit:hover { color: var(--info); }
         .btn-icon.delete:hover { color: var(--danger); }
-
-        /* TIMEKEEPING STYLES */
+        
         .timekeeping-card {
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
             padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
@@ -207,14 +198,16 @@
         .timekeeping-status { display: flex; align-items: center; gap: 1rem; }
         .status-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
         .status-indicator.active { background: var(--success); box-shadow: 0 0 8px var(--success); }
-
-        /* CHAT CSKH STYLES */
+        
+        /* CHAT CSKH STYLES & DẤU CHẤM ĐỎ NHẮC NHỞ */
         .chat-layout { display: flex; height: 500px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--card-bg); }
         .chat-sidebar { width: 220px; border-right: 1px solid var(--border-color); background: var(--table-header); display: flex; flex-direction: column; flex-shrink: 0; }
         .chat-sidebar-header { padding: 0.75rem 1rem; font-weight: 600; font-size: 0.83rem; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
         .chat-user-list { list-style: none; overflow-y: auto; flex: 1; }
-        .chat-user-item { padding: 0.65rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); }
+        .chat-user-item { padding: 0.65rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; color: var(--text-main); position: relative; }
         .chat-user-item:hover, .chat-user-item.active { background: var(--border-color); font-weight: 600; }
+        .unread-dot { width: 8px; height: 8px; background-color: var(--danger); border-radius: 50%; display: inline-block; box-shadow: 0 0 6px var(--danger); }
+        
         .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         .chat-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); flex-wrap: wrap; gap: 0.3rem; }
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; background: var(--bg-main); }
@@ -226,7 +219,7 @@
         .chat-templates { padding: 0.5rem 1rem; background: var(--table-header); border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; overflow-x: auto; }
         .chat-template-btn { background: var(--card-bg); border: 1px solid var(--border-color); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; white-space: nowrap; color: var(--text-main); flex-shrink: 0; }
         .chat-template-btn:hover { background: var(--primary); color: white; }
-
+        
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
         .modal-overlay.open { display: flex; }
         .modal-container { background: var(--card-bg); width: 420px; max-width: 100%; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--border-color); max-height: 90vh; display: flex; flex-direction: column; }
@@ -244,43 +237,33 @@
         .toast.error { border-left: 4px solid var(--danger); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* TỐI ƯU HÓA ĐẶC BIỆT CHO GIAO DIỆN DI ĐỘNG (MOBILE RESPONSIVE) */
         @media screen and (max-width: 768px) {
             body { height: 100vh; overflow: auto; }
             #app-container { flex-direction: column; height: 100vh; overflow: hidden; }
-            
-            /* Sidebar chuyển thành thanh menu cuộn ngang trên cùng hoặc dưới cùng cực kỳ dễ bấm */
             .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); flex-shrink: 0; order: 2; }
-            .sidebar-brand { display: none; } /* Ẩn brand ở sidebar mobile cho gọn */
+            .sidebar-brand { display: none; }
             .sidebar-menu { display: flex; overflow-x: auto; padding: 0.4rem 0.5rem; gap: 0.4rem; -webkit-overflow-scrolling: touch; }
             .sidebar-menu::-webkit-scrollbar { display: none; }
             .sidebar-menu li { margin-bottom: 0; flex-shrink: 0; }
             .sidebar-menu a { padding: 0.45rem 0.7rem; font-size: 0.73rem; border-radius: 6px; background: var(--table-header); border: 1px solid var(--border-color); }
             .sidebar-menu li.active a { background-color: var(--sidebar-active); color: #ffffff; }
-
-            /* Main content chiếm phần trên */
             .main-content { height: calc(100vh - 50px); overflow: hidden; order: 1; display: flex; flex-direction: column; }
             .top-navbar { padding: 0 0.75rem; height: 50px; flex-shrink: 0; }
             .page-title { font-size: 0.95rem; gap: 0.4rem; }
             .user-nav-actions { gap: 0.5rem; font-size: 0.75rem; }
-            .user-info, #live-clock { display: none; } /* Thu gọn top bar trên mobile cho thoáng */
-            
+            .user-info, #live-clock { display: none; }
             .content-body { padding: 0.75rem; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
             .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
             .stat-card { padding: 0.75rem; }
             .stat-body h3 { font-size: 1.1rem; }
-            
             .card { margin-bottom: 0.75rem; }
             .card-header { padding: 0.75rem; }
             .card-header h2 { font-size: 0.85rem; }
             .card-body { padding: 0.75rem; }
-            
             .schedule-controls { flex-direction: column; align-items: stretch; gap: 0.5rem; margin-bottom: 0.75rem; }
             .date-navigator { justify-content: space-between; }
             .export-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
             .export-group button { width: 100%; justify-content: center; font-size: 0.7rem; padding: 0.4rem 0.2rem; }
-            
-            /* Bảng lịch cuộn ngang mượt mà trên mobile */
             .schedule-table th, .schedule-table td { padding: 0.25rem; font-size: 0.7rem; }
             .emp-col-cell { width: 100px !important; }
             .emp-name-mini { font-size: 0.7rem; }
@@ -288,8 +271,6 @@
             .shift-block { padding: 2px 3px; }
             .shift-title { font-size: 0.58rem; }
             .shift-content { font-size: 0.63rem; }
-            
-            /* Giao diện Chat CSKH trên mobile: xếp dọc hoặc thu gọn sidebar */
             .chat-layout { flex-direction: column; height: 380px; }
             .chat-sidebar { width: 100%; height: 75px; flex-direction: row; overflow-x: auto; flex-shrink: 0; }
             .chat-sidebar-header { display: none; }
@@ -297,13 +278,11 @@
             .chat-user-item { border-bottom: none; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.3rem 0.6rem; white-space: nowrap; height: 32px; }
             .chat-messages { padding: 0.5rem; }
             .chat-bubble { max-width: 85%; font-size: 0.78rem; }
-            
             .modal-container { width: 95%; margin: auto; max-height: 85vh; }
         }
     </style>
 </head>
 <body>
-    <!-- MÀN HÌNH ĐĂNG NHẬP -->
     <div id="login-screen">
         <div class="login-box">
             <div class="login-logo">
@@ -334,9 +313,7 @@
         </div>
     </div>
 
-    <!-- ỨNG DỤNG CHÍNH -->
     <div id="app-container" style="display: none;">
-        <!-- SIDEBAR / THANH ĐIỀU HƯỚNG MOBILE & DESKTOP -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <i class="fa-solid fa-calendar-days" style="color: #818cf8; font-size: 1.05rem;"></i>
@@ -344,7 +321,6 @@
             </div>
             <ul class="sidebar-menu" id="sidebar-menu"></ul>
         </aside>
-
         <main class="main-content">
             <header class="top-navbar">
                 <div class="page-title" id="current-page-title">
@@ -366,7 +342,7 @@
                 </div>
             </header>
 
-            <!-- TAB DASHBOARD / LỊCH -->
+            <!-- TAB DASHBOARD -->
             <div id="tab-dashboard" class="content-body active">
                 <div class="grid-4" id="admin-stats-grid">
                     <div class="stat-card">
@@ -390,7 +366,6 @@
                         <div class="stat-footer" style="color: var(--warning);">Tải được cân bằng tự động</div>
                     </div>
                 </div>
-
                 <div class="card" style="margin-bottom: 0;">
                     <div class="card-header">
                         <h2><i class="fa-regular fa-calendar-days" style="color: var(--info);"></i> <span id="schedule-card-title">Lịch làm việc & Cân bằng tải theo ca Sáng - Chiều</span></h2>
@@ -434,7 +409,7 @@
                 </div>
             </div>
 
-            <!-- TAB CHẤM CÔNG THEO CA & GIỜ -->
+            <!-- TAB CHẤM CÔNG -->
             <div id="tab-timekeeping" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -511,23 +486,23 @@
                 </div>
             </div>
 
-            <!-- TAB HỖ TRỢ CSKH & BÁO LỖI LƯƠNG -->
+            <!-- TAB HỖ TRỢ CSKH (ĐÃ NÂNG CẤP 2 CHIỀU & CHẤM ĐỎ NHẮC NHỞ) -->
             <div id="tab-support" class="content-body">
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fa-solid fa-headset" style="color: var(--info);"></i> Trung Tâm Hỗ Trợ CSKH & Báo Lỗi Lương</h2>
-                        <span style="font-size: 0.75rem; color: var(--text-muted);">Kết nối trực tiếp giữa Nhân viên và Admin</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Giao tiếp 2 chiều trực tuyến giữa Nhân viên và Quản trị viên</span>
                     </div>
                     <div class="card-body">
                         <div class="chat-layout">
                             <div class="chat-sidebar" id="chat-sidebar">
-                                <div class="chat-sidebar-header"><i class="fa-solid fa-comments"></i> Hội thoại CSKH</div>
+                                <div class="chat-sidebar-header"><i class="fa-solid fa-comments"></i> Hội thoại nhân sự</div>
                                 <ul class="chat-user-list" id="chat-user-list"></ul>
                             </div>
                             <div class="chat-main">
                                 <div class="chat-header">
                                     <span id="chat-active-title"><i class="fa-solid fa-user-gear"></i> Kênh CSKH Trực Tiếp</span>
-                                    <span style="font-size: 0.7rem; color: var(--success); font-weight: 500;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Trực tuyến</span>
+                                    <span style="font-size: 0.7rem; color: var(--success); font-weight: 500;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Thời gian thực</span>
                                 </div>
                                 <div class="chat-messages" id="chat-messages"></div>
                                 <div class="chat-templates" id="chat-templates">
@@ -536,7 +511,7 @@
                                     <button class="chat-template-btn" onclick="applyChatTemplate('timekeeping')"><i class="fa-solid fa-clock"></i> [Quên chấm công]</button>
                                 </div>
                                 <div class="chat-input-area">
-                                    <input type="text" id="chat-input" class="form-control" placeholder="Nhập nội dung phản hồi/báo lỗi gửi Admin..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+                                    <input type="text" id="chat-input" class="form-control" placeholder="Nhập nội dung tin nhắn..." onkeypress="if(event.key==='Enter') sendChatMessage()">
                                     <button class="btn-primary-sm" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i> Gửi</button>
                                 </div>
                             </div>
@@ -545,7 +520,7 @@
                 </div>
             </div>
 
-            <!-- TAB QUẢN LÝ NHÂN SỰ -->
+            <!-- TAB NHÂN SỰ -->
             <div id="tab-employee" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -572,7 +547,7 @@
                 </div>
             </div>
 
-            <!-- TAB DANH MỤC CÔNG VIỆC -->
+            <!-- TAB CÔNG VIỆC -->
             <div id="tab-task" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -598,7 +573,7 @@
                 </div>
             </div>
 
-            <!-- TAB CÂN BẰNG PHỤ TẢI -->
+            <!-- TAB PHÂN BỔ -->
             <div id="tab-assignment" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -689,7 +664,7 @@
         </main>
     </div>
 
-    <!-- MODAL ĐỔI MẬT KHẨU NHÂN VIÊN DÀNH CHO ADMIN -->
+    <!-- MODALS -->
     <div class="modal-overlay" id="admin-emp-pwd-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -719,7 +694,6 @@
         </div>
     </div>
 
-    <!-- MODAL CẤU HÌNH GIỜ CA TRỰC DÀNH CHO ADMIN -->
     <div class="modal-overlay" id="shift-config-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -753,7 +727,6 @@
         </div>
     </div>
 
-    <!-- MODAL SỬA BẢNG LƯƠNG DÀNH CHO ADMIN -->
     <div class="modal-overlay" id="payroll-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -788,7 +761,6 @@
         </div>
     </div>
 
-    <!-- MODAL NHÂN VIÊN -->
     <div class="modal-overlay" id="emp-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -835,7 +807,6 @@
         </div>
     </div>
 
-    <!-- MODAL CÔNG VIỆC -->
     <div class="modal-overlay" id="task-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -870,10 +841,8 @@
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container"></div>
 
-    <!-- APPLICATION LOGIC JAVASCRIPT -->
     <script>
         const DEFAULT_EMPLOYEES = [
             { id: 'emp_1', name: 'Nguyễn Văn Hải', dept: 'Kỹ thuật', exp: 5, level: 'Senior', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', password: '123' },
@@ -1071,7 +1040,7 @@
                     <li class="active" onclick="switchTab('dashboard', this)"><a><i class="fa-solid fa-calendar-week"></i> Lịch Cá Nhân</a></li>
                     <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Chấm Công</a></li>
                     <li onclick="switchTab('payroll', this)"><a><i class="fa-solid fa-money-check-dollar"></i> Lương Của Tôi</a></li>
-                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> Hỗ Trợ CSKH</a></li>
+                    <li onclick="switchTab('support', this)" id="menu-support-item"><a><i class="fa-solid fa-headset"></i> Hỗ Trợ CSKH <span id="nav-unread-dot" style="display:none; width:7px; height:7px; background:var(--danger); border-radius:50%; margin-left:6px; display:inline-block;"></span></a></li>
                     <li onclick="switchTab('settings', this)"><a><i class="fa-solid fa-gear"></i> Cài Đặt</a></li>
                 `;
                 const statsGrid = document.getElementById('admin-stats-grid');
@@ -1081,7 +1050,7 @@
                     <li class="active" onclick="switchTab('dashboard', this)"><a><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
                     <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Chấm Công</a></li>
                     <li onclick="switchTab('payroll', this)"><a><i class="fa-solid fa-money-check-dollar"></i> Bảng Lương</a></li>
-                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> CSKH</a></li>
+                    <li onclick="switchTab('support', this)" id="menu-support-item"><a><i class="fa-solid fa-headset"></i> CSKH <span id="nav-unread-dot" style="display:none; width:7px; height:7px; background:var(--danger); border-radius:50%; margin-left:6px; display:inline-block;"></span></a></li>
                     <li onclick="switchTab('employee', this)"><a><i class="fa-solid fa-users"></i> Nhân Sự</a></li>
                     <li onclick="switchTab('task', this)"><a><i class="fa-solid fa-clipboard-list"></i> Công Việc</a></li>
                     <li onclick="switchTab('assignment', this)"><a><i class="fa-solid fa-list-check"></i> Phân Bổ</a></li>
@@ -1097,6 +1066,7 @@
             renderTimekeepingUI();
             renderPayrollUI();
             renderChatUI();
+            updateUnreadNotifications();
         }
 
         function switchTab(tabId, element) {
@@ -1104,6 +1074,10 @@
             if(element) element.classList.add('active');
             document.querySelectorAll('.content-body').forEach(b => b.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            if (tabId === 'support') {
+                markCurrentChatAsRead();
+            }
         }
 
         function switchSettingsSection(sectionId, btn) {
@@ -1304,36 +1278,77 @@
             showToast('Cập nhật bảng lương thành công!');
         }
 
+        /* --- HỆ THỐNG CHAT 2 CHIỀU & THÔNG BÁO DẤU CHẤM ĐỎ --- */
         function renderChatUI() {
             const isEmp = state.currentUser.role === 'employee';
             const userListEl = document.getElementById('chat-user-list');
             const templatesEl = document.getElementById('chat-templates');
             if (!userListEl) return;
+            
             if (isEmp) {
                 if (templatesEl) templatesEl.style.display = 'flex';
+                state.selectedChatEmpId = state.currentUser.id;
                 userListEl.innerHTML = `
                     <li class="chat-user-item active">
-                        <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i> Admin CSKH
+                        <span><i class="fa-solid fa-user-shield" style="color:var(--primary);"></i> Quản trị viên (Admin)</span>
                     </li>
                 `;
-                state.selectedChatEmpId = state.currentUser.id;
             } else {
                 if (templatesEl) templatesEl.style.display = 'none';
                 if (!state.selectedChatEmpId && state.employees.length > 0) {
                     state.selectedChatEmpId = state.employees[0].id;
                 }
-                userListEl.innerHTML = state.employees.map(emp => `
-                    <li class="chat-user-item ${emp.id === state.selectedChatEmpId ? 'active' : ''}" onclick="selectChatUser('${emp.id}')">
-                        <i class="fa-solid fa-user"></i> ${emp.name}
-                    </li>
-                `).join('');
+                userListEl.innerHTML = state.employees.map(emp => {
+                    // Kiểm tra xem nhân viên này có tin nhắn chưa đọc từ phía họ gửi cho admin không
+                    const hasUnread = state.chatMessages.some(m => m.empId === emp.id && m.senderRole === 'employee' && !m.readByAdmin);
+                    return `
+                        <li class="chat-user-item ${emp.id === state.selectedChatEmpId ? 'active' : ''}" onclick="selectChatUser('${emp.id}')">
+                            <span><i class="fa-solid fa-user"></i> ${emp.name}</span>
+                            ${hasUnread ? '<span class="unread-dot" title="Có tin nhắn mới"></span>' : ''}
+                        </li>
+                    `;
+                }).join('');
             }
             renderChatMessages();
         }
 
         function selectChatUser(empId) {
             state.selectedChatEmpId = empId;
+            markCurrentChatAsRead();
             renderChatUI();
+        }
+
+        function markCurrentChatAsRead() {
+            if (!state.currentUser) return;
+            if (state.currentUser.role === 'admin' && state.selectedChatEmpId) {
+                state.chatMessages.forEach(m => {
+                    if (m.empId === state.selectedChatEmpId && m.senderRole === 'employee') {
+                        m.readByAdmin = true;
+                    }
+                });
+            } else if (state.currentUser.role === 'employee') {
+                state.chatMessages.forEach(m => {
+                    if (m.empId === state.currentUser.id && m.senderRole === 'admin') {
+                        m.readByEmp = true;
+                    }
+                });
+            }
+            saveDataToStorage();
+            updateUnreadNotifications();
+        }
+
+        function updateUnreadNotifications() {
+            if (!state.currentUser) return;
+            let hasUnread = false;
+            if (state.currentUser.role === 'admin') {
+                hasUnread = state.chatMessages.some(m => m.senderRole === 'employee' && !m.readByAdmin);
+            } else {
+                hasUnread = state.chatMessages.some(m => m.empId === state.currentUser.id && m.senderRole === 'admin' && !m.readByEmp);
+            }
+            const navDot = document.getElementById('nav-unread-dot');
+            if (navDot) {
+                navDot.style.display = hasUnread ? 'inline-block' : 'none';
+            }
         }
 
         function renderChatMessages() {
@@ -1346,7 +1361,7 @@
             }
             const filteredMsgs = state.chatMessages.filter(m => m.empId === targetEmpId);
             if (filteredMsgs.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.8rem;"><i class="fa-solid fa-comment-dots"></i> Chưa có tin nhắn nào. Nhập nội dung để trao đổi!</div>`;
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.8rem;"><i class="fa-solid fa-comment-dots"></i> Chưa có tin nhắn nào. Bắt đầu trao đổi 2 chiều ngay!</div>`;
                 return;
             }
             container.innerHTML = filteredMsgs.map(m => {
@@ -1368,18 +1383,22 @@
             if (!text) return;
             const targetEmpId = state.currentUser.role === 'employee' ? state.currentUser.id : state.selectedChatEmpId;
             if (!targetEmpId) return showToast('Chưa chọn người nhận!', 'error');
+            
             const newMsg = {
                 id: 'msg_' + Date.now(),
                 empId: targetEmpId,
                 senderRole: state.currentUser.role,
                 senderName: state.currentUser.name,
                 text: text,
-                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN')
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' ' + new Date().toLocaleDateString('vi-VN'),
+                readByAdmin: state.currentUser.role === 'admin',
+                readByEmp: state.currentUser.role === 'employee'
             };
             state.chatMessages.push(newMsg);
             saveDataToStorage();
             input.value = '';
-            renderChatMessages();
+            renderChatUI();
+            updateUnreadNotifications();
         }
 
         function applyChatTemplate(type) {
@@ -1748,9 +1767,9 @@
                     const dateStr = d.toISOString().split('T')[0];
                     const dayData = state.schedules[dateStr]?.[emp.id];
                     if (dayData) {
-                        const m = state.tasks.find(t => t.id === dayData.morning)?.name || '';
-                        const a = state.tasks.find(t => t.id === dayData.afternoon)?.name || '';
-                        row.push(`Sáng: ${m} | Chiều: ${a}`);
+                        const m = state.tasks.find(t => t.id === dayData.morning);
+                        const a = state.tasks.find(t => t.id === dayData.afternoon);
+                        row.push(`Sáng: ${m ? m.name : 'Trống'} | Chiều: ${a ? a.name : 'Trống'}`);
                     } else {
                         row.push('OFF');
                     }
@@ -1759,25 +1778,33 @@
             });
             const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Lich_Lam_Viec_Tuan');
-            XLSX.writeFile(wb, `Lich_Lam_Viec_Tuan_${state.currentMondayDate.toISOString().split('T')[0]}.xlsx`);
-            showToast('Đã xuất báo cáo Excel thành công!');
+            XLSX.utils.book_append_sheet(wb, ws, "LichLamViecTuan");
+            XLSX.writeFile(wb, "LichLamViec_CaTruc.xlsx");
+            showToast('Xuất file Excel thành công!');
         }
 
         function exportDailyScheduleExcel() {
             const todayStr = new Date().toISOString().split('T')[0];
-            const data = [['Họ và tên', 'Phòng ban', 'Ca Sáng', 'Ca Chiều']];
+            const data = [
+                ['BÁO CÁO LỊCH TRỰC TRONG NGÀY:', todayStr],
+                ['Họ và tên', 'Phòng ban', 'Ca Sáng', 'Ca Chiều']
+            ];
             state.employees.forEach(emp => {
                 const dayData = state.schedules[todayStr]?.[emp.id];
-                const m = state.tasks.find(t => t.id === dayData?.morning)?.name || 'OFF';
-                const a = state.tasks.find(t => t.id === dayData?.afternoon)?.name || 'OFF';
-                data.push([emp.name, emp.dept, m, a]);
+                const m = dayData ? state.tasks.find(t => t.id === dayData.morning) : null;
+                const a = dayData ? state.tasks.find(t => t.id === dayData.afternoon) : null;
+                data.push([
+                    emp.name,
+                    emp.dept,
+                    m ? m.name : 'OFF',
+                    a ? a.name : 'OFF'
+                ]);
             });
             const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Lich_Ngay');
-            XLSX.writeFile(wb, `Lich_Lam_Viec_Ngay_${todayStr}.xlsx`);
-            showToast('Đã xuất báo cáo Excel ngày hôm nay!');
+            XLSX.utils.book_append_sheet(wb, ws, "LichTrucTrongNgay");
+            XLSX.writeFile(wb, `LichTruc_${todayStr}.xlsx`);
+            showToast('Xuất Excel trong ngày thành công!');
         }
     </script>
 </body>
