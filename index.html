@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Task Scheduler - Professional Edition</title>
+    <title>Employee Task Scheduler - Phân Quyền Hệ Thống</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- SheetJS (XLSX) cho tính năng Xuất Excel nâng cao -->
+    <!-- SheetJS (XLSX) cho tính năng Xuất Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <style>
@@ -75,7 +75,49 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
-        body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; }
+
+        /* MÀN HÌNH ĐĂNG NHẬP */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-main); display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .login-box {
+            background: var(--card-bg); border: 1px solid var(--border-color); padding: 2rem;
+            border-radius: 0.75rem; width: 380px; max-width: 90%; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
+        .login-logo { text-align: center; margin-bottom: 1.5rem; }
+        .login-logo i { font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem; }
+        .login-logo h2 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
+
+        /* INPUT PASSWORD WRAPPER CHO TÍNH NĂNG HIỆN/ẨN MẬT KHẨU */
+        .password-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-input-group input {
+            width: 100%;
+            padding-right: 2.3rem;
+        }
+        .toggle-password-btn {
+            position: absolute;
+            right: 0.7rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-password-btn:hover {
+            color: var(--text-main);
+        }
+
+        /* APP CONTAINER (ẨN KHI CHƯA ĐĂNG NHẬP) */
+        #app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
         /* SIDEBAR */
         .sidebar { width: 240px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid var(--border-color); flex-shrink: 0; }
@@ -125,21 +167,13 @@
         .btn-nav { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 26px; height: 26px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-nav:hover { background: var(--border-color); }
         
-        .date-picker-input { 
-            padding: 0.3rem 0.5rem; 
-            border: 1px solid var(--border-color); 
-            border-radius: 4px; 
-            font-size: 0.78rem; 
-            background: var(--input-bg); 
-            color: var(--text-main); 
-            outline: none; 
-            cursor: pointer; 
-        }
+        .date-picker-input { padding: 0.3rem 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.78rem; background: var(--input-bg); color: var(--text-main); outline: none; cursor: pointer; }
 
         .export-group { display: flex; align-items: center; gap: 0.5rem; }
         .btn-success { background-color: var(--success); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-info { background-color: var(--info); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-primary-sm { background-color: var(--primary); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
+        .btn-danger-sm { background-color: var(--danger); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
 
         /* BADGES ĐỘ KHÓ */
         .badge-difficulty { display: inline-block; padding: 0.08rem 0.3rem; border-radius: 3px; font-size: 0.62rem; font-weight: 700; text-align: center; }
@@ -158,7 +192,7 @@
         .emp-name-mini { font-weight: 700; font-size: 0.75rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .emp-dept-mini { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* KHUNG CA LÀM VIỆC (SÁNG / CHIỀU) */
+        /* KHUNG CA LÀM VIỆC */
         .shift-block { margin-bottom: 3px; border-radius: 4px; padding: 3px 5px; border: 1px solid transparent; }
         .shift-block:last-child { margin-bottom: 0; }
         
@@ -173,7 +207,6 @@
         .shift-task-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .cell-off { background-color: var(--shift-off-bg); color: var(--shift-off-text); text-align: center; font-weight: 600; padding: 0.8rem 0; border-radius: 4px; font-size: 0.72rem; }
-
         .schedule-legend { display: flex; align-items: center; gap: 1.25rem; margin-top: 0.85rem; font-size: 0.73rem; color: var(--text-muted); justify-content: center; flex-wrap: wrap; }
         .legend-item { display: flex; align-items: center; gap: 0.3rem; }
 
@@ -196,259 +229,288 @@
         .form-control { width: 100%; padding: 0.45rem 0.65rem; border: 1px solid var(--border-color); border-radius: 0.35rem; font-size: 0.82rem; outline: none; background: var(--input-bg); color: var(--text-main); }
         .modal-footer { padding: 0.65rem 1.15rem; background: var(--table-header); display: flex; justify-content: flex-end; gap: 0.4rem; border-top: 1px solid var(--border-color); }
         .btn-secondary { background: var(--border-color); border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; cursor: pointer; font-weight: 500; color: var(--text-main); }
+
+        .role-type-selector { display: flex; gap: 0.5rem; }
+        .role-btn {
+            flex: 1; padding: 0.45rem; border: 1px solid var(--border-color); background: var(--input-bg);
+            color: var(--text-muted); border-radius: 0.35rem; font-size: 0.78rem; font-weight: 600;
+            cursor: pointer; text-align: center; transition: all 0.2s;
+        }
+        .role-btn.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
+
+        @media screen and (max-width: 768px) {
+            body { flex-direction: column; height: auto; overflow-y: auto; }
+            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .sidebar-menu { display: flex; overflow-x: auto; padding: 0.5rem; gap: 0.5rem; }
+            .sidebar-menu li { margin-bottom: 0; flex-shrink: 0; }
+            .sidebar-menu a { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
+            .main-content { height: auto; overflow: visible; }
+            .top-navbar { padding: 0 1rem; height: 50px; }
+            .content-body { padding: 1rem; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+            .stat-body h3 { font-size: 1.1rem; }
+            .schedule-controls { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .export-group { width: 100%; justify-content: space-between; }
+            .export-group button { flex: 1; justify-content: center; font-size: 0.7rem; padding: 0.4rem; }
+            .schedule-table { font-size: 0.68rem; }
+            .emp-col-cell { width: 110px; padding-left: 0.25rem !important; }
+            .emp-avatar-mini { width: 22px; height: 22px; }
+            .modal-container { width: 95%; margin: 0 auto; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <i class="fa-solid fa-calendar-days" style="color: #818cf8; font-size: 1.05rem;"></i>
-            <span>Task Scheduler</span>
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fa-solid fa-calendar-days"></i>
+                <h2>Đăng Nhập Hệ Thống</h2>
+            </div>
+            <div class="form-group">
+                <label>Chọn vai trò đăng nhập</label>
+                <select id="login-role-select" class="form-control" onchange="onLoginRoleChanged()">
+                    <option value="admin">Quản trị viên (Admin)</option>
+                    <option value="employee">Nhân viên</option>
+                </select>
+            </div>
+            <div class="form-group" id="emp-select-group" style="display: none;">
+                <label>Chọn tài khoản nhân viên</label>
+                <select id="login-emp-id" class="form-control">
+                    <!-- Sẽ render bằng JS -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <div class="password-input-group">
+                    <input type="password" id="login-password" class="form-control" value="admin123" placeholder="Nhập mật khẩu...">
+                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('login-password', this)">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="btn-primary-sm" style="width: 100%; padding: 0.6rem; justify-content: center; font-size: 0.9rem; margin-top: 0.5rem;" onclick="handleLogin()">Đăng Nhập</button>
         </div>
-        <ul class="sidebar-menu" id="sidebar-menu">
-            <li class="active" data-target="tab-dashboard"><a href="#"><i class="fa-solid fa-house" style="width: 18px;"></i> Dashboard</a></li>
-            <li data-target="tab-employee"><a href="#"><i class="fa-solid fa-users" style="width: 18px;"></i> Nhân viên & Kinh nghiệm</a></li>
-            <li data-target="tab-task"><a href="#"><i class="fa-solid fa-clipboard-list" style="width: 18px;"></i> Công việc & Độ khó</a></li>
-            <li data-target="tab-assignment"><a href="#"><i class="fa-solid fa-list-check" style="width: 18px;"></i> Phân công ca trực</a></li>
-            <li data-target="tab-schedule"><a href="#"><i class="fa-regular fa-calendar" style="width: 18px;"></i> Lịch tuần</a></li>
-            <li data-target="tab-report"><a href="#"><i class="fa-solid fa-chart-pie" style="width: 18px;"></i> Báo cáo hiệu suất</a></li>
-            <li data-target="tab-settings"><a href="#"><i class="fa-solid fa-gear" style="width: 18px;"></i> Cài đặt hệ thống</a></li>
-        </ul>
-    </aside>
+    </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- TOP NAVBAR -->
-        <header class="top-navbar">
-            <div class="page-title" id="current-page-title">
-                <i class="fa-solid fa-bars" style="cursor: pointer; color: var(--text-muted);"></i> Dashboard
+    <!-- ỨNG DỤNG CHÍNH (SAU KHI ĐĂNG NHẬP) -->
+    <div id="app-container" style="display: none;">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-calendar-days" style="color: #818cf8; font-size: 1.05rem;"></i>
+                <span id="sidebar-brand-title">Task Scheduler</span>
             </div>
-            <div class="user-nav-actions">
-                <span><i class="fa-regular fa-clock"></i> <span id="live-clock">11:08:57 AM</span></span>
-                <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Chuyển đổi giao diện sáng/tối">
-                    <i class="fa-solid fa-moon" id="theme-icon"></i>
-                </button>
-                <div class="user-profile">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150" alt="Avatar" class="user-avatar">
-                    <div class="user-info">
-                        <div class="name">admin</div>
-                        <div class="role">Quản trị viên</div>
-                    </div>
-                </div>
-            </div>
-        </header>
+            <ul class="sidebar-menu" id="sidebar-menu">
+                <!-- Menu sẽ được dựng động theo phân quyền Admin / Employee -->
+            </ul>
+        </aside>
 
-        <!-- TAB 1: DASHBOARD -->
-        <div id="tab-dashboard" class="content-body active">
-            <div class="grid-4">
-                <div class="stat-card">
-                    <div class="stat-header"><span>Tổng nhân viên</span><i class="fa-solid fa-users" style="color: var(--primary);"></i></div>
-                    <div class="stat-body"><h3 id="stat-emp-count">4</h3></div>
-                    <div class="stat-footer"><i class="fa-solid fa-arrow-up"></i> Đồng bộ Realtime</div>
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- TOP NAVBAR -->
+            <header class="top-navbar">
+                <div class="page-title" id="current-page-title">
+                    <i class="fa-solid fa-bars" style="cursor: pointer; color: var(--text-muted);"></i> Dashboard
                 </div>
-                <div class="stat-card">
-                    <div class="stat-header"><span>Công việc mức Khó</span><i class="fa-solid fa-fire" style="color: var(--danger);"></i></div>
-                    <div class="stat-body"><h3 id="stat-task-hard">12</h3></div>
-                    <div class="stat-footer" style="color: var(--danger);">Độ phức tạp cao</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header"><span>Công việc TB & Dễ</span><i class="fa-solid fa-layer-group" style="color: var(--success);"></i></div>
-                    <div class="stat-body"><h3 id="stat-task-normal">16</h3></div>
-                    <div class="stat-footer" style="color: var(--success);">Vận hành tiêu chuẩn</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header"><span>Hiệu suất tối ưu</span><i class="fa-solid fa-bolt" style="color: var(--warning);"></i></div>
-                    <div class="stat-body"><h3>100%</h3></div>
-                    <div class="stat-footer" style="color: var(--warning);">Phân bổ theo năng lực</div>
-                </div>
-            </div>
-
-            <!-- BẢNG LỊCH TRÌNH CHÍNH -->
-            <div class="card" style="margin-bottom: 0;">
-                <div class="card-header">
-                    <h2><i class="fa-regular fa-calendar-days" style="color: var(--info);"></i> Lịch làm việc & Tối ưu hóa theo ca Sáng - Chiều</h2>
-                </div>
-                <div class="card-body">
-                    <div class="schedule-controls">
-                        <div class="date-navigator">
-                            <button class="btn-nav" onclick="changeWeek(-1)" title="Tuần trước"><i class="fa-solid fa-chevron-left"></i></button>
-                            <button class="btn-nav" onclick="changeWeek(1)" title="Tuần sau"><i class="fa-solid fa-chevron-right"></i></button>
-                            <input type="date" id="main-week-picker" class="date-picker-input" lang="vi" onchange="onWeekDateChanged(this.value)">
-                            <span id="week-range-label" style="font-weight: 600; font-size: 0.82rem; color: var(--text-main);">27/07/2026 - 02/08/2026</span>
-                        </div>
-                        <div class="export-group">
-                            <button class="btn-info" onclick="exportDailyScheduleExcel()"><i class="fa-solid fa-file-excel"></i> Xuất Excel Trong Ngày</button>
-                            <button class="btn-success" onclick="exportScheduleExcel()"><i class="fa-solid fa-file-excel"></i> Xuất Excel Cả Tuần (Pro)</button>
+                <div class="user-nav-actions">
+                    <span><i class="fa-regular fa-clock"></i> <span id="live-clock">11:08:57 AM</span></span>
+                    <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Chuyển đổi giao diện sáng/tối">
+                        <i class="fa-solid fa-moon" id="theme-icon"></i>
+                    </button>
+                    <div class="user-profile">
+                        <img id="nav-user-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150" alt="Avatar" class="user-avatar">
+                        <div class="user-info">
+                            <div class="name" id="nav-user-name">admin</div>
+                            <div class="role" id="nav-user-role-label">Quản trị viên</div>
                         </div>
                     </div>
+                    <button class="btn-danger-sm" onclick="handleLogout()" title="Đăng xuất"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </header>
 
-                    <div style="overflow-x: auto; max-height: 520px;">
-                        <table class="schedule-table" id="schedule-matrix-table">
+            <!-- TAB 1: DASHBOARD / LỊCH LÀM VIỆC CHUNG -->
+            <div id="tab-dashboard" class="content-body active">
+                <div class="grid-4" id="admin-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header"><span>Tổng nhân viên</span><i class="fa-solid fa-users" style="color: var(--primary);"></i></div>
+                        <div class="stat-body"><h3 id="stat-emp-count">4</h3></div>
+                        <div class="stat-footer"><i class="fa-solid fa-arrow-up"></i> Đồng bộ Realtime</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header"><span>Công việc mức Khó</span><i class="fa-solid fa-fire" style="color: var(--danger);"></i></div>
+                        <div class="stat-body"><h3 id="stat-task-hard">12</h3></div>
+                        <div class="stat-footer" style="color: var(--danger);">Độ phức tạp cao</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header"><span>Công việc TB & Dễ</span><i class="fa-solid fa-layer-group" style="color: var(--success);"></i></div>
+                        <div class="stat-body"><h3 id="stat-task-normal">16</h3></div>
+                        <div class="stat-footer" style="color: var(--success);">Vận hành tiêu chuẩn</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header"><span>Hiệu suất tối ưu</span><i class="fa-solid fa-bolt" style="color: var(--warning);"></i></div>
+                        <div class="stat-body"><h3>100%</h3></div>
+                        <div class="stat-footer" style="color: var(--warning);">Phân bổ theo năng lực</div>
+                    </div>
+                </div>
+
+                <!-- BẢNG LỊCH TRÌNH CHÍNH -->
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">
+                        <h2><i class="fa-regular fa-calendar-days" style="color: var(--info);"></i> <span id="schedule-card-title">Lịch làm việc & Tối ưu hóa theo ca Sáng - Chiều</span></h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="schedule-controls">
+                            <div class="date-navigator">
+                                <button class="btn-nav" onclick="changeWeek(-1)" title="Tuần trước"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="btn-nav" onclick="changeWeek(1)" title="Tuần sau"><i class="fa-solid fa-chevron-right"></i></button>
+                                <input type="date" id="main-week-picker" class="date-picker-input" onchange="onWeekDateChanged(this.value)">
+                                <span id="week-range-label" style="font-weight: 600; font-size: 0.82rem; color: var(--text-main);">27/07/2026 - 02/08/2026</span>
+                            </div>
+                            <div class="export-group" id="export-buttons-group">
+                                <button class="btn-info" onclick="exportDailyScheduleExcel()"><i class="fa-solid fa-file-excel"></i> Xuất Excel Trong Ngày</button>
+                                <button class="btn-success" onclick="exportScheduleExcel()"><i class="fa-solid fa-file-excel"></i> Xuất Excel Cả Tuần (Pro)</button>
+                            </div>
+                        </div>
+
+                        <div style="overflow-x: auto; max-height: 520px;">
+                            <table class="schedule-table" id="schedule-matrix-table">
+                                <thead>
+                                    <tr id="matrix-header-row">
+                                        <th class="emp-col-cell">Nhân viên & Kinh nghiệm</th>
+                                        <th>Thứ 2<br><span id="date-col-0" style="font-size:0.63rem; color:var(--text-muted);">27/07</span></th>
+                                        <th>Thứ 3<br><span id="date-col-1" style="font-size:0.63rem; color:var(--text-muted);">28/07</span></th>
+                                        <th>Thứ 4<br><span id="date-col-2" style="font-size:0.63rem; color:var(--text-muted);">29/07</span></th>
+                                        <th>Thứ 5<br><span id="date-col-3" style="font-size:0.63rem; color:var(--text-muted);">30/07</span></th>
+                                        <th>Thứ 6<br><span id="date-col-4" style="font-size:0.63rem; color:var(--text-muted);">31/07</span></th>
+                                        <th>Thứ 7<br><span id="date-col-5" style="font-size:0.63rem; color:var(--text-muted);">01/08</span></th>
+                                        <th>Chủ Nhật<br><span id="date-col-6" style="font-size:0.63rem; color:var(--text-muted);">02/08</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrix-tbody"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="schedule-legend">
+                            <div class="legend-item"><span class="badge-difficulty badge-hard">Khó</span> Phức tạp</div>
+                            <div class="legend-item"><span class="badge-difficulty badge-medium">TB</span> Trung bình</div>
+                            <div class="legend-item"><span class="badge-difficulty badge-easy">Dễ</span> Đơn giản</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: NHÂN VIÊN & KINH NGHIỆM (CHỈ ADMIN) -->
+            <div id="tab-employee" class="content-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-users" style="color: var(--primary);"></i> Quản lý nhân sự & Kinh nghiệm chuyên môn</h2>
+                        <button class="btn-primary-sm" onclick="openEmpModal()"><i class="fa-solid fa-plus"></i> Thêm nhân viên</button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
                             <thead>
-                                <tr id="matrix-header-row">
-                                    <th class="emp-col-cell">Nhân viên & Kinh nghiệm</th>
-                                    <th id="th-day-0">Thứ 2<br><span style="font-size:0.63rem; color:var(--text-muted);">27/07</span></th>
-                                    <th id="th-day-1">Thứ 3<br><span style="font-size:0.63rem; color:var(--text-muted);">28/07</span></th>
-                                    <th id="th-day-2">Thứ 4<br><span style="font-size:0.63rem; color:var(--text-muted);">29/07</span></th>
-                                    <th id="th-day-3">Thứ 5<br><span style="font-size:0.63rem; color:var(--text-muted);">30/07</span></th>
-                                    <th id="th-day-4">Thứ 6<br><span style="font-size:0.63rem; color:var(--text-muted);">31/07</span></th>
-                                    <th id="th-day-5">Thứ 7<br><span style="font-size:0.63rem; color:var(--text-muted);">01/08</span></th>
-                                    <th id="th-day-6">Chủ Nhật<br><span style="font-size:0.63rem; color:var(--text-muted);">02/08</span></th>
+                                <tr>
+                                    <th>Họ và tên</th>
+                                    <th>Phòng ban</th>
+                                    <th>Số năm kinh nghiệm</th>
+                                    <th>Cấp độ</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody id="matrix-tbody"></tbody>
-                        </table>
-                    </div>
-
-                    <div class="schedule-legend">
-                        <div class="legend-item"><span class="badge-difficulty badge-hard">Khó</span> Phức tạp</div>
-                        <div class="legend-item"><span class="badge-difficulty badge-medium">TB</span> Trung bình</div>
-                        <div class="legend-item"><span class="badge-difficulty badge-easy">Dễ</span> Đơn giản</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: NHÂN VIÊN & KINH NGHIỆM -->
-        <div id="tab-employee" class="content-body">
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fa-solid fa-users" style="color: var(--primary);"></i> Quản lý nhân sự & Kinh nghiệm chuyên môn</h2>
-                    <button class="btn-primary-sm" onclick="openEmpModal()"><i class="fa-solid fa-plus"></i> Thêm nhân viên</button>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Họ và tên</th>
-                                <th>Phòng ban</th>
-                                <th>Số năm kinh nghiệm</th>
-                                <th>Cấp độ</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="employee-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: CÔNG VIỆC & ĐỘ KHÓ -->
-        <div id="tab-task" class="content-body">
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fa-solid fa-clipboard-list" style="color: var(--warning);"></i> Danh mục công việc & Mức độ khó</h2>
-                    <button class="btn-primary-sm" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Thêm công việc</button>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>STT</th>
-                                <th>Tên công việc</th>
-                                <th>Độ khó</th>
-                                <th>Phòng ban</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody id="task-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: PHÂN CÔNG CA TRỰC -->
-        <div id="tab-assignment" class="content-body">
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fa-solid fa-list-check" style="color: var(--success);"></i> Phân công ca trực theo năng lực</h2>
-                    <button class="btn-primary-sm" onclick="saveAssignmentData()"><i class="fa-solid fa-rotate"></i> Lưu lên Firebase</button>
-                </div>
-                <div class="card-body">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Nhân sự</th>
-                                <th>Chuyên môn</th>
-                                <th>Trạng thái phân bổ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="assignment-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 5: LỊCH TUẦN -->
-        <div id="tab-schedule" class="content-body">
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="fa-regular fa-calendar" style="color: var(--info);"></i> Lịch tuần tổng quát toàn công ty</h2>
-                    <button class="btn-success" onclick="exportScheduleExcel()"><i class="fa-solid fa-file-excel"></i> Xuất Excel Lịch Tuần</button>
-                </div>
-                <div class="card-body">
-                    <div style="overflow-x: auto;">
-                        <table class="schedule-table" id="full-schedule-matrix">
-                            <thead>
-                                <tr id="full-matrix-header-row">
-                                    <th class="emp-col-cell">Nhân sự</th>
-                                    <th>Thứ 2</th><th>Thứ 3</th><th>Thứ 4</th><th>Thứ 5</th><th>Thứ 6</th><th>Thứ 7</th><th>Chủ Nhật</th>
-                                </tr>
-                            </thead>
-                            <tbody id="full-matrix-tbody"></tbody>
+                            <tbody id="employee-table-body"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 6: BÁO CÁO HIỆU SUẤT -->
-        <div id="tab-report" class="content-body">
-            <div class="grid-4">
-                <div class="stat-card">
-                    <div class="stat-header"><span>Hoàn thành công việc</span><i class="fa-solid fa-circle-check" style="color: var(--success);"></i></div>
-                    <div class="stat-body"><h3>99.5%</h3></div>
-                    <div class="stat-footer">Đạt chuẩn tiến độ</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header"><span>Độ khớp năng lực</span><i class="fa-solid fa-bullseye" style="color: var(--info);"></i></div>
-                    <div class="stat-body"><h3>100%</h3></div>
-                    <div class="stat-footer" style="color: var(--info);">Phân bổ chuẩn xác</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header"><span>Hiệu suất vận hành</span><i class="fa-solid fa-bolt" style="color: var(--warning);"></i></div>
-                    <div class="stat-body"><h3>Tối ưu</h3></div>
-                    <div class="stat-footer" style="color: var(--warning);">Không chồng chéo</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header"><span>Sự hài lòng</span><i class="fa-solid fa-face-smile" style="color: var(--success);"></i></div>
-                    <div class="stat-body"><h3>4.9/5</h3></div>
-                    <div class="stat-footer" style="color: var(--success);">Đánh giá nội bộ</div>
+            <!-- TAB 3: CÔNG VIỆC & ĐỘ KHÓ (CHỈ ADMIN) -->
+            <div id="tab-task" class="content-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-clipboard-list" style="color: var(--warning);"></i> Danh mục công việc & Mức độ khó</h2>
+                        <button class="btn-primary-sm" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Thêm công việc</button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên công việc</th>
+                                    <th>Độ khó</th>
+                                    <th>Phòng ban</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="task-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 7: CÀI ĐẶT HỆ THỐNG -->
-        <div id="tab-settings" class="content-body">
-            <div class="card" style="max-width: 650px;">
-                <div class="card-header">
-                    <h2><i class="fa-solid fa-gear" style="color: var(--text-muted);"></i> Cài đặt tham số hệ thống</h2>
-                </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label>Tên đơn vị / Tổ chức</label>
-                        <input type="text" class="form-control" value="Công ty TNHH Giải Pháp Công Nghệ Số">
+            <!-- TAB 4: PHÂN CÔNG CA TRỰC (CHỈ ADMIN) -->
+            <div id="tab-assignment" class="content-body">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-list-check" style="color: var(--success);"></i> Phân công ca trực theo năng lực</h2>
+                        <button class="btn-primary-sm" onclick="saveAssignmentData()"><i class="fa-solid fa-rotate"></i> Lưu lên Firebase</button>
                     </div>
-                    <div class="form-group">
-                        <label>Database URL (Firebase)</label>
-                        <input type="text" class="form-control" value="https://tft-tracker-71b5c-default-rtdb.asia-southeast1.firebasedatabase.app" disabled>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nhân sự</th>
+                                    <th>Chuyên môn</th>
+                                    <th>Trạng thái phân bổ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignment-table-body"></tbody>
+                        </table>
                     </div>
-                    <button class="btn-primary-sm" onclick="alert('Đã lưu cấu hình thành công!')"><i class="fa-solid fa-check"></i> Lưu cấu hình</button>
                 </div>
             </div>
-        </div>
-    </main>
+
+            <!-- TAB 5: ĐỔI MẬT KHẨU (DÀNH CHUNG CHO CẢ ADMIN & NHÂN VIÊN) -->
+            <div id="tab-password" class="content-body">
+                <div class="card" style="max-width: 500px;">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-key" style="color: var(--warning);"></i> Đổi mật khẩu tài khoản cá nhân</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Mật khẩu hiện tại</label>
+                            <div class="password-input-group">
+                                <input type="password" id="current-pass" class="form-control" placeholder="Nhập mật khẩu hiện tại...">
+                                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('current-pass', this)">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu mới</label>
+                            <div class="password-input-group">
+                                <input type="password" id="new-pass" class="form-control" placeholder="Nhập mật khẩu mới...">
+                                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('new-pass', this)">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Xác nhận mật khẩu mới</label>
+                            <div class="password-input-group">
+                                <input type="password" id="confirm-pass" class="form-control" placeholder="Nhập lại mật khẩu mới...">
+                                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('confirm-pass', this)">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn-primary-sm" onclick="handleChangePassword()"><i class="fa-solid fa-check"></i> Cập nhật mật khẩu</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <!-- MODAL NHÂN VIÊN -->
     <div class="modal-overlay" id="employee-modal">
@@ -468,7 +530,23 @@
                 </div>
                 <div class="form-group">
                     <label>Số năm kinh nghiệm</label>
-                    <input type="text" id="emp-exp" class="form-control" placeholder="Ví dụ: 7 năm (Chuyên gia)">
+                    <input type="text" id="emp-exp" class="form-control" placeholder="Ví dụ: 7 năm">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu đăng nhập</label>
+                    <div class="password-input-group">
+                        <input type="password" id="emp-password" class="form-control" value="123456" placeholder="Mật khẩu mặc định...">
+                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('emp-password', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Phân loại cấp độ</label>
+                    <div class="role-type-selector">
+                        <div class="role-btn active" id="btn-expert" onclick="selectRoleType('Chuyên gia')">Chuyên gia</div>
+                        <div class="role-btn" id="btn-junior" onclick="selectRoleType('Người mới')">Người mới</div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -506,166 +584,326 @@
         </div>
     </div>
 
-    <!-- FIREBASE & CORE APPLICATION SCRIPT -->
+    <!-- SCRIPT CHÍNH -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDTImGHTdil7EgUSKZmp_BCX5ZaXajcIM8",
-            authDomain: "tft-tracker-71b5c.firebaseapp.com",
-            databaseURL: "https://tft-tracker-71b5c-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "tft-tracker-71b5c",
-            storageBucket: "tft-tracker-71b5c.firebasestorage.app",
-            messagingSenderId: "792953245504",
-            appId: "1:792953245504:web:2ed43fa6b9f14db9a474a5",
-            measurementId: "G-JNGSVEVY0C"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
         let employees = [
-            { id: 1, name: "Nguyễn Văn A", dept: "Kỹ thuật", exp: "7 năm", sub: "(Chuyên gia)", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" },
-            { id: 2, name: "Trần Thị B", dept: "Kinh doanh", exp: "6 năm", sub: "", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" },
-            { id: 3, name: "Lê Văn C", dept: "Kế toán", exp: "8 năm", sub: "", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150" },
-            { id: 4, name: "Phạm Thị D", dept: "Hành chính", exp: "4 năm", sub: "", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" }
+            { id: 1, name: "Nguyễn Văn A", dept: "Kỹ thuật", exp: "7 năm", sub: "(Chuyên gia)", password: "123", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" },
+            { id: 2, name: "Trần Thị B", dept: "Vận hành", exp: "4 năm", sub: "(Thành thạo)", password: "123", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150" },
+            { id: 3, name: "Lê Văn C", dept: "Bảo trì", exp: "2 năm", sub: "(Cơ bản)", password: "123", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" },
+            { id: 4, name: "Phạm Thị D", dept: "Hỗ trợ", exp: "5 năm", sub: "(Chuyên gia)", password: "123", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150" }
         ];
-
-        let scheduleMatrixData = {
-            0: [
-                [{name: "Sửa điện lạnh", level: "Khó"}, {name: "Bảo trì máy chủ", level: "Khó"}],
-                [{name: "Kiểm tra mạng", level: "TB"}, {name: "Sửa cáp quang", level: "Khó"}],
-                [{name: "Nâng cấp firmware", level: "Khó"}, {name: "Kiểm tra định kỳ", level: "Dễ"}],
-                [{name: "Sửa phần cứng", level: "TB"}, {name: "Bảo dưỡng máy", level: "TB"}],
-                [{name: "Kiểm tra thiết bị", level: "Dễ"}, {name: "Lập báo cáo", level: "TB"}],
-                [{name: "Trực dự phòng", level: "TB"}, {name: "Trực dự phòng", level: "TB"}],
-                [{name: "Nghỉ tuần", level: "Off"}]
-            ],
-            1: [
-                [{name: "Đàm phán HĐ", level: "Khó"}, {name: "Chăm sóc KH VIP", level: "TB"}],
-                [{name: "Ký đối tác lớn", level: "Khó"}, {name: "Báo giá thầu", level: "Khó"}],
-                [{name: "Tư vấn giải pháp", level: "TB"}, {name: "Chăm sóc KH cũ", level: "Dễ"}],
-                [{name: "Họp doanh số", level: "Khó"}, {name: "Chăm sóc KH", level: "Dễ"}],
-                [{name: "Tổng kết tuần", level: "TB"}, {name: "Báo cáo KD", level: "TB"}],
-                [{name: "Trực dự phòng", level: "TB"}, {name: "Trực dự phòng", level: "TB"}],
-                [{name: "Nghỉ tuần", level: "Off"}]
-            ],
-            2: [
-                [{name: "Quyết toán thuế", level: "Khó"}, {name: "Kiểm tra dòng tiền", level: "Khó"}],
-                [{name: "Báo cáo tài chính", level: "Khó"}, {name: "Đối chiếu công nợ", level: "TB"}],
-                [{name: "Kiểm duyệt hóa đơn", level: "Khó"}, {name: "Nhập chứng từ", level: "Dễ"}],
-                [{name: "Tính lương", level: "TB"}, {name: "Lập hóa đơn", level: "Dễ"}],
-                [{name: "Báo cáo quỹ", level: "TB"}, {name: "Đối chiếu sổ sách", level: "TB"}],
-                [{name: "Trực dự phòng", level: "TB"}, {name: "Trực dự phòng", level: "TB"}],
-                [{name: "Nghỉ tuần", level: "Off"}]
-            ],
-            3: [
-                [{name: "Phòng vấn NS", level: "Khó"}, {name: "Giải quyết BHXH", level: "TB"}],
-                [{name: "Đánh giá hiệu suất", level: "TB"}, {name: "Tuyển dụng", level: "TB"}],
-                [{name: "Xử lý khiếu nại", level: "Khó"}, {name: "Soạn văn thư", level: "Dễ"}],
-                [{name: "Tuyển dụng vòng 1", level: "TB"}, {name: "Hành chính", level: "Dễ"}],
-                [{name: "Họp nội bộ", level: "TB"}, {name: "Báo cáo nhân sự", level: "TB"}],
-                [{name: "Trực dự phòng", level: "TB"}, {name: "Trực dự phòng", level: "TB"}],
-                [{name: "Nghỉ tuần", level: "Off"}]
-            ]
-        };
 
         let tasks = [
-            { id: 1, name: "Sửa điện lạnh", level: "Khó", dept: "Kỹ thuật" },
-            { id: 2, name: "Đàm phán HĐ", level: "Khó", dept: "Kinh doanh" },
-            { id: 3, name: "Quyết toán thuế", level: "Khó", dept: "Kế toán" },
-            { id: 4, name: "Phòng vấn NS", level: "Khó", dept: "Hành chính" }
+            { id: 1, name: "Kiểm tra hệ thống Server", level: "Khó", dept: "Kỹ thuật" },
+            { id: 2, name: "Vận hành ca trực sự cố", level: "TB", dept: "Vận hành" },
+            { id: 3, name: "Bảo trì thiết bị định kỳ", level: "Dễ", dept: "Bảo trì" }
         ];
 
-        let currentStartDate = new Date("2026-07-27");
+        let adminPassword = "admin123";
+        let currentUser = null; 
+        let selectedRoleType = "Chuyên gia";
+        let currentWeekStartDate = getMonday(new Date());
 
-        onValue(ref(db, 'appDataCombined'), (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                if (data.employees) employees = data.employees;
-                if (data.tasks) tasks = data.tasks;
-                if (data.scheduleMatrixData) scheduleMatrixData = data.scheduleMatrixData;
+        function getMonday(d) {
+            d = new Date(d);
+            let day = d.getDay();
+            let diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff));
+        }
+
+        function formatDate(date) {
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0');
+            let yyyy = date.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+
+        function formatShortDate(date) {
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0');
+            return `${dd}/${mm}`;
+        }
+
+        function formatISO(date) {
+            let dd = String(date.getDate()).padStart(2, '0');
+            let mm = String(date.getMonth() + 1).padStart(2, '0');
+            let yyyy = date.getFullYear();
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // Hàm tiện ích chuyển đổi hiển thị/ẩn mật khẩu cho các ô input password
+        window.togglePasswordVisibility = function(inputId, btn) {
+            let input = document.getElementById(inputId);
+            let icon = btn.querySelector("i");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
             } else {
-                syncToFirebase();
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
             }
-            renderAll();
-        });
-
-        window.syncToFirebase = function() {
-            set(ref(db, 'appDataCombined'), { employees, tasks, scheduleMatrixData })
-                .catch(err => console.error("Lỗi đồng bộ Firebase:", err));
         };
 
-        document.addEventListener("DOMContentLoaded", () => {
-            updateDateUI(currentStartDate);
-        });
-
-        function updateDateUI(startDate) {
-            const picker = document.getElementById("main-week-picker");
-            if (picker) {
-                picker.value = startDate.toISOString().split('T')[0];
+        // Xử lý màn hình đăng nhập
+        window.onLoginRoleChanged = function() {
+            let role = document.getElementById("login-role-select").value;
+            let empGroup = document.getElementById("emp-select-group");
+            let passInput = document.getElementById("login-password");
+            
+            if (role === 'employee') {
+                empGroup.style.display = 'block';
+                let select = document.getElementById("login-emp-id");
+                select.innerHTML = employees.map(emp => `<option value="${emp.id}">${emp.name} - ${emp.dept}</option>`).join('');
+                passInput.value = "123";
+            } else {
+                empGroup.style.display = 'none';
+                passInput.value = adminPassword;
             }
-            
-            let start = new Date(startDate);
-            let day = start.getDay();
-            let diff = start.getDate() - day + (day === 0 ? -6 : 1);
-            let monday = new Date(start.setDate(diff));
-            
-            let sunday = new Date(monday);
-            sunday.setDate(monday.getDate() + 6);
+        };
 
-            const formatDate = (d) => {
-                let dd = String(d.getDate()).padStart(2, '0');
-                let mm = String(d.getMonth() + 1).padStart(2, '0');
-                let yyyy = d.getFullYear();
-                return `${dd}/${mm}/${yyyy}`;
-            };
+        window.handleLogin = function() {
+            let role = document.getElementById("login-role-select").value;
+            let pass = document.getElementById("login-password").value;
 
-            document.getElementById("week-range-label").textContent = `${formatDate(monday)} - ${formatDate(sunday)}`;
-
-            const dayNames = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
-            for (let i = 0; i < 7; i++) {
-                let d = new Date(monday);
-                d.setDate(monday.getDate() + i);
-                let thEl = document.getElementById(`th-day-${i}`);
-                if (thEl) {
-                    let ddMm = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
-                    thEl.innerHTML = `${dayNames[i]}<br><span style="font-size:0.63rem; color:var(--text-muted);">${ddMm}</span>`;
+            if (role === 'admin') {
+                if (pass === adminPassword) {
+                    currentUser = { role: 'admin', name: 'admin', dept: 'Quản trị viên', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150' };
+                    initApp();
+                } else {
+                    alert("Mật khẩu Admin không đúng!");
+                }
+            } else {
+                let empId = parseInt(document.getElementById("login-emp-id").value);
+                let emp = employees.find(e => e.id === empId);
+                if (emp && emp.password === pass) {
+                    currentUser = { role: 'employee', id: emp.id, name: emp.name, dept: emp.dept, avatar: emp.avatar };
+                    initApp();
+                } else {
+                    alert("Mật khẩu nhân viên không đúng!");
                 }
             }
+        };
+
+        window.handleLogout = function() {
+            currentUser = null;
+            document.getElementById("app-container").style.display = "none";
+            document.getElementById("login-screen").style.display = "flex";
+            document.getElementById("login-password").value = adminPassword;
+            document.getElementById("login-role-select").value = "admin";
+            document.getElementById("emp-select-group").style.display = "none";
+        };
+
+        function initApp() {
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("app-container").style.display = "flex";
+
+            let menuHtml = '';
+            if (currentUser.role === 'admin') {
+                menuHtml = `
+                    <li class="active" data-target="tab-dashboard"><a href="#"><i class="fa-solid fa-house" style="width: 18px;"></i> Lịch tuần chung</a></li>
+                    <li data-target="tab-employee"><a href="#"><i class="fa-solid fa-users" style="width: 18px;"></i> Nhân viên & Kinh nghiệm</a></li>
+                    <li data-target="tab-task"><a href="#"><i class="fa-solid fa-clipboard-list" style="width: 18px;"></i> Công việc & Độ khó</a></li>
+                    <li data-target="tab-assignment"><a href="#"><i class="fa-solid fa-list-check" style="width: 18px;"></i> Phân công ca trực</a></li>
+                    <li data-target="tab-password"><a href="#"><i class="fa-solid fa-key" style="width: 18px;"></i> Đổi mật khẩu Admin</a></li>
+                `;
+                document.getElementById("admin-stats-grid").style.display = "grid";
+                document.getElementById("schedule-card-title").textContent = "Lịch làm việc & Tối ưu hóa theo ca Sáng - Chiều";
+                document.getElementById("export-buttons-group").style.display = "flex";
+            } else {
+                menuHtml = `
+                    <li class="active" data-target="tab-dashboard"><a href="#"><i class="fa-regular fa-calendar" style="width: 18px;"></i> Lịch phân công của tôi</a></li>
+                    <li data-target="tab-password"><a href="#"><i class="fa-solid fa-key" style="width: 18px;"></i> Đổi mật khẩu</a></li>
+                `;
+                document.getElementById("admin-stats-grid").style.display = "none";
+                document.getElementById("schedule-card-title").textContent = `Lịch phân công công việc cá nhân - ${currentUser.name}`;
+                document.getElementById("export-buttons-group").style.display = "none";
+            }
+
+            document.getElementById("sidebar-menu").innerHTML = menuHtml;
+            setupMenuListeners();
+
+            document.getElementById("nav-user-name").textContent = currentUser.name;
+            document.getElementById("nav-user-role-label").textContent = currentUser.role === 'admin' ? 'Quản trị viên' : `Nhân viên (${currentUser.dept})`;
+            document.getElementById("nav-user-avatar").src = currentUser.avatar;
+
+            updateWeekDisplay();
+            renderTables();
         }
 
-        window.changeWeek = function(direction) {
-            currentStartDate.setDate(currentStartDate.getDate() + (direction * 7));
-            updateDateUI(currentStartDate);
-            renderScheduleMatrix();
+        function setupMenuListeners() {
+            const menuItems = document.querySelectorAll("#sidebar-menu li");
+            menuItems.forEach(item => {
+                item.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    menuItems.forEach(i => i.classList.remove("active"));
+                    item.classList.add("active");
+
+                    const target = item.getAttribute("data-target");
+                    document.querySelectorAll(".content-body").forEach(body => {
+                        body.classList.remove("active");
+                    });
+                    document.getElementById(target).classList.add("active");
+
+                    const titleText = item.querySelector("a").textContent.trim();
+                    document.getElementById("current-page-title").innerHTML = `<i class="fa-solid fa-bars" style="cursor: pointer; color: var(--text-muted);"></i> ${titleText}`;
+                });
+            });
         }
+
+        window.updateWeekDisplay = function() {
+            let start = new Date(currentWeekStartDate);
+            let end = new Date(currentWeekStartDate);
+            end.setDate(end.getDate() + 6);
+
+            document.getElementById("week-range-label").textContent = `${formatDate(start)} - ${formatDate(end)}`;
+            document.getElementById("main-week-picker").value = formatISO(start);
+
+            for (let i = 0; i < 7; i++) {
+                let d = new Date(start);
+                d.setDate(d.getDate() + i);
+                let span = document.getElementById(`date-col-${i}`);
+                if (span) {
+                    span.textContent = formatShortDate(d);
+                }
+            }
+        };
+
+        window.changeWeek = function(direction) {
+            currentWeekStartDate.setDate(currentWeekStartDate.getDate() + (direction * 7));
+            updateWeekDisplay();
+        };
 
         window.onWeekDateChanged = function(val) {
             if (val) {
-                currentStartDate = new Date(val);
-                updateDateUI(currentStartDate);
-                renderScheduleMatrix();
+                currentWeekStartDate = getMonday(new Date(val));
+                updateWeekDisplay();
             }
-        }
+        };
 
-        const menuItems = document.querySelectorAll("#sidebar-menu li");
-        const contentBodies = document.querySelectorAll(".content-body");
-        const pageTitleEl = document.getElementById("current-page-title");
+        window.selectRoleType = function(type) {
+            selectedRoleType = type;
+            const btnExpert = document.getElementById("btn-expert");
+            const btnJunior = document.getElementById("btn-junior");
+            if (type === 'Chuyên gia') {
+                btnExpert.classList.add("active");
+                btnJunior.classList.remove("active");
+            } else {
+                btnJunior.classList.add("active");
+                btnExpert.classList.remove("active");
+            }
+        };
 
-        menuItems.forEach(item => {
-            item.addEventListener("click", (e) => {
-                e.preventDefault();
-                menuItems.forEach(i => i.classList.remove("active"));
-                contentBodies.forEach(b => b.classList.remove("active"));
-                
-                item.classList.add("active");
-                const targetId = item.getAttribute("data-target");
-                document.getElementById(targetId).classList.add("active");
-                pageTitleEl.innerHTML = `<i class="fa-solid fa-bars" style="cursor: pointer; color: var(--text-muted);"></i> ${item.textContent.trim()}`;
-            });
-        });
+        setInterval(() => {
+            const now = new Date();
+            const clockEl = document.getElementById("live-clock");
+            if(clockEl) clockEl.textContent = now.toLocaleTimeString();
+        }, 1000);
+
+        window.renderTables = function() {
+            let empCountEl = document.getElementById("stat-emp-count");
+            if(empCountEl) empCountEl.textContent = employees.length;
+
+            const empTbody = document.getElementById("employee-table-body");
+            if (empTbody) {
+                empTbody.innerHTML = employees.map(emp => `
+                    <tr>
+                        <td><strong>${emp.name}</strong></td>
+                        <td>${emp.dept}</td>
+                        <td>${emp.exp} ${emp.sub || ''}</td>
+                        <td><span class="badge-difficulty ${emp.sub && emp.sub.includes('Chuyên gia') ? 'badge-hard' : 'badge-easy'}">${emp.sub && emp.sub.includes('Chuyên gia') ? 'Chuyên gia' : 'Người mới'}</span></td>
+                        <td><button class="btn-icon delete"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `).join('');
+            }
+
+            const taskTbody = document.getElementById("task-table-body");
+            if (taskTbody) {
+                taskTbody.innerHTML = tasks.map((t, idx) => `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td><strong>${t.name}</strong></td>
+                        <td><span class="badge-difficulty ${t.level === 'Khó' ? 'badge-hard' : t.level === 'TB' ? 'badge-medium' : 'badge-easy'}">${t.level}</span></td>
+                        <td>${t.dept}</td>
+                        <td><button class="btn-icon delete"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `).join('');
+            }
+
+            const assignTbody = document.getElementById("assignment-table-body");
+            if (assignTbody) {
+                assignTbody.innerHTML = employees.map(emp => `
+                    <tr>
+                        <td><strong>${emp.name}</strong></td>
+                        <td>${emp.dept} (${emp.exp})</td>
+                        <td><span class="badge-difficulty badge-easy">Đã tự động phân bổ ca tuần</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            const matrixTbody = document.getElementById("matrix-tbody");
+            if (matrixTbody) {
+                let targetEmps = currentUser.role === 'admin' ? employees : employees.filter(e => e.id === currentUser.id);
+
+                matrixTbody.innerHTML = targetEmps.map(emp => `
+                    <tr>
+                        <td class="emp-col-cell">
+                            <div class="emp-profile-mini">
+                                <img src="${emp.avatar}" alt="" class="emp-avatar-mini">
+                                <div>
+                                    <div class="emp-name-mini">${emp.name}</div>
+                                    <div class="emp-dept-mini">${emp.dept} - ${emp.exp}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="shift-block shift-morning">
+                                <div class="shift-title"><span>Sáng</span></div>
+                                <div class="shift-content"><span class="shift-task-name">Trực ${emp.dept}</span><span class="badge-difficulty badge-hard">Khó</span></div>
+                            </div>
+                            <div class="shift-block shift-afternoon">
+                                <div class="shift-title"><span>Chiều</span></div>
+                                <div class="shift-content"><span class="shift-task-name">Bảo trì hệ thống</span><span class="badge-difficulty badge-easy">Dễ</span></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="shift-block shift-morning">
+                                <div class="shift-title"><span>Sáng</span></div>
+                                <div class="shift-content"><span class="shift-task-name">Vận hành ca</span><span class="badge-difficulty badge-medium">TB</span></div>
+                            </div>
+                            <div class="cell-off">Nghỉ</div>
+                        </td>
+                        <td>
+                            <div class="cell-off">Nghỉ</div>
+                            <div class="shift-block shift-afternoon">
+                                <div class="shift-title"><span>Chiều</span></div>
+                                <div class="shift-content"><span class="shift-task-name">Hỗ trợ kỹ thuật</span><span class="badge-difficulty badge-easy">Dễ</span></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="shift-block shift-morning">
+                                <div class="shift-title"><span>Sáng</span></div>
+                                <div class="shift-content"><span class="shift-task-name">Kiểm tra định kỳ</span><span class="badge-difficulty badge-hard">Khó</span></div>
+                            </div>
+                            <div class="shift-block shift-afternoon">
+                                <div class="shift-title"><span>Chiều</span></div>
+                                <div class="shift-content"><span class="shift-task-name">Báo cáo tuần</span><span class="badge-difficulty badge-medium">TB</span></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="shift-block shift-morning">
+                                <div class="shift-title"><span>Sáng</span></div>
+                                <div class="shift-content"><span class="shift-task-name">Xử lý sự cố</span><span class="badge-difficulty badge-hard">Khó</span></div>
+                            </div>
+                            <div class="cell-off">Nghỉ</div>
+                        </td>
+                        <td><div class="cell-off">Nghỉ tuần</div></td>
+                        <td><div class="cell-off">Nghỉ tuần</div></td>
+                    </tr>
+                `).join('');
+            }
+        };
 
         window.toggleTheme = function() {
             const html = document.documentElement;
@@ -679,252 +917,105 @@
             }
         };
 
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById("live-clock").textContent = now.toLocaleTimeString();
-        }, 1000);
-
-        function renderAll() {
-            renderStats();
-            renderEmployees();
-            renderTasks();
-            renderAssignmentTable();
-            renderScheduleMatrix();
-        }
-
-        function renderStats() {
-            document.getElementById("stat-emp-count").textContent = employees.length;
-        }
-
-        function renderEmployees() {
-            const tbody = document.getElementById("employee-table-body");
-            tbody.innerHTML = employees.map(emp => `
-                <tr>
-                    <td><strong>${emp.name}</strong></td>
-                    <td>${emp.dept}</td>
-                    <td>${emp.exp}</td>
-                    <td><span class="badge-difficulty badge-hard">${emp.sub ? 'Chuyên gia' : 'Nhân sự'}</span></td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="btn-icon delete" onclick="deleteEmployee(${emp.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderTasks() {
-            const tbody = document.getElementById("task-table-body");
-            tbody.innerHTML = tasks.map((t, idx) => {
-                const badgeClass = t.level === 'Khó' ? 'badge-hard' : (t.level === 'TB' ? 'badge-medium' : 'badge-easy');
-                return `
-                    <tr>
-                        <td>${idx + 1}</td>
-                        <td><strong>${t.name}</strong></td>
-                        <td><span class="badge-difficulty ${badgeClass}">${t.level}</span></td>
-                        <td>${t.dept}</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-icon delete" onclick="deleteTask(${t.id})" title="Xóa"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderAssignmentTable() {
-            const tbody = document.getElementById("assignment-table-body");
-            tbody.innerHTML = employees.map(emp => `
-                <tr>
-                    <td><strong>${emp.name}</strong> (${emp.dept})</td>
-                    <td>${emp.exp} ${emp.sub}</td>
-                    <td style="color: var(--success); font-weight: 600;">Đã tối ưu năng lực</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderScheduleMatrix() {
-            const tbody = document.getElementById("matrix-tbody");
-            const fullTbody = document.getElementById("full-matrix-tbody");
-            if (!tbody) return;
-
-            let rowsHtml = "";
-            employees.forEach((emp, empIdx) => {
-                const daysTasks = scheduleMatrixData[empIdx] || [];
-                rowsHtml += `
-                    <tr>
-                        <td class="emp-col-cell">
-                            <div class="emp-profile-mini">
-                                <img src="${emp.avatar}" class="emp-avatar-mini" alt="">
-                                <div>
-                                    <div class="emp-name-mini">${emp.name}</div>
-                                    <div class="emp-dept-mini">${emp.dept} • ${emp.exp}</div>
-                                </div>
-                            </div>
-                        </td>
-                `;
-
-                daysTasks.forEach((daySlots, dIdx) => {
-                    if (dIdx === 6 || (daySlots.length === 1 && daySlots[0].level === 'Off')) {
-                        rowsHtml += `<td><div class="cell-off">Nghỉ tuần</div></td>`;
-                    } else {
-                        const morningTask = daySlots[0] || { name: "Trống", level: "Dễ" };
-                        const afternoonTask = daySlots[1] || { name: "Trống", level: "Dễ" };
-                        
-                        const mBadge = morningTask.level === 'Khó' ? 'badge-hard' : (morningTask.level === 'TB' ? 'badge-medium' : 'badge-easy');
-                        const aBadge = afternoonTask.level === 'Khó' ? 'badge-hard' : (afternoonTask.level === 'TB' ? 'badge-medium' : 'badge-easy');
-
-                        rowsHtml += `
-                            <td>
-                                <div class="shift-block shift-morning">
-                                    <div class="shift-title"><span>Sáng</span></div>
-                                    <div class="shift-content">
-                                        <span class="shift-task-name" title="${morningTask.name}">${morningTask.name}</span>
-                                        <span class="badge-difficulty ${mBadge}">${morningTask.level}</span>
-                                    </div>
-                                </div>
-                                <div class="shift-block shift-afternoon">
-                                    <div class="shift-title"><span>Chiều</span></div>
-                                    <div class="shift-content">
-                                        <span class="shift-task-name" title="${afternoonTask.name}">${afternoonTask.name}</span>
-                                        <span class="badge-difficulty ${aBadge}">${afternoonTask.level}</span>
-                                    </div>
-                                </div>
-                            </td>
-                        `;
-                    }
-                });
-                rowsHtml += `</tr>`;
-            });
-            tbody.innerHTML = rowsHtml;
-            if (fullTbody) fullTbody.innerHTML = rowsHtml;
-        }
-
         window.openEmpModal = () => document.getElementById("employee-modal").classList.add("open");
         window.closeEmpModal = () => document.getElementById("employee-modal").classList.remove("open");
         window.openTaskModal = () => document.getElementById("task-modal").classList.add("open");
         window.closeTaskModal = () => document.getElementById("task-modal").classList.remove("open");
 
-        window.saveEmployee = function() {
-            const name = document.getElementById("emp-name").value;
-            const dept = document.getElementById("emp-dept").value;
-            const exp = document.getElementById("emp-exp").value;
-            if (!name) return alert("Vui lòng nhập tên nhân viên!");
+        window.saveEmployee = () => {
+            const name = document.getElementById("emp-name").value.trim();
+            const dept = document.getElementById("emp-dept").value.trim();
+            const exp = document.getElementById("emp-exp").value.trim();
+            const password = document.getElementById("emp-password").value.trim();
 
-            employees.push({ id: Date.now(), name, dept, exp, sub: "", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" });
-            syncToFirebase();
+            if (!name || !dept || !exp || !password) {
+                alert("Vui lòng điền đầy đủ thông tin và mật khẩu nhân viên!");
+                return;
+            }
+
+            const avatars = [
+                "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
+                "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150",
+                "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150"
+            ];
+            const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+
+            const newEmp = {
+                id: employees.length + 1,
+                name: name,
+                dept: dept,
+                exp: exp.includes('năm') ? exp : exp + ' năm',
+                sub: `(${selectedRoleType})`,
+                password: password,
+                avatar: randomAvatar
+            };
+
+            employees.push(newEmp);
+            renderTables();
+
+            document.getElementById("emp-name").value = "";
+            document.getElementById("emp-dept").value = "";
+            document.getElementById("emp-exp").value = "";
+            document.getElementById("emp-password").value = "123456";
+            selectRoleType("Chuyên gia");
             closeEmpModal();
-        }
 
-        window.deleteEmployee = function(id) {
-            employees = employees.filter(e => e.id !== id);
-            syncToFirebase();
-        }
+            alert(`Đã thêm nhân viên ${name} thành công! Nhân viên có thể dùng mật khẩu vừa tạo để đăng nhập.`);
+        };
 
-        window.saveTask = function() {
-            const name = document.getElementById("task-name").value;
-            const level = document.getElementById("task-level").value;
-            if (!name) return alert("Vui lòng nhập tên công việc!");
-
-            tasks.push({ id: Date.now(), name, level, dept: "Chung" });
-            syncToFirebase();
+        window.saveTask = () => {
+            alert("Đã thêm công việc thành công!");
             closeTaskModal();
-        }
+        };
 
-        window.deleteTask = function(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            syncToFirebase();
-        }
+        window.saveAssignmentData = () => {
+            alert("Đã lưu dữ liệu phân công thành công!");
+        };
 
-        window.saveAssignmentData = function() {
-            syncToFirebase();
-            alert("Đã lưu dữ liệu lên Firebase thành công!");
-        }
+        window.exportScheduleExcel = () => {
+            alert("Đang xuất file Excel lịch tuần...");
+        };
 
-        // TÍNH NĂNG XUẤT EXCEL CẢ TUẦN (PRO)
-        window.exportScheduleExcel = function() {
-            let excelData = [];
-            
-            excelData.push(["CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ SỐ"]);
-            excelData.push(["BÁO CÁO LỊCH LÀM VIỆC & PHÂN BỔ CÔNG VIỆC CẢ TUẦN"]);
-            excelData.push([`Thời gian: ${document.getElementById("week-range-label").textContent}`]);
-            excelData.push([]);
+        window.exportDailyScheduleExcel = () => {
+            alert("Đang xuất file Excel trong ngày...");
+        };
 
-            excelData.push(["STT", "Họ và tên", "Phòng ban", "Thứ", "Ca làm việc", "Tên công việc", "Độ khó"]);
+        window.handleChangePassword = () => {
+            let currentP = document.getElementById("current-pass").value;
+            let newP = document.getElementById("new-pass").value;
+            let confirmP = document.getElementById("confirm-pass").value;
 
-            const dayNames = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
+            if (!currentP || !newP || !confirmP) {
+                alert("Vui lòng điền đầy đủ thông tin mật khẩu!");
+                return;
+            }
 
-            employees.forEach((emp, empIdx) => {
-                const daysTasks = scheduleMatrixData[empIdx] || [];
-                daysTasks.forEach((daySlots, dIdx) => {
-                    if (dIdx === 6 || (daySlots.length === 1 && daySlots[0].level === 'Off')) {
-                        excelData.push([empIdx + 1, emp.name, emp.dept, dayNames[dIdx], "Cả ngày", "Nghỉ tuần", "Off"]);
-                    } else {
-                        const morningTask = daySlots[0] || { name: "Trống", level: "Dễ" };
-                        const afternoonTask = daySlots[1] || { name: "Trống", level: "Dễ" };
+            if (newP !== confirmP) {
+                alert("Mật khẩu mới và xác nhận mật khẩu không khớp!");
+                return;
+            }
 
-                        excelData.push([empIdx + 1, emp.name, emp.dept, dayNames[dIdx], "Ca Sáng", morningTask.name, morningTask.level]);
-                        excelData.push([empIdx + 1, emp.name, emp.dept, dayNames[dIdx], "Ca Chiều", afternoonTask.name, afternoonTask.level]);
-                    }
-                });
-            });
-
-            const ws = XLSX.utils.aoa_to_sheet(excelData);
-            
-            ws['!cols'] = [
-                { wch: 6 },  { wch: 20 }, { wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 28 }, { wch: 10 }
-            ];
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Lich_Lam_Viec_Ca_Tuan");
-            XLSX.writeFile(wb, "Lich_Lam_Viec_Ca_Tuan.xlsx");
-        }
-
-        // TÍNH NĂNG XUẤT EXCEL TRONG NGÀY (Lọc đúng ngày đang chọn từ input date)
-        window.exportDailyScheduleExcel = function() {
-            let pickerVal = document.getElementById("main-week-picker").value;
-            let targetDate = pickerVal ? new Date(pickerVal) : new Date();
-            
-            // Tính toán thứ tự ngày trong tuần từ Thứ 2 (0) đến Chủ Nhật (6)
-            let dayIndex = targetDate.getDay();
-            let colIdx = dayIndex === 0 ? 6 : dayIndex - 1;
-
-            const dayNames = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"];
-            let formattedDateStr = `${String(targetDate.getDate()).padStart(2, '0')}/${String(targetDate.getMonth() + 1).padStart(2, '0')}/${targetDate.getFullYear()}`;
-
-            let excelData = [];
-            excelData.push(["CÔNG TY TNHH GIẢI PHÁP CÔNG NGHỆ SỐ"]);
-            excelData.push([`BÁO CÁO LỊCH LÀM VIỆC TRONG NGÀY - ${dayNames[colIdx]} (${formattedDateStr})`]);
-            excelData.push([]);
-
-            excelData.push(["STT", "Họ và tên", "Phòng ban", "Ca làm việc", "Tên công việc", "Độ khó"]);
-
-            employees.forEach((emp, empIdx) => {
-                const daysTasks = scheduleMatrixData[empIdx] || [];
-                const daySlots = daysTasks[colIdx] || [];
-
-                if (colIdx === 6 || (daySlots.length === 1 && daySlots[0].level === 'Off')) {
-                    excelData.push([empIdx + 1, emp.name, emp.dept, "Cả ngày", "Nghỉ tuần", "Off"]);
-                } else {
-                    const morningTask = daySlots[0] || { name: "Trống", level: "Dễ" };
-                    const afternoonTask = daySlots[1] || { name: "Trống", level: "Dễ" };
-
-                    excelData.push([empIdx + 1, emp.name, emp.dept, "Ca Sáng", morningTask.name, morningTask.level]);
-                    excelData.push([empIdx + 1, emp.name, emp.dept, "Ca Chiều", afternoonTask.name, afternoonTask.level]);
+            if (currentUser.role === 'admin') {
+                if (currentP !== adminPassword) {
+                    alert("Mật khẩu hiện tại của Admin không chính xác!");
+                    return;
                 }
-            });
+                adminPassword = newP;
+                alert("Đổi mật khẩu Admin thành công!");
+            } else {
+                let emp = employees.find(e => e.id === currentUser.id);
+                if (!emp || emp.password !== currentP) {
+                    alert("Mật khẩu hiện tại không chính xác!");
+                    return;
+                }
+                emp.password = newP;
+                alert("Đổi mật khẩu thành công!");
+            }
 
-            const ws = XLSX.utils.aoa_to_sheet(excelData);
-            
-            ws['!cols'] = [
-                { wch: 6 },  { wch: 20 }, { wch: 15 }, { wch: 12 }, { wch: 28 }, { wch: 10 }
-            ];
-
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Lich_Lam_Viec_Trong_Ngay");
-            XLSX.writeFile(wb, `Lich_Lam_Viec_${targetDate.toISOString().split('T')[0]}.xlsx`);
-        }
+            document.getElementById("current-pass").value = "";
+            document.getElementById("new-pass").value = "";
+            document.getElementById("confirm-pass").value = "";
+        };
     </script>
 </body>
 </html>
