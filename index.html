@@ -83,6 +83,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.2s, color 0.2s; }
         body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; }
+        
         /* MÀN HÌNH ĐĂNG NHẬP */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -102,8 +103,10 @@
             color: var(--text-muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
         }
         .toggle-password-btn:hover { color: var(--text-main); }
+
         /* APP CONTAINER */
         #app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        
         /* SIDEBAR */
         .sidebar { width: 240px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; border-right: 1px solid var(--border-color); flex-shrink: 0; }
         .sidebar-brand { padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 0.65rem; font-size: 0.95rem; font-weight: 700; color: white; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -116,6 +119,7 @@
         }
         .sidebar-menu a:hover { color: #ffffff; background-color: rgba(255,255,255,0.05); }
         .sidebar-menu li.active a { background-color: var(--sidebar-active); color: #ffffff; font-weight: 600; }
+
         /* MAIN CONTENT */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .top-navbar { height: 60px; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; flex-shrink: 0; }
@@ -139,28 +143,31 @@
         .card-header { padding: 0.9rem 1.15rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
         .card-header h2 { font-size: 0.92rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); }
         .card-body { padding: 1.15rem; }
+
         /* SETTINGS TAB STYLES */
         .settings-nav { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem; gap: 0.5rem; }
         .settings-tab-btn { padding: 0.6rem 1rem; background: none; border: none; border-bottom: 2px solid transparent; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
         .settings-tab-btn.active { border-bottom-color: var(--primary); color: var(--primary); }
         .settings-tab-btn:hover { color: var(--text-main); }
         .schedule-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; font-size: 0.83rem; flex-wrap: wrap; gap: 0.75rem; }
-        .date-navigator { display: flex; align-items: center; gap: 0.4rem; }
+        .date-navigator { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
         .btn-nav { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 26px; height: 26px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-nav:hover { background: var(--border-color); }
         
         .date-picker-input { padding: 0.3rem 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.78rem; background: var(--input-bg); color: var(--text-main); outline: none; cursor: pointer; }
-        .export-group { display: flex; align-items: center; gap: 0.5rem; }
+        .export-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
         .btn-success { background-color: var(--success); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-info { background-color: var(--info); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-primary-sm { background-color: var(--primary); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-danger-sm { background-color: var(--danger); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
         .btn-warning-sm { background-color: var(--warning); color: white; border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
+        
         .badge-difficulty { display: inline-block; padding: 0.08rem 0.3rem; border-radius: 3px; font-size: 0.62rem; font-weight: 700; text-align: center; }
         .badge-hard { background-color: #ef4444; color: #ffffff; }
         .badge-medium { background-color: #d97706; color: #ffffff; }
         .badge-easy { background-color: #10b981; color: #ffffff; }
-        .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; table-layout: fixed; }
+
+        .schedule-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; table-layout: fixed; min-width: 700px; }
         .schedule-table th, .schedule-table td { border: 1px solid var(--border-color); padding: 0.3rem; vertical-align: middle; color: var(--text-main); }
         .schedule-table th { background-color: var(--table-header); color: var(--text-muted); font-weight: 600; text-align: center; }
         
@@ -169,6 +176,7 @@
         .emp-avatar-mini { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .emp-name-mini { font-weight: 700; font-size: 0.75rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .emp-dept-mini { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
         .shift-block { margin-bottom: 3px; border-radius: 4px; padding: 3px 5px; border: 1px solid transparent; }
         .shift-block:last-child { margin-bottom: 0; }
         .shift-morning { background-color: var(--shift-morning-bg); border-color: var(--shift-morning-border); }
@@ -181,74 +189,116 @@
         .cell-off { background-color: var(--shift-off-bg); color: var(--shift-off-text); text-align: center; font-weight: 600; padding: 0.8rem 0; border-radius: 4px; font-size: 0.72rem; }
         .schedule-legend { display: flex; align-items: center; gap: 1.25rem; margin-top: 0.85rem; font-size: 0.73rem; color: var(--text-muted); justify-content: center; flex-wrap: wrap; }
         .legend-item { display: flex; align-items: center; gap: 0.3rem; }
-        .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+
+        .data-table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 550px; }
         .data-table th, .data-table td { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border-color); text-align: left; color: var(--text-main); }
         .data-table th { background-color: var(--table-header); color: var(--text-muted); font-weight: 600; }
         .action-btns { display: flex; gap: 0.4rem; }
         .btn-icon { background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--text-muted); }
         .btn-icon.edit:hover { color: var(--info); }
         .btn-icon.delete:hover { color: var(--danger); }
+
         /* TIMEKEEPING STYLES */
         .timekeeping-card {
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px;
             padding: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
         }
         .timekeeping-status { display: flex; align-items: center; gap: 1rem; }
-        .status-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--text-muted); }
+        .status-indicator { width: 12px; height: 12px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
         .status-indicator.active { background: var(--success); box-shadow: 0 0 8px var(--success); }
+
         /* CHAT CSKH STYLES */
         .chat-layout { display: flex; height: 500px; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--card-bg); }
-        .chat-sidebar { width: 220px; border-right: 1px solid var(--border-color); background: var(--table-header); display: flex; flex-direction: column; }
+        .chat-sidebar { width: 220px; border-right: 1px solid var(--border-color); background: var(--table-header); display: flex; flex-direction: column; flex-shrink: 0; }
         .chat-sidebar-header { padding: 0.75rem 1rem; font-weight: 600; font-size: 0.83rem; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
         .chat-user-list { list-style: none; overflow-y: auto; flex: 1; }
         .chat-user-item { padding: 0.65rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main); }
         .chat-user-item:hover, .chat-user-item.active { background: var(--border-color); font-weight: 600; }
-        .chat-main { flex: 1; display: flex; flex-direction: column; }
-        .chat-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); }
+        .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .chat-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); flex-wrap: wrap; gap: 0.3rem; }
         .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; background: var(--bg-main); }
-        .chat-bubble { max-width: 70%; padding: 0.6rem 0.85rem; border-radius: 8px; font-size: 0.82rem; line-height: 1.4; word-break: break-word; }
+        .chat-bubble { max-width: 75%; padding: 0.6rem 0.85rem; border-radius: 8px; font-size: 0.82rem; line-height: 1.4; word-break: break-word; }
         .chat-bubble.me { align-self: flex-end; background: var(--chat-bubble-user); color: #ffffff; border-bottom-right-radius: 2px; }
         .chat-bubble.other { align-self: flex-start; background: var(--chat-bubble-other); color: var(--chat-text-other); border-bottom-left-radius: 2px; }
         .chat-time { font-size: 0.65rem; opacity: 0.75; margin-top: 3px; text-align: right; }
         .chat-input-area { padding: 0.75rem; border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; background: var(--card-bg); }
         .chat-templates { padding: 0.5rem 1rem; background: var(--table-header); border-top: 1px solid var(--border-color); display: flex; gap: 0.5rem; overflow-x: auto; }
-        .chat-template-btn { background: var(--card-bg); border: 1px solid var(--border-color); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; white-space: nowrap; color: var(--text-main); }
+        .chat-template-btn { background: var(--card-bg); border: 1px solid var(--border-color); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.72rem; cursor: pointer; white-space: nowrap; color: var(--text-main); flex-shrink: 0; }
         .chat-template-btn:hover { background: var(--primary); color: white; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
         .modal-overlay.open { display: flex; }
-        .modal-container { background: var(--card-bg); width: 420px; max-width: 90%; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--border-color); }
-        .modal-header { padding: 0.9rem 1.15rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
-        .modal-body { padding: 1.15rem; }
+        .modal-container { background: var(--card-bg); width: 420px; max-width: 100%; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid var(--border-color); max-height: 90vh; display: flex; flex-direction: column; }
+        .modal-header { padding: 0.9rem 1.15rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.9rem; color: var(--text-main); flex-shrink: 0; }
+        .modal-body { padding: 1.15rem; overflow-y: auto; flex: 1; }
         .form-group { margin-bottom: 0.85rem; }
         .form-group label { display: block; margin-bottom: 0.3rem; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
         .form-control { width: 100%; padding: 0.45rem 0.65rem; border: 1px solid var(--border-color); border-radius: 0.35rem; font-size: 0.82rem; outline: none; background: var(--input-bg); color: var(--text-main); }
-        .modal-footer { padding: 0.65rem 1.15rem; background: var(--table-header); display: flex; justify-content: flex-end; gap: 0.4rem; border-top: 1px solid var(--border-color); }
+        .modal-footer { padding: 0.65rem 1.15rem; background: var(--table-header); display: flex; justify-content: flex-end; gap: 0.4rem; border-top: 1px solid var(--border-color); flex-shrink: 0; }
         .btn-secondary { background: var(--border-color); border: none; padding: 0.38rem 0.7rem; border-radius: 4px; font-size: 0.78rem; cursor: pointer; font-weight: 500; color: var(--text-main); }
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
-        .toast { padding: 0.75rem 1rem; border-radius: 6px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 0.8rem; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s forwards; }
+        
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; max-width: calc(100% - 40px); }
+        .toast { padding: 0.75rem 1rem; border-radius: 6px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 0.8rem; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s forwards; word-break: break-word; }
         .toast.success { border-left: 4px solid var(--success); }
         .toast.error { border-left: 4px solid var(--danger); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* TỐI ƯU HÓA ĐẶC BIỆT CHO GIAO DIỆN DI ĐỘNG (MOBILE RESPONSIVE) */
         @media screen and (max-width: 768px) {
-            body { flex-direction: column; height: auto; overflow-y: auto; }
-            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .sidebar-menu { display: flex; overflow-x: auto; padding: 0.5rem; gap: 0.5rem; }
+            body { height: 100vh; overflow: auto; }
+            #app-container { flex-direction: column; height: 100vh; overflow: hidden; }
+            
+            /* Sidebar chuyển thành thanh menu cuộn ngang trên cùng hoặc dưới cùng cực kỳ dễ bấm */
+            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); flex-shrink: 0; order: 2; }
+            .sidebar-brand { display: none; } /* Ẩn brand ở sidebar mobile cho gọn */
+            .sidebar-menu { display: flex; overflow-x: auto; padding: 0.4rem 0.5rem; gap: 0.4rem; -webkit-overflow-scrolling: touch; }
+            .sidebar-menu::-webkit-scrollbar { display: none; }
             .sidebar-menu li { margin-bottom: 0; flex-shrink: 0; }
-            .sidebar-menu a { padding: 0.5rem 0.7rem; font-size: 0.75rem; }
-            .main-content { height: auto; overflow: visible; }
-            .top-navbar { padding: 0 1rem; height: 50px; }
-            .content-body { padding: 1rem; }
-            .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+            .sidebar-menu a { padding: 0.45rem 0.7rem; font-size: 0.73rem; border-radius: 6px; background: var(--table-header); border: 1px solid var(--border-color); }
+            .sidebar-menu li.active a { background-color: var(--sidebar-active); color: #ffffff; }
+
+            /* Main content chiếm phần trên */
+            .main-content { height: calc(100vh - 50px); overflow: hidden; order: 1; display: flex; flex-direction: column; }
+            .top-navbar { padding: 0 0.75rem; height: 50px; flex-shrink: 0; }
+            .page-title { font-size: 0.95rem; gap: 0.4rem; }
+            .user-nav-actions { gap: 0.5rem; font-size: 0.75rem; }
+            .user-info, #live-clock { display: none; } /* Thu gọn top bar trên mobile cho thoáng */
+            
+            .content-body { padding: 0.75rem; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+            .stat-card { padding: 0.75rem; }
             .stat-body h3 { font-size: 1.1rem; }
-            .schedule-controls { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-            .export-group { width: 100%; justify-content: space-between; }
-            .export-group button { flex: 1; justify-content: center; font-size: 0.7rem; padding: 0.4rem; }
-            .schedule-table { font-size: 0.68rem; }
-            .emp-col-cell { width: 110px; padding-left: 0.25rem !important; }
-            .emp-avatar-mini { width: 22px; height: 22px; }
-            .modal-container { width: 95%; margin: 0 auto; }
-            .chat-layout { flex-direction: column; height: 450px; }
-            .chat-sidebar { width: 100%; height: 120px; }
+            
+            .card { margin-bottom: 0.75rem; }
+            .card-header { padding: 0.75rem; }
+            .card-header h2 { font-size: 0.85rem; }
+            .card-body { padding: 0.75rem; }
+            
+            .schedule-controls { flex-direction: column; align-items: stretch; gap: 0.5rem; margin-bottom: 0.75rem; }
+            .date-navigator { justify-content: space-between; }
+            .export-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+            .export-group button { width: 100%; justify-content: center; font-size: 0.7rem; padding: 0.4rem 0.2rem; }
+            
+            /* Bảng lịch cuộn ngang mượt mà trên mobile */
+            .schedule-table th, .schedule-table td { padding: 0.25rem; font-size: 0.7rem; }
+            .emp-col-cell { width: 100px !important; }
+            .emp-name-mini { font-size: 0.7rem; }
+            .emp-dept-mini { font-size: 0.6rem; }
+            .shift-block { padding: 2px 3px; }
+            .shift-title { font-size: 0.58rem; }
+            .shift-content { font-size: 0.63rem; }
+            
+            /* Giao diện Chat CSKH trên mobile: xếp dọc hoặc thu gọn sidebar */
+            .chat-layout { flex-direction: column; height: 380px; }
+            .chat-sidebar { width: 100%; height: 75px; flex-direction: row; overflow-x: auto; flex-shrink: 0; }
+            .chat-sidebar-header { display: none; }
+            .chat-user-list { display: flex; flex-direction: row; padding: 0.3rem; gap: 0.3rem; align-items: center; }
+            .chat-user-item { border-bottom: none; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.3rem 0.6rem; white-space: nowrap; height: 32px; }
+            .chat-messages { padding: 0.5rem; }
+            .chat-bubble { max-width: 85%; font-size: 0.78rem; }
+            
+            .modal-container { width: 95%; margin: auto; max-height: 85vh; }
         }
     </style>
 </head>
@@ -283,8 +333,10 @@
             <button class="btn-primary-sm" style="width: 100%; padding: 0.6rem; justify-content: center; font-size: 0.9rem; margin-top: 0.5rem;" onclick="handleLogin()">Đăng Nhập</button>
         </div>
     </div>
+
     <!-- ỨNG DỤNG CHÍNH -->
     <div id="app-container" style="display: none;">
+        <!-- SIDEBAR / THANH ĐIỀU HƯỚNG MOBILE & DESKTOP -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <i class="fa-solid fa-calendar-days" style="color: #818cf8; font-size: 1.05rem;"></i>
@@ -292,6 +344,7 @@
             </div>
             <ul class="sidebar-menu" id="sidebar-menu"></ul>
         </aside>
+
         <main class="main-content">
             <header class="top-navbar">
                 <div class="page-title" id="current-page-title">
@@ -312,6 +365,8 @@
                     <button class="btn-danger-sm" onclick="handleLogout()" title="Đăng xuất"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </header>
+
+            <!-- TAB DASHBOARD / LỊCH -->
             <div id="tab-dashboard" class="content-body active">
                 <div class="grid-4" id="admin-stats-grid">
                     <div class="stat-card">
@@ -335,6 +390,7 @@
                         <div class="stat-footer" style="color: var(--warning);">Tải được cân bằng tự động</div>
                     </div>
                 </div>
+
                 <div class="card" style="margin-bottom: 0;">
                     <div class="card-header">
                         <h2><i class="fa-regular fa-calendar-days" style="color: var(--info);"></i> <span id="schedule-card-title">Lịch làm việc & Cân bằng tải theo ca Sáng - Chiều</span></h2>
@@ -352,7 +408,7 @@
                                 <button class="btn-success" onclick="exportScheduleExcel()"><i class="fa-solid fa-file-excel"></i> Xuất Excel Cả Tuần (Pro)</button>
                             </div>
                         </div>
-                        <div style="overflow-x: auto; max-height: 520px;">
+                        <div style="overflow-x: auto; max-height: 520px; -webkit-overflow-scrolling: touch;">
                             <table class="schedule-table" id="schedule-matrix-table">
                                 <thead>
                                     <tr id="matrix-header-row">
@@ -377,6 +433,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- TAB CHẤM CÔNG THEO CA & GIỜ -->
             <div id="tab-timekeeping" class="content-body">
                 <div class="card">
@@ -385,7 +442,6 @@
                         <div id="admin-shift-config-btn-wrap"></div>
                     </div>
                     <div class="card-body">
-                        <!-- THÔNG TIN CA LÀM VIỆC HIỆN TẠI -->
                         <div class="card" style="margin-bottom: 1rem; background: var(--table-header);">
                             <div class="card-body" style="padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                                 <div>
@@ -403,28 +459,31 @@
                                     <div style="font-size: 0.78rem; color: var(--text-muted);" id="clock-detail-text">Nhấn "Vào Ca" để ghi nhận thời gian làm việc</div>
                                 </div>
                             </div>
-                            <div style="display: flex; gap: 0.5rem;">
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                 <button class="btn-success" id="btn-checkin" onclick="handleCheckIn()"><i class="fa-solid fa-right-to-bracket"></i> Vào Ca (Check-in)</button>
                                 <button class="btn-danger-sm" id="btn-checkout" onclick="handleCheckOut()" style="display: none;"><i class="fa-solid fa-right-from-bracket"></i> Tan Ca (Check-out)</button>
                             </div>
                         </div>
                         <h3 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--text-main);"><i class="fa-solid fa-list-ol"></i> Lịch sử ca làm gần nhất</h3>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Ngày</th>
-                                    <th>Nhân viên</th>
-                                    <th>Giờ vào</th>
-                                    <th>Giờ ra</th>
-                                    <th>Tổng giờ làm</th>
-                                    <th>Tạm tính lương (40k/h)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="timekeeping-history-tbody"></tbody>
-                        </table>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ngày</th>
+                                        <th>Nhân viên</th>
+                                        <th>Giờ vào</th>
+                                        <th>Giờ ra</th>
+                                        <th>Tổng giờ làm</th>
+                                        <th>Tạm tính lương (40k/h)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timekeeping-history-tbody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <!-- TAB BẢNG LƯƠNG -->
             <div id="tab-payroll" class="content-body">
                 <div class="card">
@@ -433,23 +492,26 @@
                         <span id="payroll-admin-badge" style="font-size: 0.75rem; background: rgba(16,185,129,0.15); color: var(--success); padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 600;">Lương định mức: 40.000 VNĐ / Giờ</span>
                     </div>
                     <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nhân sự</th>
-                                    <th>Lương / Giờ (VNĐ)</th>
-                                    <th>Tổng giờ đã tích lũy</th>
-                                    <th>Thưởng / Phụ cấp</th>
-                                    <th>Tổng Lương Thực Nhận</th>
-                                    <th id="payroll-action-header">Thao tác Admin</th>
-                                </tr>
-                            </thead>
-                            <tbody id="payroll-tbody"></tbody>
-                        </table>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nhân sự</th>
+                                        <th>Lương / Giờ (VNĐ)</th>
+                                        <th>Tổng giờ đã tích lũy</th>
+                                        <th>Thưởng / Phụ cấp</th>
+                                        <th>Tổng Lương Thực Nhận</th>
+                                        <th id="payroll-action-header">Thao tác Admin</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payroll-tbody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- TAB TÍNH NĂNG MỚI: HỖ TRỢ CSKH & BÁO LỖI LƯƠNG -->
+
+            <!-- TAB HỖ TRỢ CSKH & BÁO LỖI LƯƠNG -->
             <div id="tab-support" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -458,20 +520,16 @@
                     </div>
                     <div class="card-body">
                         <div class="chat-layout">
-                            <!-- SIDEBAR DANH SÁCH HỘI THOẠI (ADMIN XEM D.SÁCH / NHÂN VIÊN XEM KHU VỰC CỦA MÌNH) -->
                             <div class="chat-sidebar" id="chat-sidebar">
                                 <div class="chat-sidebar-header"><i class="fa-solid fa-comments"></i> Hội thoại CSKH</div>
                                 <ul class="chat-user-list" id="chat-user-list"></ul>
                             </div>
-                            <!-- KHU VỰC KHUNG CHAT MỞ RỘNG -->
                             <div class="chat-main">
                                 <div class="chat-header">
                                     <span id="chat-active-title"><i class="fa-solid fa-user-gear"></i> Kênh CSKH Trực Tiếp</span>
                                     <span style="font-size: 0.7rem; color: var(--success); font-weight: 500;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Trực tuyến</span>
                                 </div>
                                 <div class="chat-messages" id="chat-messages"></div>
-                                
-                                <!-- TEMPLATES SOẠN NHANH DÀNH CHO NHÂN VIÊN -->
                                 <div class="chat-templates" id="chat-templates">
                                     <button class="chat-template-btn" onclick="applyChatTemplate('salary')"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);"></i> [Báo sai lương]</button>
                                     <button class="chat-template-btn" onclick="applyChatTemplate('system_error')"><i class="fa-solid fa-bug" style="color:var(--danger);"></i> [Báo lỗi hệ thống]</button>
@@ -486,6 +544,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TAB QUẢN LÝ NHÂN SỰ -->
             <div id="tab-employee" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -493,22 +553,26 @@
                         <button class="btn-primary-sm" onclick="openEmpModal()"><i class="fa-solid fa-plus"></i> Thêm nhân viên</button>
                     </div>
                     <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Họ và tên</th>
-                                    <th>Phòng ban</th>
-                                    <th>Kinh nghiệm</th>
-                                    <th>Cấp độ</th>
-                                    <th>Mật khẩu đăng nhập</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="employee-table-body"></tbody>
-                        </table>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Họ và tên</th>
+                                        <th>Phòng ban</th>
+                                        <th>Kinh nghiệm</th>
+                                        <th>Cấp độ</th>
+                                        <th>Mật khẩu đăng nhập</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employee-table-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- TAB DANH MỤC CÔNG VIỆC -->
             <div id="tab-task" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -516,21 +580,25 @@
                         <button class="btn-primary-sm" onclick="openTaskModal()"><i class="fa-solid fa-plus"></i> Thêm công việc</button>
                     </div>
                     <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Tên công việc</th>
-                                    <th>Độ khó</th>
-                                    <th>Phòng ban</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="task-table-body"></tbody>
-                        </table>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên công việc</th>
+                                        <th>Độ khó</th>
+                                        <th>Phòng ban</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="task-table-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- TAB CÂN BẰNG PHỤ TẢI -->
             <div id="tab-assignment" class="content-body">
                 <div class="card">
                     <div class="card-header">
@@ -538,19 +606,22 @@
                         <button class="btn-primary-sm" onclick="autoAssignTasks()"><i class="fa-solid fa-wand-magic-sparkles"></i> Phân bổ cân bằng tải</button>
                     </div>
                     <div class="card-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nhân sự</th>
-                                    <th>Chuyên môn</th>
-                                    <th>Trạng thái phân bổ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="assignment-table-body"></tbody>
-                        </table>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nhân sự</th>
+                                        <th>Chuyên môn</th>
+                                        <th>Trạng thái phân bổ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assignment-table-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <!-- TAB CÀI ĐẶT -->
             <div id="tab-settings" class="content-body">
                 <div class="settings-nav">
@@ -617,6 +688,7 @@
             </div>
         </main>
     </div>
+
     <!-- MODAL ĐỔI MẬT KHẨU NHÂN VIÊN DÀNH CHO ADMIN -->
     <div class="modal-overlay" id="admin-emp-pwd-modal">
         <div class="modal-container">
@@ -646,6 +718,7 @@
             </form>
         </div>
     </div>
+
     <!-- MODAL CẤU HÌNH GIỜ CA TRỰC DÀNH CHO ADMIN -->
     <div class="modal-overlay" id="shift-config-modal">
         <div class="modal-container">
@@ -679,6 +752,7 @@
             </form>
         </div>
     </div>
+
     <!-- MODAL SỬA BẢNG LƯƠNG DÀNH CHO ADMIN -->
     <div class="modal-overlay" id="payroll-modal">
         <div class="modal-container">
@@ -713,7 +787,8 @@
             </form>
         </div>
     </div>
-    <!-- MODALS KHÁC -->
+
+    <!-- MODAL NHÂN VIÊN -->
     <div class="modal-overlay" id="emp-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -759,6 +834,8 @@
             </form>
         </div>
     </div>
+
+    <!-- MODAL CÔNG VIỆC -->
     <div class="modal-overlay" id="task-modal">
         <div class="modal-container">
             <div class="modal-header">
@@ -792,11 +869,12 @@
             </form>
         </div>
     </div>
+
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container"></div>
+
     <!-- APPLICATION LOGIC JAVASCRIPT -->
     <script>
-        // CẤU HÌNH DỮ LIỆU KHỞI TẠO DỰ PHÒNG
         const DEFAULT_EMPLOYEES = [
             { id: 'emp_1', name: 'Nguyễn Văn Hải', dept: 'Kỹ thuật', exp: 5, level: 'Senior', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', password: '123' },
             { id: 'emp_2', name: 'Trần Thị Mai', dept: 'Vận hành', exp: 3, level: 'Mid', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', password: '123' },
@@ -808,7 +886,7 @@
             { id: 'task_3', name: 'Vệ sinh thiết bị đầu cuối', difficulty: 'Dễ', dept: 'Bảo trì' },
             { id: 'task_4', name: 'Khắc phục sự cố mạng LAN', difficulty: 'Khó', dept: 'Kỹ thuật' }
         ];
-        // STATE MANAGEMENT
+        
         let state = {
             currentUser: null,
             employees: [],
@@ -816,8 +894,8 @@
             schedules: {},
             timekeepingLogs: [],
             payrolls: {},
-            chatMessages: [], // Chứa tin nhắn hỗ trợ CSKH
-            selectedChatEmpId: null, // Admin chọn nhân viên để chat
+            chatMessages: [],
+            selectedChatEmpId: null,
             currentMondayDate: getMonday(new Date()),
             shiftConfig: {
                 morningStart: '08:00',
@@ -826,7 +904,7 @@
                 afternoonEnd: '17:30'
             }
         };
-        // FIREBASE INITIALIZATION SAFEGUARD
+
         try {
             const firebaseConfig = {
                 apiKey: "AIzaSyDummyKeyForInitializationOnly",
@@ -843,12 +921,13 @@
         } catch (e) {
             console.warn("Firebase config fallback to Local Storage mode.", e);
         }
-        // INITIALIZATION
+
         document.addEventListener('DOMContentLoaded', () => {
             loadInitialData();
             startClock();
             initDatePicker();
         });
+
         function loadInitialData() {
             const storedEmps = localStorage.getItem('app_employees');
             const storedTasks = localStorage.getItem('app_tasks');
@@ -865,6 +944,7 @@
             state.payrolls = storedPayrolls ? JSON.parse(storedPayrolls) : {};
             state.chatMessages = storedChats ? JSON.parse(storedChats) : [];
             if (storedShiftCfg) state.shiftConfig = JSON.parse(storedShiftCfg);
+            
             state.employees.forEach(emp => {
                 if (!state.payrolls[emp.id]) {
                     state.payrolls[emp.id] = { hourlyRate: 40000, totalHours: 0, bonus: 0 };
@@ -876,6 +956,7 @@
             saveDataToStorage();
             populateEmpLoginSelect();
         }
+
         function saveDataToStorage() {
             localStorage.setItem('app_employees', JSON.stringify(state.employees));
             localStorage.setItem('app_tasks', JSON.stringify(state.tasks));
@@ -885,24 +966,27 @@
             localStorage.setItem('app_chat_messages', JSON.stringify(state.chatMessages));
             localStorage.setItem('app_shift_config', JSON.stringify(state.shiftConfig));
         }
-        // CLOCK & UTILS
+
         function startClock() {
             setInterval(() => {
                 const now = new Date();
-                document.getElementById('live-clock').textContent = now.toLocaleTimeString('vi-VN');
+                const clockEl = document.getElementById('live-clock');
+                if (clockEl) clockEl.textContent = now.toLocaleTimeString('vi-VN');
             }, 1000);
         }
+
         function toggleTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('theme-icon');
             if (html.getAttribute('data-theme') === 'dark') {
                 html.setAttribute('data-theme', 'light');
-                icon.className = 'fa-solid fa-sun';
+                if (icon) icon.className = 'fa-solid fa-sun';
             } else {
                 html.setAttribute('data-theme', 'dark');
-                icon.className = 'fa-solid fa-moon';
+                if (icon) icon.className = 'fa-solid fa-moon';
             }
         }
+
         function togglePasswordVisibility(inputId, btn) {
             const input = document.getElementById(inputId);
             const icon = btn.querySelector('i');
@@ -914,6 +998,7 @@
                 icon.className = 'fa-solid fa-eye';
             }
         }
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -922,7 +1007,7 @@
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
-        // AUTHENTICATION
+
         function onLoginRoleChanged() {
             const role = document.getElementById('login-role-select').value;
             const empGroup = document.getElementById('emp-select-group');
@@ -937,8 +1022,10 @@
                 pwdInput.value = 'admin123';
             }
         }
+
         function populateEmpLoginSelect() {
             const select = document.getElementById('login-emp-id');
+            if (!select) return;
             select.innerHTML = state.employees.map(e => `<option value="${e.id}">${e.name} (${e.dept})</option>`).join('');
             select.onchange = () => {
                 const empId = select.value;
@@ -948,6 +1035,7 @@
                 }
             };
         }
+
         function handleLogin() {
             const role = document.getElementById('login-role-select').value;
             const pwd = document.getElementById('login-password').value;
@@ -965,11 +1053,13 @@
             setupUIPerRole();
             showToast('Đăng nhập thành công!');
         }
+
         function handleLogout() {
             state.currentUser = null;
             document.getElementById('app-container').style.display = 'none';
             document.getElementById('login-screen').style.display = 'flex';
         }
+
         function setupUIPerRole() {
             const isEmp = state.currentUser.role === 'employee';
             document.getElementById('nav-user-name').textContent = state.currentUser.name;
@@ -979,24 +1069,26 @@
             if (isEmp) {
                 menu.innerHTML = `
                     <li class="active" onclick="switchTab('dashboard', this)"><a><i class="fa-solid fa-calendar-week"></i> Lịch Cá Nhân</a></li>
-                    <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Chấm Công Theo Ca & Giờ</a></li>
+                    <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Chấm Công</a></li>
                     <li onclick="switchTab('payroll', this)"><a><i class="fa-solid fa-money-check-dollar"></i> Lương Của Tôi</a></li>
-                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> Hỗ Trợ CSKH & Báo Lỗi</a></li>
+                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> Hỗ Trợ CSKH</a></li>
                     <li onclick="switchTab('settings', this)"><a><i class="fa-solid fa-gear"></i> Cài Đặt</a></li>
                 `;
-                document.getElementById('admin-stats-grid').style.display = 'none';
+                const statsGrid = document.getElementById('admin-stats-grid');
+                if (statsGrid) statsGrid.style.display = 'none';
             } else {
                 menu.innerHTML = `
-                    <li class="active" onclick="switchTab('dashboard', this)"><a><i class="fa-solid fa-chart-pie"></i> Dashboard & Lịch</a></li>
-                    <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Quản Lý Chấm Công & Ca</a></li>
-                    <li onclick="switchTab('payroll', this)"><a><i class="fa-solid fa-money-check-dollar"></i> Quản Lý Bảng Lương</a></li>
-                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> Hỗ Trợ CSKH & Báo Lỗi</a></li>
-                    <li onclick="switchTab('employee', this)"><a><i class="fa-solid fa-users"></i> Quản Lý Nhân Sự</a></li>
-                    <li onclick="switchTab('task', this)"><a><i class="fa-solid fa-clipboard-list"></i> Danh Mục Công Việc</a></li>
-                    <li onclick="switchTab('assignment', this)"><a><i class="fa-solid fa-list-check"></i> Cân Bằng Phụ Tải</a></li>
+                    <li class="active" onclick="switchTab('dashboard', this)"><a><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                    <li onclick="switchTab('timekeeping', this)"><a><i class="fa-solid fa-clock-rotate-left"></i> Chấm Công</a></li>
+                    <li onclick="switchTab('payroll', this)"><a><i class="fa-solid fa-money-check-dollar"></i> Bảng Lương</a></li>
+                    <li onclick="switchTab('support', this)"><a><i class="fa-solid fa-headset"></i> CSKH</a></li>
+                    <li onclick="switchTab('employee', this)"><a><i class="fa-solid fa-users"></i> Nhân Sự</a></li>
+                    <li onclick="switchTab('task', this)"><a><i class="fa-solid fa-clipboard-list"></i> Công Việc</a></li>
+                    <li onclick="switchTab('assignment', this)"><a><i class="fa-solid fa-list-check"></i> Phân Bổ</a></li>
                     <li onclick="switchTab('settings', this)"><a><i class="fa-solid fa-gear"></i> Cài Đặt</a></li>
                 `;
-                document.getElementById('admin-stats-grid').style.display = 'grid';
+                const statsGrid = document.getElementById('admin-stats-grid');
+                if (statsGrid) statsGrid.style.display = 'grid';
             }
             renderDashboard();
             renderEmployees();
@@ -1006,19 +1098,21 @@
             renderPayrollUI();
             renderChatUI();
         }
+
         function switchTab(tabId, element) {
             document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
             if(element) element.classList.add('active');
             document.querySelectorAll('.content-body').forEach(b => b.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
         }
+
         function switchSettingsSection(sectionId, btn) {
             document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.setting-section').forEach(sec => sec.style.display = 'none');
             document.getElementById(`setting-sec-${sectionId}`).style.display = 'block';
         }
-        // LOGIC CHẤM CÔNG THEO CA & GIỜ & BẢNG LƯƠNG
+
         function handleCheckIn() {
             if (state.currentUser.role === 'admin') {
                 return showToast('Tài khoản Admin không tham gia chấm công ca trực!', 'error');
@@ -1044,6 +1138,7 @@
             renderTimekeepingUI();
             showToast('Check-in thành công! Chúc bạn làm việc vui vẻ.');
         }
+
         function handleCheckOut() {
             const todayStr = new Date().toISOString().split('T')[0];
             const activeLog = state.timekeepingLogs.find(l => l.empId === state.currentUser.id && l.date === todayStr && !l.checkOut);
@@ -1064,21 +1159,26 @@
             renderPayrollUI();
             showToast(`Tan ca thành công! Bạn đã làm ${diffHours} giờ.`);
         }
+
         function renderTimekeepingUI() {
             const isEmp = state.currentUser.role === 'employee';
             const actionCard = document.getElementById('timekeeping-action-card');
             const shiftInfoDisplay = document.getElementById('shift-time-info-display');
             const adminShiftEditAction = document.getElementById('admin-shift-edit-action');
-            shiftInfoDisplay.textContent = `Ca Sáng: ${state.shiftConfig.morningStart} - ${state.shiftConfig.morningEnd} | Ca Chiều: ${state.shiftConfig.afternoonStart} - ${state.shiftConfig.afternoonEnd} (Định mức: 40.000 VNĐ / Giờ)`;
-            if (!isEmp) {
-                adminShiftEditAction.innerHTML = `<button class="btn-warning-sm" onclick="openShiftConfigModal()"><i class="fa-solid fa-clock"></i> Sửa Giờ Ca Làm</button>`;
-            } else {
-                adminShiftEditAction.innerHTML = '';
+            if (shiftInfoDisplay) {
+                shiftInfoDisplay.textContent = `Ca Sáng: ${state.shiftConfig.morningStart} - ${state.shiftConfig.morningEnd} | Ca Chiều: ${state.shiftConfig.afternoonStart} - ${state.shiftConfig.afternoonEnd} (Định mức: 40.000 VNĐ / Giờ)`;
+            }
+            if (adminShiftEditAction) {
+                if (!isEmp) {
+                    adminShiftEditAction.innerHTML = `<button class="btn-warning-sm" onclick="openShiftConfigModal()"><i class="fa-solid fa-clock"></i> Sửa Giờ Ca</button>`;
+                } else {
+                    adminShiftEditAction.innerHTML = '';
+                }
             }
             if (!isEmp) {
-                actionCard.style.display = 'none';
+                if (actionCard) actionCard.style.display = 'none';
             } else {
-                actionCard.style.display = 'flex';
+                if (actionCard) actionCard.style.display = 'flex';
                 const todayStr = new Date().toISOString().split('T')[0];
                 const activeLog = state.timekeepingLogs.find(l => l.empId === state.currentUser.id && l.date === todayStr && !l.checkOut);
                 
@@ -1088,20 +1188,21 @@
                 const btnIn = document.getElementById('btn-checkin');
                 const btnOut = document.getElementById('btn-checkout');
                 if (activeLog) {
-                    dot.className = 'status-indicator active';
-                    title.textContent = `Đang trong ca làm việc (Vào ca: ${activeLog.checkIn})`;
-                    detail.textContent = 'Mức lương: 40.000 VNĐ / Giờ';
-                    btnIn.style.display = 'none';
-                    btnOut.style.display = 'inline-flex';
+                    if (dot) dot.className = 'status-indicator active';
+                    if (title) title.textContent = `Đang trong ca làm việc (Vào: ${activeLog.checkIn})`;
+                    if (detail) detail.textContent = 'Mức lương: 40.000 VNĐ / Giờ';
+                    if (btnIn) btnIn.style.display = 'none';
+                    if (btnOut) btnOut.style.display = 'inline-flex';
                 } else {
-                    dot.className = 'status-indicator';
-                    title.textContent = 'Sẵn sàng chấm công ca làm việc';
-                    detail.textContent = 'Nhấn "Vào Ca" để bắt đầu tính giờ làm';
-                    btnIn.style.display = 'inline-flex';
-                    btnOut.style.display = 'none';
+                    if (dot) dot.className = 'status-indicator';
+                    if (title) title.textContent = 'Sẵn sàng chấm công ca làm việc';
+                    if (detail) detail.textContent = 'Nhấn "Vào Ca" để bắt đầu tính giờ làm';
+                    if (btnIn) btnIn.style.display = 'inline-flex';
+                    if (btnOut) btnOut.style.display = 'none';
                 }
             }
             const tbody = document.getElementById('timekeeping-history-tbody');
+            if (!tbody) return;
             const filteredLogs = isEmp ? state.timekeepingLogs.filter(l => l.empId === state.currentUser.id) : state.timekeepingLogs;
             if (filteredLogs.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Chưa có dữ liệu chấm công nào.</td></tr>`;
@@ -1118,6 +1219,7 @@
                 </tr>
             `).join('');
         }
+
         function openShiftConfigModal() {
             document.getElementById('cfg-morning-start').value = state.shiftConfig.morningStart;
             document.getElementById('cfg-morning-end').value = state.shiftConfig.morningEnd;
@@ -1125,6 +1227,7 @@
             document.getElementById('cfg-afternoon-end').value = state.shiftConfig.afternoonEnd;
             document.getElementById('shift-config-modal').classList.add('open');
         }
+
         function saveShiftConfig(e) {
             e.preventDefault();
             state.shiftConfig.morningStart = document.getElementById('cfg-morning-start').value;
@@ -1136,12 +1239,14 @@
             closeModal('shift-config-modal');
             showToast('Cập nhật khung giờ ca trực thành công!');
         }
+
         function renderPayrollUI() {
             const isEmp = state.currentUser.role === 'employee';
             const tbody = document.getElementById('payroll-tbody');
             const actionHeader = document.getElementById('payroll-action-header');
+            if (!tbody) return;
             if (isEmp) {
-                actionHeader.style.display = 'none';
+                if (actionHeader) actionHeader.style.display = 'none';
                 const empPayroll = state.payrolls[state.currentUser.id] || { hourlyRate: 40000, totalHours: 0, bonus: 0 };
                 const totalSalary = (empPayroll.totalHours * empPayroll.hourlyRate) + (empPayroll.bonus || 0);
                 tbody.innerHTML = `
@@ -1154,7 +1259,7 @@
                     </tr>
                 `;
             } else {
-                actionHeader.style.display = 'table-cell';
+                if (actionHeader) actionHeader.style.display = 'table-cell';
                 tbody.innerHTML = state.employees.map(emp => {
                     const p = state.payrolls[emp.id] || { hourlyRate: 40000, totalHours: 0, bonus: 0 };
                     const totalSalary = (p.totalHours * p.hourlyRate) + (p.bonus || 0);
@@ -1166,13 +1271,14 @@
                             <td>${(p.bonus || 0).toLocaleString('vi-VN')} VNĐ</td>
                             <td style="color:var(--success); font-weight:700;">${totalSalary.toLocaleString('vi-VN')} VNĐ</td>
                             <td>
-                                <button class="btn-warning-sm" onclick="openPayrollEditModal('${emp.id}')"><i class="fa-solid fa-pen-to-square"></i> Điều chỉnh</button>
+                                <button class="btn-warning-sm" onclick="openPayrollEditModal('${emp.id}')"><i class="fa-solid fa-pen-to-square"></i> Sửa</button>
                             </td>
                         </tr>
                     `;
                 }).join('');
             }
         }
+
         function openPayrollEditModal(empId) {
             const emp = state.employees.find(e => e.id === empId);
             if (!emp) return;
@@ -1184,6 +1290,7 @@
             document.getElementById('edit-payroll-bonus').value = p.bonus || 0;
             document.getElementById('payroll-modal').classList.add('open');
         }
+
         function savePayrollEdit(e) {
             e.preventDefault();
             const empId = document.getElementById('edit-payroll-emp-id').value;
@@ -1196,13 +1303,14 @@
             closeModal('payroll-modal');
             showToast('Cập nhật bảng lương thành công!');
         }
-        // LOGIC TÍNH NĂNG CHÁT HỖ TRỢ CSKH & BÁO LỖI LƯƠNG
+
         function renderChatUI() {
             const isEmp = state.currentUser.role === 'employee';
             const userListEl = document.getElementById('chat-user-list');
             const templatesEl = document.getElementById('chat-templates');
+            if (!userListEl) return;
             if (isEmp) {
-                templatesEl.style.display = 'flex';
+                if (templatesEl) templatesEl.style.display = 'flex';
                 userListEl.innerHTML = `
                     <li class="chat-user-item active">
                         <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i> Admin CSKH
@@ -1210,7 +1318,7 @@
                 `;
                 state.selectedChatEmpId = state.currentUser.id;
             } else {
-                templatesEl.style.display = 'none';
+                if (templatesEl) templatesEl.style.display = 'none';
                 if (!state.selectedChatEmpId && state.employees.length > 0) {
                     state.selectedChatEmpId = state.employees[0].id;
                 }
@@ -1222,12 +1330,15 @@
             }
             renderChatMessages();
         }
+
         function selectChatUser(empId) {
             state.selectedChatEmpId = empId;
             renderChatUI();
         }
+
         function renderChatMessages() {
             const container = document.getElementById('chat-messages');
+            if (!container) return;
             const targetEmpId = state.selectedChatEmpId;
             if (!targetEmpId) {
                 container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem;">Vui lòng chọn hội thoại</div>`;
@@ -1235,7 +1346,7 @@
             }
             const filteredMsgs = state.chatMessages.filter(m => m.empId === targetEmpId);
             if (filteredMsgs.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.8rem;"><i class="fa-solid fa-comment-dots"></i> Chưa có tin nhắn nào. Hãy nhập nội dung bên dưới để báo lỗi hoặc hỗ trợ!</div>`;
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.8rem;"><i class="fa-solid fa-comment-dots"></i> Chưa có tin nhắn nào. Nhập nội dung để trao đổi!</div>`;
                 return;
             }
             container.innerHTML = filteredMsgs.map(m => {
@@ -1250,6 +1361,7 @@
             }).join('');
             container.scrollTop = container.scrollHeight;
         }
+
         function sendChatMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
@@ -1269,61 +1381,80 @@
             input.value = '';
             renderChatMessages();
         }
+
         function applyChatTemplate(type) {
             const input = document.getElementById('chat-input');
+            if (!input) return;
             if (type === 'salary') {
-                input.value = 'Chào Admin, tôi kiểm tra thấy bảng lương của tôi bị sai/thiếu giờ làm. Nhờ Admin kiểm tra và cập nhật lại giúp tôi!';
+                input.value = 'Chào Admin, bảng lương của tôi có sai sót/thiếu giờ làm. Nhờ Admin kiểm tra giúp!';
             } else if (type === 'system_error') {
-                input.value = 'Chào Admin, tôi gặp sự cố khi sử dụng ứng dụng (lỗi chấm công / hiển thị). Nhờ bộ phận CSKH kiểm tra hỗ trợ!';
+                input.value = 'Chào Admin, tôi gặp sự cố giao diện/chấm công trên ứng dụng. Nhờ hỗ trợ!';
             } else if (type === 'timekeeping') {
-                input.value = 'Chào Admin, hôm nay tôi quên bấm Check-in/Check-out ca làm việc. Nhờ Admin điều chỉnh bổ sung giờ làm giúp tôi!';
+                input.value = 'Chào Admin, tôi quên bấm Check-in/Check-out hôm nay. Nhờ bổ sung giúp!';
             }
             input.focus();
         }
-        // DATE & MATRIX HELPER
+
         function getMonday(d) {
             const date = new Date(d);
             const day = date.getDay();
             const diff = date.getDate() - day + (day === 0 ? -6 : 1);
             return new Date(date.setDate(diff));
         }
+
         function initDatePicker() {
             const picker = document.getElementById('main-week-picker');
-            picker.value = state.currentMondayDate.toISOString().split('T')[0];
+            if (picker) {
+                picker.value = state.currentMondayDate.toISOString().split('T')[0];
+            }
             updateWeekRangeLabel();
         }
+
         function changeWeek(offset) {
             state.currentMondayDate.setDate(state.currentMondayDate.getDate() + (offset * 7));
-            document.getElementById('main-week-picker').value = state.currentMondayDate.toISOString().split('T')[0];
+            const picker = document.getElementById('main-week-picker');
+            if (picker) picker.value = state.currentMondayDate.toISOString().split('T')[0];
             updateWeekRangeLabel();
             renderDashboard();
         }
+
         function onWeekDateChanged(val) {
             if (!val) return;
             state.currentMondayDate = getMonday(new Date(val));
             updateWeekRangeLabel();
             renderDashboard();
         }
+
         function updateWeekRangeLabel() {
             const start = new Date(state.currentMondayDate);
             const end = new Date(start);
             end.setDate(end.getDate() + 6);
-            document.getElementById('week-range-label').textContent = `${start.toLocaleDateString('vi-VN')} - ${end.toLocaleDateString('vi-VN')}`;
+            const rangeLabel = document.getElementById('week-range-label');
+            if (rangeLabel) {
+                rangeLabel.textContent = `${start.toLocaleDateString('vi-VN')} - ${end.toLocaleDateString('vi-VN')}`;
+            }
             for (let i = 0; i < 7; i++) {
                 const colDate = new Date(start);
                 colDate.setDate(colDate.getDate() + i);
-                document.getElementById(`date-col-${i}`).textContent = `${colDate.getDate()}/${colDate.getMonth()+1}`;
+                const colEl = document.getElementById(`date-col-${i}`);
+                if (colEl) colEl.textContent = `${colDate.getDate()}/${colDate.getMonth()+1}`;
             }
         }
-        // RENDER FUNCTIONS
+
         function renderDashboard() {
-            document.getElementById('stat-emp-count').textContent = state.employees.length;
-            document.getElementById('stat-task-hard').textContent = state.tasks.filter(t => t.difficulty === 'Khó').length;
-            document.getElementById('stat-task-normal').textContent = state.tasks.filter(t => t.difficulty !== 'Khó').length;
+            const empCountEl = document.getElementById('stat-emp-count');
+            const taskHardEl = document.getElementById('stat-task-hard');
+            const taskNormalEl = document.getElementById('stat-task-normal');
+            if (empCountEl) empCountEl.textContent = state.employees.length;
+            if (taskHardEl) taskHardEl.textContent = state.tasks.filter(t => t.difficulty === 'Khó').length;
+            if (taskNormalEl) taskNormalEl.textContent = state.tasks.filter(t => t.difficulty !== 'Khó').length;
+            
             const tbody = document.getElementById('matrix-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             const isEmp = state.currentUser.role === 'employee';
             const displayEmps = isEmp ? state.employees.filter(e => e.id === state.currentUser.id) : state.employees;
+            
             displayEmps.forEach(emp => {
                 const tr = document.createElement('tr');
                 let rowHtml = `
@@ -1367,13 +1498,16 @@
                 tbody.appendChild(tr);
             });
         }
+
         function getBadgeHtml(diff) {
             if (diff === 'Khó') return `<span class="badge-difficulty badge-hard">Khó</span>`;
             if (diff === 'Trung bình') return `<span class="badge-difficulty badge-medium">TB</span>`;
             return `<span class="badge-difficulty badge-easy">Dễ</span>`;
         }
+
         function renderEmployees() {
             const tbody = document.getElementById('employee-table-body');
+            if (!tbody) return;
             tbody.innerHTML = state.employees.map(e => `
                 <tr>
                     <td><strong>${e.name}</strong></td>
@@ -1390,6 +1524,7 @@
                 </tr>
             `).join('');
         }
+
         function openAdminEmpPasswordModal(empId) {
             const emp = state.employees.find(e => e.id === empId);
             if (!emp) return;
@@ -1398,6 +1533,7 @@
             document.getElementById('admin-edit-emp-newpwd').value = '';
             document.getElementById('admin-emp-pwd-modal').classList.add('open');
         }
+
         function saveAdminEmpPassword(e) {
             e.preventDefault();
             const empId = document.getElementById('admin-edit-emp-id').value;
@@ -1408,11 +1544,13 @@
                 saveDataToStorage();
                 renderEmployees();
                 closeModal('admin-emp-pwd-modal');
-                showToast(`Đã cập nhật mật khẩu cho nhân viên ${emp.name}!`);
+                showToast(`Đã cập nhật mật khẩu cho ${emp.name}!`);
             }
         }
+
         function renderTasks() {
             const tbody = document.getElementById('task-table-body');
+            if (!tbody) return;
             tbody.innerHTML = state.tasks.map((t, index) => `
                 <tr>
                     <td>${index + 1}</td>
@@ -1428,17 +1566,19 @@
                 </tr>
             `).join('');
         }
+
         function renderAssignments() {
             const tbody = document.getElementById('assignment-table-body');
+            if (!tbody) return;
             tbody.innerHTML = state.employees.map(e => `
                 <tr>
                     <td><strong>${e.name}</strong></td>
                     <td>${e.dept} (${e.level})</td>
-                    <td><span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Đã sẵn sàng phân bổ</span></td>
+                    <td><span style="color: var(--success); font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Sẵn sàng</span></td>
                 </tr>
             `).join('');
         }
-        // LOAD BALANCING ALGORITHM
+
         function autoAssignTasks() {
             if (state.tasks.length === 0 || state.employees.length === 0) {
                 return showToast('Cần ít nhất 1 nhân viên và 1 công việc!', 'error');
@@ -1462,8 +1602,12 @@
             renderDashboard();
             showToast('Đã tự động phân công cân bằng tải cả tuần!');
         }
-        // MODAL ACTIONS & FORM HANDLERS
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('open');
+        }
+
         function openEmpModal() {
             document.getElementById('emp-id').value = '';
             document.getElementById('emp-name').value = '';
@@ -1474,6 +1618,7 @@
             document.getElementById('emp-modal-title').textContent = 'Thêm Nhân Viên';
             document.getElementById('emp-modal').classList.add('open');
         }
+
         function saveEmployee(e) {
             e.preventDefault();
             const id = document.getElementById('emp-id').value || 'emp_' + Date.now();
@@ -1498,6 +1643,7 @@
             closeModal('emp-modal');
             showToast('Đã lưu thông tin nhân viên!');
         }
+
         function editEmp(id) {
             const emp = state.employees.find(e => e.id === id);
             if (!emp) return;
@@ -1511,6 +1657,7 @@
             document.getElementById('emp-modal-title').textContent = 'Sửa Nhân Viên';
             document.getElementById('emp-modal').classList.add('open');
         }
+
         function deleteEmp(id) {
             if (!confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) return;
             state.employees = state.employees.filter(e => e.id !== id);
@@ -1521,6 +1668,7 @@
             renderPayrollUI();
             showToast('Đã xóa nhân viên!');
         }
+
         function openTaskModal() {
             document.getElementById('task-id').value = '';
             document.getElementById('task-name').value = '';
@@ -1528,6 +1676,7 @@
             document.getElementById('task-modal-title').textContent = 'Thêm Công Việc';
             document.getElementById('task-modal').classList.add('open');
         }
+
         function saveTask(e) {
             e.preventDefault();
             const id = document.getElementById('task-id').value || 'task_' + Date.now();
@@ -1546,6 +1695,7 @@
             closeModal('task-modal');
             showToast('Đã lưu công việc!');
         }
+
         function editTask(id) {
             const t = state.tasks.find(x => x.id === id);
             if (!t) return;
@@ -1556,6 +1706,7 @@
             document.getElementById('task-modal-title').textContent = 'Sửa Công Việc';
             document.getElementById('task-modal').classList.add('open');
         }
+
         function deleteTask(id) {
             if (!confirm('Xóa công việc này?')) return;
             state.tasks = state.tasks.filter(t => t.id !== id);
@@ -1564,6 +1715,7 @@
             renderDashboard();
             showToast('Đã xóa công việc!');
         }
+
         function handleChangePassword(e) {
             e.preventDefault();
             const oldP = document.getElementById('pwd-old').value;
@@ -1580,9 +1732,10 @@
                 saveDataToStorage();
                 showToast('Đã đổi mật khẩu cá nhân thành công!');
             }
-            document.getElementById('change-pwd-form').reset();
+            const form = document.getElementById('change-pwd-form');
+            if (form) form.reset();
         }
-        // EXCEL EXPORT USING SHEETJS
+
         function exportScheduleExcel() {
             const data = [];
             const headers = ['Nhân viên', 'Phòng ban', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
@@ -1610,6 +1763,7 @@
             XLSX.writeFile(wb, `Lich_Lam_Viec_Tuan_${state.currentMondayDate.toISOString().split('T')[0]}.xlsx`);
             showToast('Đã xuất báo cáo Excel thành công!');
         }
+
         function exportDailyScheduleExcel() {
             const todayStr = new Date().toISOString().split('T')[0];
             const data = [['Họ và tên', 'Phòng ban', 'Ca Sáng', 'Ca Chiều']];
